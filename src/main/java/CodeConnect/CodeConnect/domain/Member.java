@@ -4,7 +4,9 @@ import CodeConnect.CodeConnect.dto.SignUpRequestDto;
 import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 import java.time.LocalDateTime;
 
 /**
@@ -21,14 +23,17 @@ import java.time.LocalDateTime;
 public class Member {
 
     @Id
+    @Email
     private String email; // 이메일
 
     @NotBlank(message = "비밀번호를 입력해 주세요")
+    @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*[0-9])(?=.*[$@$!%*#?&])[A-Za-z[0-9]$@$!%*#?&]{8,20}$", message = "비밀번호는 영문, 숫자, 특수문자 8~10자리만 가능합니다.") // 영문, 숫자, 특수문자 8~10자리
     private String password; // 비밀번호
     private String passwordCheck; // 비밀번호 확인
 
     @NotBlank(message = "닉네임을 입력해 주세요")
     @Column(unique = true)
+    @Pattern(regexp = "^[A-Za-z0-9가-힣]{1,18}$", message = "닉네임은 한글, 영문, 숫자 18자리 이하만 사용 가능합니다.") // 한글, 영문, 숫자 12자리만 사용 가능
     private String nickname;
 
     private LocalDateTime createMemberTime;
