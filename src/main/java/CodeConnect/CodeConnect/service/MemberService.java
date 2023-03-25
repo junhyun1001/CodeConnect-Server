@@ -66,4 +66,9 @@ public class MemberService {
 
     }
 
+    // 회원 탈퇴
+
+
+    // 회원 수정
+
 }
