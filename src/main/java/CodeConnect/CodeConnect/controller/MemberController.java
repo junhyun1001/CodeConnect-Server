@@ -1,5 +1,6 @@
 package CodeConnect.CodeConnect.controller;
 
+import CodeConnect.CodeConnect.domain.Member;
 import CodeConnect.CodeConnect.dto.SignInRequestDto;
 import CodeConnect.CodeConnect.dto.SignInResponseDto;
 import CodeConnect.CodeConnect.dto.ResponseDto;
@@ -16,13 +17,18 @@ public class MemberController {
     private final MemberService memberService;
 
     @PostMapping("/signUp")
-    public ResponseDto<?> signUp(@RequestBody SignUpRequestDto requestBody) {
-        return memberService.signUp(requestBody);
+    public ResponseDto<?> signUp(@RequestBody SignUpRequestDto requestDto) {
+        return memberService.signUp(requestDto);
     }
 
     @PostMapping("/signIn")
-    public ResponseDto<SignInResponseDto> signIn(@RequestBody SignInRequestDto requestBody) {
-        return memberService.signIn(requestBody);
+    public ResponseDto<?> signIn(@RequestBody SignInRequestDto requestDto) {
+        return memberService.signIn(requestDto);
+    }
+
+    @DeleteMapping("/delete/{email}")
+    public ResponseDto<?> delete(@PathVariable String email) {
+        return memberService.deleteMember(email);
     }
 
 }
