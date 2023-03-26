@@ -1,6 +1,5 @@
 package CodeConnect.CodeConnect.domain.post;
 
-import CodeConnect.CodeConnect.domain.Address;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -34,7 +33,7 @@ public abstract class Post {
     
     private LocalDateTime modifiedDateTime; // 수정 날짜와 시간 정보
 
-    private Address address; // 모임 장소에 대한 주소 정보
+    private String address; // 위치 설정
 
 }
 
