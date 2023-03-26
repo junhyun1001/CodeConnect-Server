@@ -19,24 +19,31 @@ import java.util.Date;
 @Service
 public class TokenProvider {
 
-    private static final String SECURITY_KEY = "jwtseckey!@";
+    private static final Key SECRET_KEY = Keys.secretKeyFor(SignatureAlgorithm.HS256);
 
     // 암호화
     public String create(String email) {
         Date exprTime = Date.from(Instant.now().plus(1, ChronoUnit.HOURS)); // 만료날짜를 현재 시간으로부터 +1시간
 
-        Key key = Keys.hmacShaKeyFor(SECURITY_KEY.getBytes());
-
-        return Jwts.builder()
-                .signWith(SignatureAlgorithm.HS512, key) // 암호화에 사용될 알고리즘과 Key
-                .setSubject(email).setIssuedAt(new Date()).setExpiration(exprTime) // JWT 제목, 생성일, 만료일
-                .compact(); // 생성
+        String token = Jwts.builder()
+                .signWith(SECRET_KEY, SignatureAlgorithm.HS256)
+                .setSubject(email)
+                .setIssuedAt(new Date())
+                .setExpiration(exprTime)
+                .compact();
+        return token;
     }
 
-    // 복호화
-    public String validate (String token) {
-        Claims claims = Jwts.parser().setSigningKey(SECURITY_KEY).parseClaimsJws(token).getBody(); // 매개변수로 받은 토큰을 복호화
-        return claims.getSubject(); // 복호화된 토큰의 payload에서 제목을 가져옴
+    // 토큰 디코딩
+    public String validate(String token) {
+
+        Claims claims = Jwts.parserBuilder()
+                .setSigningKey(SECRET_KEY)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+
+        return claims.getSubject();
     }
 
 }
