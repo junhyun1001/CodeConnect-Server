@@ -18,12 +18,12 @@ public class ResponseDto<D> {
     private String message;
     private D data; // SignUpResponseDto를 실어서 보낸다.
 
-    // 회원가입 성공 리턴
+    // 성공 리턴
     public static <D> ResponseDto<D> setSuccess(String message, D data) {
         return ResponseDto.set(true, message, data);
     }
 
-    // 회원가입 실패 리턴
+    // 실패 리턴
     public static <D> ResponseDto<D> setFail(String message) {
         return ResponseDto.set(false, message, null);
     }
