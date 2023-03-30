@@ -16,7 +16,7 @@ public class ResponseDto<D> {
 
     private boolean result;
     private String message;
-    private D data; // SignUpResponseDto를 실어서 보낸다.
+    private D data;
 
     // 성공 리턴
     public static <D> ResponseDto<D> setSuccess(String message, D data) {

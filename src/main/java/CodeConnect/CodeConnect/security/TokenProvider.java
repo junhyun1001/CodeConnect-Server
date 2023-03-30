@@ -1,13 +1,10 @@
 package CodeConnect.CodeConnect.security;
 
-import CodeConnect.CodeConnect.domain.Field;
-import CodeConnect.CodeConnect.dto.SignUpRequestDto;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
@@ -26,7 +23,6 @@ import java.util.List;
 public class TokenProvider {
 
     private final SecretKey SECRET_KEY = Keys.secretKeyFor(SignatureAlgorithm.HS256);
-
 
     // 암호화
     public String create(String email, String nickname, List<String> fieldList) {
