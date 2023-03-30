@@ -1,7 +1,7 @@
 package CodeConnect.CodeConnect.domain;
 
 import CodeConnect.CodeConnect.converter.FieldConverter;
-import CodeConnect.CodeConnect.dto.SignUpRequestDto;
+import CodeConnect.CodeConnect.dto.member.SignUpRequestDto;
 import lombok.*;
 
 import javax.persistence.*;

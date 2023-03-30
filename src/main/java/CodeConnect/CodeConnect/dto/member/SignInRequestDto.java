@@ -1,4 +1,4 @@
-package CodeConnect.CodeConnect.dto;
+package CodeConnect.CodeConnect.dto.member;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

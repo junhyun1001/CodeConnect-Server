@@ -1,9 +1,9 @@
 package CodeConnect.CodeConnect.controller;
 
 import CodeConnect.CodeConnect.dto.ResponseDto;
-import CodeConnect.CodeConnect.dto.SignInRequestDto;
-import CodeConnect.CodeConnect.dto.SignUpRequestDto;
-import CodeConnect.CodeConnect.dto.UpdateRequestDto;
+import CodeConnect.CodeConnect.dto.member.SignInRequestDto;
+import CodeConnect.CodeConnect.dto.member.SignUpRequestDto;
+import CodeConnect.CodeConnect.dto.member.UpdateRequestDto;
 import CodeConnect.CodeConnect.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;

@@ -2,9 +2,12 @@ package CodeConnect.CodeConnect.service;
 
 import CodeConnect.CodeConnect.domain.Member;
 import CodeConnect.CodeConnect.dto.*;
+import CodeConnect.CodeConnect.dto.member.SignInRequestDto;
+import CodeConnect.CodeConnect.dto.member.SignInResponseDto;
+import CodeConnect.CodeConnect.dto.member.SignUpRequestDto;
+import CodeConnect.CodeConnect.dto.member.UpdateRequestDto;
 import CodeConnect.CodeConnect.repository.MemberRepository;
 import CodeConnect.CodeConnect.security.TokenProvider;
-import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
