@@ -1,8 +1,7 @@
 package CodeConnect.CodeConnect.domain.post;
 
 import CodeConnect.CodeConnect.converter.FieldConverter;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -17,7 +16,10 @@ import java.util.List;
 @Table(name = "Post")
 @Getter
 @Setter
-public abstract class Post {
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class Post {
 
     @Id
     @GeneratedValue
@@ -31,7 +33,7 @@ public abstract class Post {
 
     private String writer; // 작성자
 
-    private LocalDateTime currentDateTime; // 작성 날짜와 시간 정보
+    private LocalDateTime currentDateTime = LocalDateTime.now(); // 작성 날짜와 시간 정보
     
     private LocalDateTime modifiedDateTime; // 수정 날짜와 시간 정보
 
@@ -39,6 +41,8 @@ public abstract class Post {
 
     @Convert(converter = FieldConverter.class)
     private List<String> fieldList;
+
+
 
 }
 
