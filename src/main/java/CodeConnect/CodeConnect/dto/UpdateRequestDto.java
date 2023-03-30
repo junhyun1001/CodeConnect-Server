@@ -13,11 +13,7 @@ public class UpdateRequestDto {
 
     private String nickname;
 
-    private String state;
-
-    private String city;
-
-//    private String street;
+    private String address;
 
     private List<String> fieldList;
 }
