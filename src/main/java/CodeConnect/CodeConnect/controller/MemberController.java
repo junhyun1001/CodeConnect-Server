@@ -1,13 +1,14 @@
 package CodeConnect.CodeConnect.controller;
 
-import CodeConnect.CodeConnect.domain.Member;
-import CodeConnect.CodeConnect.dto.SignInRequestDto;
-import CodeConnect.CodeConnect.dto.SignInResponseDto;
 import CodeConnect.CodeConnect.dto.ResponseDto;
+import CodeConnect.CodeConnect.dto.SignInRequestDto;
 import CodeConnect.CodeConnect.dto.SignUpRequestDto;
+import CodeConnect.CodeConnect.dto.UpdateRequestDto;
 import CodeConnect.CodeConnect.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping("/members")
@@ -17,18 +18,25 @@ public class MemberController {
     private final MemberService memberService;
 
     @PostMapping("/signUp")
-    public ResponseDto<?> signUp(@RequestBody SignUpRequestDto requestDto) {
-        return memberService.signUp(requestDto);
+    public ResponseDto<?> signUp(@RequestBody SignUpRequestDto signUpDto) {
+        return memberService.signUp(signUpDto);
     }
 
-    @PostMapping("/signIn")
-    public ResponseDto<?> signIn(@RequestBody SignInRequestDto requestDto) {
-        return memberService.signIn(requestDto);
+    @GetMapping("/signIn")
+    public ResponseDto<?> signIn(@RequestBody SignInRequestDto signInDto) {
+        return memberService.signIn(signInDto);
     }
 
-    @DeleteMapping("/delete/{email}")
-    public ResponseDto<?> delete(@PathVariable String email) {
-        return memberService.deleteMember(email);
+    @PutMapping("/update")
+    public ResponseDto<?> update(@RequestBody UpdateRequestDto updateDto, HttpServletRequest request) {
+//        String token = request.getHeader("Authorization").substring(7);
+        return memberService.updateMember(updateDto);
+    }
+
+    @DeleteMapping("/delete")
+    public ResponseDto<?> delete(HttpServletRequest request) {
+        String token = request.getHeader("Authorization").substring(7);
+        return memberService.deleteMember(token);
     }
 
 }
