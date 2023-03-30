@@ -2,6 +2,7 @@ package CodeConnect.CodeConnect.filter;
 
 import CodeConnect.CodeConnect.security.TokenProvider;
 import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.AuthorityUtils;
@@ -22,39 +23,36 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    // Request가 들어왔을 때 Request Header의 Authorization 필드의 Bearer Token을 가져옴
-    // 가져온 토큰을 검증하고 검증 결과를 SecurityContext에 추가
-
     private final TokenProvider tokenProvider;
 
+    // Request Header의 Authorization 필드에서 Bearer Token을 가져와 검증하는 역할
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response, @NotNull FilterChain filterChain) throws ServletException, IOException {
         String token = parseBearerToken(request);
 
         try {
             if(token != null && !token.equalsIgnoreCase("null")) {
-                // 토큰을 검증해서 payload의 email을 가져옴
-                String email = tokenProvider.validate(token);
+                String email = tokenProvider.validate(token).getSubject();
 
                 AbstractAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(email, null, AuthorityUtils.NO_AUTHORITIES);
                 authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
-                // SecurityContext에 AbstractAuthenticationToken 객체를 추가해서
-                // 해당 Thread가 지속적으로 인증 정보를 가질 수 있도록 해줌
                 SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
                 securityContext.setAuthentication(authenticationToken);
                 SecurityContextHolder.setContext(securityContext);
-
             }
         } catch(Exception e) {
             e.printStackTrace();
+            // 유효성 검증에 실패한 경우도 SecurityContext에 인증 정보를 추가해야 함
+            AbstractAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(null, null, AuthorityUtils.NO_AUTHORITIES);
+            SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
+            securityContext.setAuthentication(authenticationToken);
+            SecurityContextHolder.setContext(securityContext);
         }
 
         filterChain.doFilter(request, response);
-
     }
 
-    // Request가 들어왔을 때 Request Header의 Authorization 필드의 Bearer Token을 가져오는 메소드
     private String parseBearerToken(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");
 
@@ -63,3 +61,4 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         return null;
     }
 }
+
