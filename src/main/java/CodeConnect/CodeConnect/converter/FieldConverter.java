@@ -1,12 +1,7 @@
-package CodeConnect.CodeConnect.domain;
-
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import org.hibernate.mapping.Array;
+package CodeConnect.CodeConnect.converter;
 
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -16,7 +11,7 @@ import java.util.stream.Collectors;
  */
 
 @Converter
-public class Field implements AttributeConverter<List<String>, String> {
+public class FieldConverter implements AttributeConverter<List<String>, String> {
 
     private static final String SPLIT_CHAR = ",";
 
