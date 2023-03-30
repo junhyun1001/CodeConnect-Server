@@ -1,10 +1,12 @@
 package CodeConnect.CodeConnect.domain.post;
 
+import CodeConnect.CodeConnect.converter.FieldConverter;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * 게시글 정보 클래스
@@ -34,6 +36,9 @@ public abstract class Post {
     private LocalDateTime modifiedDateTime; // 수정 날짜와 시간 정보
 
     private String address; // 위치 설정
+
+    @Convert(converter = FieldConverter.class)
+    private List<String> fieldList;
 
 }
 
