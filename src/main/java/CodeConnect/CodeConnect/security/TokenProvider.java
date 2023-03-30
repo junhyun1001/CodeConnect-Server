@@ -1,15 +1,20 @@
 package CodeConnect.CodeConnect.security;
 
+import CodeConnect.CodeConnect.domain.Field;
+import CodeConnect.CodeConnect.dto.SignUpRequestDto;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.security.Key;
+import javax.crypto.SecretKey;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
+import java.util.List;
 
 
 /**
@@ -17,33 +22,36 @@ import java.util.Date;
  */
 
 @Service
+@AllArgsConstructor
 public class TokenProvider {
 
-    private static final Key SECRET_KEY = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+    private final SecretKey SECRET_KEY = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+
 
     // 암호화
-    public String create(String email) {
+    public String create(String email, String nickname, List<String> fieldList) {
+
+
         Date exprTime = Date.from(Instant.now().plus(1, ChronoUnit.HOURS)); // 만료날짜를 현재 시간으로부터 +1시간
 
-        String token = Jwts.builder()
+        return Jwts.builder()
+                .setSubject(email) // 토큰 제목
+//                .setAudience(nickname) // 토큰 대상자
+//                .claim("field", fieldList) // 관심분야
+                .setIssuedAt(new Date()) // 토큰 생성 시간
+                .setExpiration(exprTime) // 토큰 만료 시간
                 .signWith(SECRET_KEY, SignatureAlgorithm.HS256)
-                .setSubject(email)
-                .setIssuedAt(new Date())
-                .setExpiration(exprTime)
                 .compact();
-        return token;
     }
 
     // 토큰 디코딩
-    public String validate(String token) {
+    public Claims validate(String token) {
 
-        Claims claims = Jwts.parserBuilder()
+        return Jwts.parserBuilder()
                 .setSigningKey(SECRET_KEY)
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
-
-        return claims.getSubject();
     }
 
 }
