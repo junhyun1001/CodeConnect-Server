@@ -1,11 +1,11 @@
 package CodeConnect.CodeConnect.dto;
 
-import CodeConnect.CodeConnect.domain.Field;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.validation.constraints.Email;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * 클라이언트에서 서버로 요청을 받는 DTO
@@ -21,6 +21,7 @@ public class SignUpRequestDto {
     private String email;
 
     private String password;
+
     private String passwordCheck;
 
     private String nickname;
@@ -28,9 +29,11 @@ public class SignUpRequestDto {
     private LocalDateTime createMemberTime = LocalDateTime.now();
 
     private String state;
+
     private String city;
+
 //    private String street;
 
-    private Field field;
+    private List<String> fieldList;
 
 }
