@@ -133,8 +133,7 @@ public class MemberService {
 
         // 지역과 관심분야 중 하나만 수정할 때, 모두 수정 할 때 어떻게 처리?
         updateMember.setFieldList(dto.getFieldList());
-        updateMember.setCity(dto.getCity());
-        updateMember.setState(dto.getState());
+        updateMember.setAddress(dto.getAddress());
 
         memberRepository.save(updateMember);
 

@@ -1,12 +1,10 @@
 package CodeConnect.CodeConnect.domain;
 
+import CodeConnect.CodeConnect.converter.FieldConverter;
 import CodeConnect.CodeConnect.dto.SignUpRequestDto;
 import lombok.*;
 
-import javax.persistence.Convert;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -35,11 +33,9 @@ public class Member {
 
     private LocalDateTime createMemberTime;
 
-    private String state; // 경기도, 서울특별시
-    private String city; // 파주시, 성북구
-//    private String street; // 문산읍, 성북동
+    private String address;
 
-    @Convert(converter = Field.class)
+    @Convert(converter = FieldConverter.class)
     private List<String> fieldList;
 
     public Member(SignUpRequestDto dto) {
@@ -47,9 +43,7 @@ public class Member {
         this.password = dto.getPassword();
         this.nickname = dto.getNickname();
         this.createMemberTime = dto.getCreateMemberTime();
-        this.state = dto.getState();
-        this.city = dto.getCity();
-//        this.street = dto.getStreet();
+        this.address = dto.getAddress();
         this.fieldList = dto.getFieldList();
     }
 
