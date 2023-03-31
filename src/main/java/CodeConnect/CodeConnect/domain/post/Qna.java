@@ -21,4 +21,6 @@ public class Qna extends Post {
     @GeneratedValue
     private Long qnaId;
 
+
+
 }

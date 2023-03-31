@@ -22,4 +22,7 @@ public class Recruitment extends Post {
 
     private int count; // 인원수
 
+    /**
+     * 여기에 지금 address 필드가 없어서 RecruitmentRepository에서 findByAddress를 못하고있음
+     */
 }
