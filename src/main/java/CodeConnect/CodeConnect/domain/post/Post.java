@@ -1,9 +1,6 @@
 package CodeConnect.CodeConnect.domain.post;
 
-import CodeConnect.CodeConnect.domain.Member;
-
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 
 /**
@@ -13,20 +10,14 @@ import java.time.LocalDateTime;
 
 public abstract class Post {
 
-    @Id
-    @GeneratedValue
-    private Long postId; // 게시글 id
+    @NotBlank
+    String title; // 제목
 
-    private Member member; // 작성자 정보
+    @NotBlank
+    String content; // 내용
 
-    private String title; // 제목
+    LocalDateTime currentDateTime = LocalDateTime.now(); // 작성 날짜와 시간 정보
 
-    private String content; // 내용
-
-    private final LocalDateTime currentDateTime = LocalDateTime.now(); // 작성 날짜와 시간 정보
-    
-    private LocalDateTime modifiedDateTime; // 수정 날짜와 시간 정보
-
-    private Comment comment; // 댓글
+    LocalDateTime modifiedDateTime; // 수정 날짜와 시간 정보
 
 }
