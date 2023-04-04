@@ -3,9 +3,10 @@ package CodeConnect.CodeConnect.controller;
 import CodeConnect.CodeConnect.dto.ResponseDto;
 import CodeConnect.CodeConnect.dto.member.SignInRequestDto;
 import CodeConnect.CodeConnect.dto.member.SignUpRequestDto;
-import CodeConnect.CodeConnect.dto.member.UpdateRequestDto;
+import CodeConnect.CodeConnect.dto.member.EditMemberRequestDto;
 import CodeConnect.CodeConnect.service.MemberService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -22,15 +23,15 @@ public class MemberController {
         return memberService.signUp(signUpDto);
     }
 
-    @GetMapping("/signIn")
+    @PostMapping("/signIn")
+//    public ResponseDto<?> signIn(@RequestBody SignInRequestDto signInDto, HttpServletRequest request) {
     public ResponseDto<?> signIn(@RequestBody SignInRequestDto signInDto) {
         return memberService.signIn(signInDto);
     }
 
-    @PutMapping("/update")
-    public ResponseDto<?> update(@RequestBody UpdateRequestDto updateDto, HttpServletRequest request) {
-//        String token = request.getHeader("Authorization").substring(7);
-        return memberService.updateMember(updateDto);
+    @PutMapping("/edit")
+    public ResponseDto<?> edit(@RequestBody EditMemberRequestDto updateDto, @AuthenticationPrincipal String email) {
+        return memberService.editMember(updateDto, email);
     }
 
     @DeleteMapping("/delete")

@@ -5,7 +5,7 @@ import CodeConnect.CodeConnect.dto.*;
 import CodeConnect.CodeConnect.dto.member.SignInRequestDto;
 import CodeConnect.CodeConnect.dto.member.SignInResponseDto;
 import CodeConnect.CodeConnect.dto.member.SignUpRequestDto;
-import CodeConnect.CodeConnect.dto.member.UpdateRequestDto;
+import CodeConnect.CodeConnect.dto.member.EditMemberRequestDto;
 import CodeConnect.CodeConnect.repository.MemberRepository;
 import CodeConnect.CodeConnect.security.TokenProvider;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.validation.constraints.Email;
+import java.util.List;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
@@ -63,12 +64,11 @@ public class MemberService {
         Member member = new Member(dto);
         // 비밀번호 암호화
         member.setPassword(passwordEncoder.encode(password));
-        // 관심분야 설정
-//        member.setField(dto.getField());
         // 회원 객체 DB 저장
         Member savedMember = memberRepository.save(member);
 
         return ResponseDto.setSuccess("회원가입 성공", savedMember);
+
     }
 
     private static boolean passwordDoubleCheck(String password, String passwordCheck) {
@@ -116,6 +116,8 @@ public class MemberService {
         if (!passwordEncoder.matches(password, member.getPassword()))
             return ResponseDto.setFail("비밀번호가 일치하지 않습니다.");
 
+
+        // 새로운 토큰 생성
         String token = tokenProvider.create(email, member.getNickname(), member.getFieldList()); // 토큰 생성
         int exprTime = 3600000;
 
@@ -123,32 +125,35 @@ public class MemberService {
 
     }
 
+
     // 회원 수정(프로필 이미지, 지역, 관심분야)
-    // 토큰을 인증하고 값을 변경해야되는데 어떻게 할지 모르겠음
-    public ResponseDto<?> updateMember(UpdateRequestDto dto) {
+    /*
+    문제: 3개를 다 업데이트 해줘야됨
+     */
+    public ResponseDto<?> editMember(EditMemberRequestDto dto, String email) {
 
-//        Claims claims = tokenProvider.validate(token);
+        String nickname = dto.getNickname();
+        String address = dto.getAddress();
+        List<String> fieldList = dto.getFieldList();
 
-        Optional<Member> member = memberRepository.findById(dto.getEmail());
+        Optional<Member> member = memberRepository.findById(email);
         if (member.isEmpty())
             return ResponseDto.setFail("존재하지 않는 회원 입니다");
-        Member updateMember = member.get();
 
-        // 지역과 관심분야 중 하나만 수정할 때, 모두 수정 할 때 어떻게 처리?
-        updateMember.setFieldList(dto.getFieldList());
-        updateMember.setAddress(dto.getAddress());
+        Member updateMember = member.get();
+        updateMember.setNickname(nickname);
+        updateMember.setAddress(address);
+        updateMember.setFieldList(fieldList);
 
         memberRepository.save(updateMember);
-
 
         return ResponseDto.setSuccess("업데이트가 완료되었습니다.", updateMember);
     }
 
-
     // 회원 탈퇴
     public ResponseDto<?> deleteMember(String token) {
 
-        String validateEmail = tokenProvider.validate(token).getSubject(); // 토큰의 email claims 값을 가져옴
+        String validateEmail = tokenProvider.validate(token); // 토큰의 email claims 값을 가져옴
 
         Optional<Member> member = memberRepository.findById(validateEmail);
         if (member.isEmpty())

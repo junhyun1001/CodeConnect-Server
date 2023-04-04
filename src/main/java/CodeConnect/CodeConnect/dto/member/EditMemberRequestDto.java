@@ -7,9 +7,7 @@ import java.util.List;
 
 @Getter
 @Setter
-public class UpdateRequestDto {
-
-    private String email;
+public class EditMemberRequestDto {
 
     private String nickname;
 
