@@ -1,8 +1,9 @@
 package CodeConnect.CodeConnect.repository;
 
-import CodeConnect.CodeConnect.domain.post.Post;
 import CodeConnect.CodeConnect.domain.post.Recruitment;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -10,9 +11,14 @@ import java.util.List;
 @Repository
 public interface RecruitmentRepository extends JpaRepository<Recruitment, Long> {
 
-//    @Query("SELECT p FROM Post p WHERE p.address = :address AND p.fieldList IN :fieldList")
-//    List<Post> findByAddressAndFieldList(@Param("address") String address, @Param("fieldList") List<String> fieldList);
+    Recruitment findByNickname(String email);
+
+    Recruitment findByEmail(String email);
 
     List<Recruitment> findByAddress(String address);
+
+    List<Recruitment> findByAddressAndField(String address, String field);
+
+
 
 }
