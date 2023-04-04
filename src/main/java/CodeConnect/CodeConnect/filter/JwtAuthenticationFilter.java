@@ -32,7 +32,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         try {
             if(token != null && !token.equalsIgnoreCase("null")) {
-                String email = tokenProvider.validate(token).getSubject();
+                String email = tokenProvider.validate(token);
 
                 AbstractAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(email, null, AuthorityUtils.NO_AUTHORITIES);
                 authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));

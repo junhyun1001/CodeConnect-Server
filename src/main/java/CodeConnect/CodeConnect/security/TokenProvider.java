@@ -26,28 +26,33 @@ public class TokenProvider {
 
     // 암호화
     public String create(String email, String nickname, List<String> fieldList) {
-
-
+        Date now = new Date();
         Date exprTime = Date.from(Instant.now().plus(1, ChronoUnit.HOURS)); // 만료날짜를 현재 시간으로부터 +1시간
 
         return Jwts.builder()
                 .setSubject(email) // 토큰 제목
-//                .setAudience(nickname) // 토큰 대상자
-//                .claim("field", fieldList) // 관심분야
-                .setIssuedAt(new Date()) // 토큰 생성 시간
+//                .claim("nickname", nickname) // 토큰 대상자
+//                .claim("fieldList", fieldList) // 관심분야
+                .setIssuedAt(now) // 토큰 생성 시간
                 .setExpiration(exprTime) // 토큰 만료 시간
                 .signWith(SECRET_KEY, SignatureAlgorithm.HS256)
                 .compact();
     }
 
     // 토큰 디코딩
-    public Claims validate(String token) {
-
-        return Jwts.parserBuilder()
-                .setSigningKey(SECRET_KEY)
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
+    public String validate(String token) {
+        try {
+            return Jwts.parserBuilder()
+                    .setSigningKey(SECRET_KEY)
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody()
+                    .getSubject();
+        } catch (Exception e) {
+            // 토큰 검증 실패 시 예외 발생
+            e.printStackTrace();
+            return null;
+        }
     }
 
 }
