@@ -41,28 +41,32 @@ public class Member {
     private String address;
 
     @Convert(converter = FieldConverter.class)
+//    @NotBlank(message = "관심분야를 선택해 주세요")
     private List<String> fieldList;
 
     /**
      *  회원과 모집 게시글은 1:N 관계이다.
      *  즉, 한 명의 회원은 여러개의 모집 게시글을 작성할 수 있지만, 각 모집 게시글은 한 명의 회원에 의해서 작성된다.
      *
+     *  mappedBy: 1:N 관계 쪽에서 N쪽이 매핑 정보를 가지고 관계를 유지하게 된다.
+     *
      * CascadeType.ALL: CascadeType.ALL은 해당 엔티티가 저장, 갱신, 삭제, 병합 등 모든 작업에 대해 연관된 엔티티들도 모두 해당 작업을 수행하도록 하는 옵션
      * 즉, 영속성 컨텍스트에서 해당 엔티티가 상태 변화를 하면, 연관된 모든 엔티티도 같은 상태 변화를 하게된다.
      *
      * orphanRemoval = true: 부모 엔티티에서 자식 엔티티를 삭제하고 해당 엔티티를 데이터베이스에서 삭제시킨다.
+     *
+     * @JsonIgonre: recruitments 필드를 포함하지 않고 josn으로 변환함(Member 엔티티에서 불필요한 데이터 제거)
      */
 
+    @JsonIgnore //
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnore // 해당 필드에 대한 데이터를 무시하고 객체가 생성됨
     private List<Recruitment> recruitments = new ArrayList<>();
 
-    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Qna> qnas = new ArrayList<>();
 
     public Member(SignUpRequestDto dto) {
-
         this.email = dto.getEmail();
         this.password = dto.getPassword();
         this.nickname = dto.getNickname();

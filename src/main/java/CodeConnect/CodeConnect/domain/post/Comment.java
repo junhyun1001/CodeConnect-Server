@@ -30,7 +30,7 @@ public class Comment {
      */
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "qna_qna_id")
+    @JoinColumn(name = "qna_id")
     @JsonIgnore
     private Qna qna;
 
