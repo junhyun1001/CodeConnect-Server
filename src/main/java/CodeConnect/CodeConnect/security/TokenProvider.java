@@ -25,14 +25,12 @@ public class TokenProvider {
     private final SecretKey SECRET_KEY = Keys.secretKeyFor(SignatureAlgorithm.HS256);
 
     // 암호화
-    public String create(String email, String nickname, List<String> fieldList) {
+    public String create(String email) {
         Date now = new Date();
         Date exprTime = Date.from(Instant.now().plus(1, ChronoUnit.HOURS)); // 만료날짜를 현재 시간으로부터 +1시간
 
         return Jwts.builder()
                 .setSubject(email) // 토큰 제목
-//                .claim("nickname", nickname) // 토큰 대상자
-//                .claim("fieldList", fieldList) // 관심분야
                 .setIssuedAt(now) // 토큰 생성 시간
                 .setExpiration(exprTime) // 토큰 만료 시간
                 .signWith(SECRET_KEY, SignatureAlgorithm.HS256)
