@@ -1,7 +1,9 @@
 package CodeConnect.CodeConnect.controller;
 
+import CodeConnect.CodeConnect.domain.Member;
 import CodeConnect.CodeConnect.dto.ResponseDto;
 import CodeConnect.CodeConnect.dto.member.SignInRequestDto;
+import CodeConnect.CodeConnect.dto.member.SignInResponseDto;
 import CodeConnect.CodeConnect.dto.member.SignUpRequestDto;
 import CodeConnect.CodeConnect.dto.member.EditMemberDto;
 import CodeConnect.CodeConnect.service.MemberService;
@@ -19,17 +21,17 @@ public class MemberController {
     private final MemberService memberService;
 
     @PostMapping("/signUp")
-    public ResponseDto<?> signUp(@RequestBody SignUpRequestDto signUpDto) {
+    public ResponseDto<Member> signUp(@RequestBody SignUpRequestDto signUpDto) {
         return memberService.signUp(signUpDto);
     }
 
     @PostMapping("/signIn")
-    public ResponseDto<?> signIn(@RequestBody SignInRequestDto signInDto) {
+    public ResponseDto<SignInResponseDto> signIn(@RequestBody SignInRequestDto signInDto) {
         return memberService.signIn(signInDto);
     }
 
     @PutMapping("/edit")
-    public ResponseDto<?> edit(@RequestBody EditMemberDto updateDto, @AuthenticationPrincipal String email) {
+    public ResponseDto<Member> edit(@RequestBody EditMemberDto updateDto, @AuthenticationPrincipal String email) {
         return memberService.editMember(updateDto, email);
     }
 

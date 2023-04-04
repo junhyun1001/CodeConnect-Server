@@ -5,7 +5,7 @@ import CodeConnect.CodeConnect.dto.*;
 import CodeConnect.CodeConnect.dto.member.SignInRequestDto;
 import CodeConnect.CodeConnect.dto.member.SignInResponseDto;
 import CodeConnect.CodeConnect.dto.member.SignUpRequestDto;
-import CodeConnect.CodeConnect.dto.member.EditMemberRequestDto;
+import CodeConnect.CodeConnect.dto.member.EditMemberDto;
 import CodeConnect.CodeConnect.repository.MemberRepository;
 import CodeConnect.CodeConnect.security.TokenProvider;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +26,7 @@ public class MemberService {
     private final PasswordEncoder passwordEncoder;
 
     // 회원가입
-    public ResponseDto<?> signUp(SignUpRequestDto dto) {
+    public ResponseDto<Member> signUp(SignUpRequestDto dto) {
 
         @Email
         String email = dto.getEmail();
@@ -102,7 +102,7 @@ public class MemberService {
 
 
     // 로그인
-    public ResponseDto<?> signIn(SignInRequestDto dto) {
+    public ResponseDto<SignInResponseDto> signIn(SignInRequestDto dto) {
         String email = dto.getEmail();
         String password = dto.getPassword();
 
@@ -116,9 +116,8 @@ public class MemberService {
         if (!passwordEncoder.matches(password, member.getPassword()))
             return ResponseDto.setFail("비밀번호가 일치하지 않습니다.");
 
-
         // 새로운 토큰 생성
-        String token = tokenProvider.create(email, member.getNickname(), member.getFieldList()); // 토큰 생성
+        String token = tokenProvider.create(email); // 토큰 생성
         int exprTime = 3600000;
 
         return ResponseDto.setSuccess("로그인 성공", new SignInResponseDto(token, exprTime, member));
@@ -130,24 +129,26 @@ public class MemberService {
     /*
     문제: 3개를 다 업데이트 해줘야됨
      */
-    public ResponseDto<?> editMember(EditMemberRequestDto dto, String email) {
+    public ResponseDto<Member> editMember(EditMemberDto dto, String email) {
 
+        // 수정할 데이터를 dto에서 가져옴
         String nickname = dto.getNickname();
         String address = dto.getAddress();
         List<String> fieldList = dto.getFieldList();
 
+        // jwt로 해당 회원을 찾음
         Optional<Member> member = memberRepository.findById(email);
         if (member.isEmpty())
             return ResponseDto.setFail("존재하지 않는 회원 입니다");
+        else {
+            Member updateMember = member.get();
+            updateMember.setNickname(nickname);
+            updateMember.setAddress(address);
+            updateMember.setFieldList(fieldList);
 
-        Member updateMember = member.get();
-        updateMember.setNickname(nickname);
-        updateMember.setAddress(address);
-        updateMember.setFieldList(fieldList);
-
-        memberRepository.save(updateMember);
-
-        return ResponseDto.setSuccess("업데이트가 완료되었습니다.", updateMember);
+            memberRepository.save(updateMember);
+            return ResponseDto.setSuccess("업데이트가 완료되었습니다.", updateMember);
+        }
     }
 
     // 회원 탈퇴
