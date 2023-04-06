@@ -13,8 +13,6 @@ public interface RecruitmentRepository extends JpaRepository<Recruitment, Long> 
 
     Recruitment findByNickname(String email);
 
-    Recruitment findByEmail(String email);
-
     List<Recruitment> findByAddress(String address);
 
     List<Recruitment> findByAddressAndField(String address, String field);
