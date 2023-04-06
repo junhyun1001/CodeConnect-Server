@@ -2,15 +2,13 @@ package CodeConnect.CodeConnect.service;
 
 import CodeConnect.CodeConnect.domain.Member;
 import CodeConnect.CodeConnect.dto.*;
-import CodeConnect.CodeConnect.dto.member.SignInRequestDto;
-import CodeConnect.CodeConnect.dto.member.SignInResponseDto;
-import CodeConnect.CodeConnect.dto.member.SignUpRequestDto;
-import CodeConnect.CodeConnect.dto.member.EditMemberDto;
+import CodeConnect.CodeConnect.dto.member.*;
 import CodeConnect.CodeConnect.repository.MemberRepository;
 import CodeConnect.CodeConnect.security.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.validation.constraints.Email;
 import java.util.List;
@@ -19,6 +17,7 @@ import java.util.regex.Pattern;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class MemberService {
 
     private final MemberRepository memberRepository;
@@ -33,7 +32,7 @@ public class MemberService {
         String nickname = dto.getNickname();
         String password = dto.getPassword();
         String passwordCheck = dto.getPasswordCheck();
-//        Field field = dto.getField();
+        List<String> fieldList = dto.getFieldList();
 
         // 이메일 중복 체크
         if (duplicateEmailCheck(email))
@@ -59,6 +58,10 @@ public class MemberService {
         if (validateNickname(nickname))
             return ResponseDto.setFail("닉네임은 한글, 영문, 숫자 18자리 이하만 사용 가능합니다.");
 
+        // 관심분야 값 체크
+        if(fieldList.size() > 2){
+            return ResponseDto.setFail("관심 분야는 2개까지 선택 가능합니다.");
+        }
 
         // 클라이언트에서 받아온 값으로 Member 객체 생성
         Member member = new Member(dto);
@@ -102,6 +105,7 @@ public class MemberService {
 
 
     // 로그인
+    @Transactional(readOnly = true)
     public ResponseDto<SignInResponseDto> signIn(SignInRequestDto dto) {
         String email = dto.getEmail();
         String password = dto.getPassword();
@@ -152,16 +156,15 @@ public class MemberService {
     }
 
     // 회원 탈퇴
-    public ResponseDto<?> deleteMember(String token) {
+    public ResponseDto<?> deleteMember(String email) {
 
-        String validateEmail = tokenProvider.validate(token); // 토큰의 email claims 값을 가져옴
+        Optional<Member> findMember = memberRepository.findById(email);
+        if (findMember.isEmpty()) {
+            return ResponseDto.setFail("존재하지 않는 회원입니다.");
+        }
+        Member member = findMember.get();
 
-        Optional<Member> member = memberRepository.findById(validateEmail);
-        if (member.isEmpty())
-            return ResponseDto.setFail("존재하지 않는 회원 입니다");
-        Member findMember = member.get();
-
-        memberRepository.delete(findMember);
+        memberRepository.delete(member);
 
         return ResponseDto.setSuccess("회원이 삭제되었습니다.", null);
     }
