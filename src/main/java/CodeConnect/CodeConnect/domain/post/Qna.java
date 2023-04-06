@@ -1,6 +1,7 @@
 package CodeConnect.CodeConnect.domain.post;
 
 import CodeConnect.CodeConnect.domain.Member;
+import CodeConnect.CodeConnect.dto.post.qna.QnaRequestDto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
@@ -26,7 +27,8 @@ public class Qna extends Post {
      * 작성자 정보에 대한 매핑 정보를 통해 작성자(Member) 엔티티를 참조할 수 있다.
      */
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "email")
+    @JoinColumn(name = "member_email")
+    @JsonIgnore
     private Member member;
 
     /**
@@ -34,6 +36,17 @@ public class Qna extends Post {
      */
     @OneToMany(mappedBy = "qna", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
-    private List<Comment> comments = new ArrayList<>();
+    private final List<Comment> comments = new ArrayList<>();
+
+    public Qna(QnaRequestDto dto, String nickname) {
+        super.title = dto.getTitle();
+        super.content = dto.getContent();
+        super.nickname = nickname;
+    }
+    // 댓글 추가 메서드
+    public void addComment(Comment comment) {
+        comments.add(comment);
+        comment.setQna(this);
+    }
 
 }
