@@ -20,14 +20,14 @@ public class Comment {
 
     private String comment; // 댓글 내용
 
+    /**
+     * 해당 댓글을 통해 회원을 조회할 수 있음
+     */
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "email")
     private Member member; // 회원 조회
 
     private LocalDateTime currentDateTime; // 댓글 작성 시간
-
-    /**
-     * 해당 댓글을 통해 댓글을 조회할 수 있음
-     */
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "qna_id")

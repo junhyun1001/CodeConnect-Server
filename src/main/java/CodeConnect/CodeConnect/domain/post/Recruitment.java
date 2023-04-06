@@ -2,6 +2,7 @@ package CodeConnect.CodeConnect.domain.post;
 
 import CodeConnect.CodeConnect.domain.Member;
 import CodeConnect.CodeConnect.dto.post.recruitment.CreateRecruitmentDto;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
@@ -38,11 +39,17 @@ public class Recruitment extends Post {
 
     private String field; // 관심분야
 
+    // 연관관계 메소드
+    public void setMember(Member member) {
+        this.member = member;
+        member.getRecruitments().add(this);
+    }
+
+    // 생성자
     public Recruitment(CreateRecruitmentDto dto, String nickname, String address) {
         super.title = dto.getTitle();
         super.content = dto.getContent();
         super.nickname = nickname;
-        super.email = dto.getEmail();
         this.address = address;
         this.setCurrentDateTime(LocalDateTime.now());
         this.count = dto.getCount();

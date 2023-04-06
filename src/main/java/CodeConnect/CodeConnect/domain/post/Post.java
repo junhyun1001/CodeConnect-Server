@@ -27,8 +27,6 @@ public abstract class Post {
 
     String nickname; // 작성자 닉네임
 
-    String email;
-
     LocalDateTime currentDateTime; // 작성 날짜와 시간 정보
 
     LocalDateTime modifiedDateTime; // 수정 날짜와 시간 정보
