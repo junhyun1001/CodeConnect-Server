@@ -97,42 +97,52 @@ public class RecruitmentService {
         int count = dto.getCount();
         String field = dto.getField();
 
-        // 회원 검증
-        String findMemberByEmail = memberRepository.findByEmail(email).getEmail();
-
-        if (!findMemberByEmail.equals(email)) {
-            return ResponseDto.setFail("허가되지 않은 회원입니다.");
-        }
-
         // 해당 게시글을 id로 조회함
         Optional<Recruitment> findRecruitment = recruitmentRepository.findById(id);
         if (findRecruitment.isEmpty()) {
             return ResponseDto.setFail("존재하지 않는 게시글 입니다.");
-        } else {
-            // 해당 게시글을 업데이트 시킴
-            Recruitment updateRecruitment = findRecruitment.get();
-            updateRecruitment.setTitle(title);
-            updateRecruitment.setContent(content);
-            updateRecruitment.setCount(count);
-            updateRecruitment.setField(field);
-            recruitmentRepository.save(updateRecruitment);
-            return ResponseDto.setSuccess("게시글 정보 업데이트", updateRecruitment);
         }
+
+        Recruitment recruitment = findRecruitment.get();
+
+        // 회원 검증
+        if (validateMember(email, recruitment))
+            return ResponseDto.setFail("접근 권한이 없습니다.");
+
+        // 해당 게시글을 업데이트 시킴
+        recruitment.setTitle(title);
+        recruitment.setContent(content);
+        recruitment.setCount(count);
+        recruitment.setField(field);
+        recruitmentRepository.save(recruitment);
+        return ResponseDto.setSuccess("게시글이 수정되었습니다.", recruitment);
     }
 
-    public ResponseDto<?> deletePost(String email, Long id) {
-        String findMemberByEmail = memberRepository.findByEmail(email).getEmail();
-
-        if (!findMemberByEmail.equals(email)) {
-            return ResponseDto.setFail("허가되지 않은 회원입니다.");
-        }
+    public ResponseDto<String> deletePost(String email, Long id) {
 
         Optional<Recruitment> findRecruitment = recruitmentRepository.findById(id);
-        if(findRecruitment.isEmpty())
+        if (findRecruitment.isEmpty())
             return ResponseDto.setFail("존재하지 않는 게시글 입니다.");
 
-        recruitmentRepository.delete(findRecruitment.get());
+        Recruitment recruitment = findRecruitment.get();
+
+        // 회원 검증
+        if (validateMember(email, recruitment))
+            return ResponseDto.setFail("접근 권한이 없습니다.");
+        recruitmentRepository.delete(recruitment);
 
         return ResponseDto.setFail("게시글이 삭제되었습니다.");
+    }
+
+    // 게시글 수정, 삭제 하려는 회원이 현재 로그인 된 회원의 nickname과 게시글의 nickname이 같은지 확인함
+    private boolean validateMember(String email, Recruitment recruitment) {
+        // 회원
+        Member findMember = memberRepository.findByEmail(email);
+        String findMemberNickname = findMember.getNickname();
+
+        // 게시글
+        String recruitmentNickname = recruitment.getNickname();
+
+        return !findMemberNickname.equals(recruitmentNickname);
     }
 }
