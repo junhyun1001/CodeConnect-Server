@@ -3,8 +3,6 @@ package CodeConnect.CodeConnect.domain.post;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
 import javax.persistence.MappedSuperclass;
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
