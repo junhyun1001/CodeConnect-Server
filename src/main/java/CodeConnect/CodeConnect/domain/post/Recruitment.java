@@ -2,7 +2,6 @@ package CodeConnect.CodeConnect.domain.post;
 
 import CodeConnect.CodeConnect.domain.Member;
 import CodeConnect.CodeConnect.dto.post.recruitment.CreateRecruitmentDto;
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
@@ -34,9 +33,6 @@ public class Recruitment extends Post {
 
     private int count; // 인원수
 
-    @Enumerated(EnumType.STRING)
-    private Role role; // 방장인지 참여자인지 구분
-
     private String field; // 관심분야
 
     // 연관관계 메소드
@@ -54,7 +50,6 @@ public class Recruitment extends Post {
         this.setCurrentDateTime(LocalDateTime.now());
         this.count = dto.getCount();
         this.field = dto.getField();
-        this.role = dto.getRole();
     }
 
     // 참여하기 버튼을 눌렀을 때 DB도 하나 더 만들어야됨
