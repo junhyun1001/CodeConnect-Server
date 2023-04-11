@@ -5,11 +5,13 @@ import CodeConnect.CodeConnect.dto.ResponseDto;
 import CodeConnect.CodeConnect.dto.post.recruitment.CreateRecruitmentDto;
 import CodeConnect.CodeConnect.dto.post.recruitment.EditRecruitmentDto;
 import CodeConnect.CodeConnect.service.RecruitmentService;
+import CodeConnect.CodeConnect.service.Role;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/recruitments")
@@ -28,6 +30,12 @@ public class RecruitmentController {
     @GetMapping("/list")
     public ResponseDto<List<Recruitment>> getPosts(@AuthenticationPrincipal String email) {
         return recruitmentService.getAllPosts(email);
+    }
+
+    // 게시글 단일 조회
+    @GetMapping("/{id}")
+    public ResponseDto<Map<Role, Recruitment>> getPost(@AuthenticationPrincipal String email, @PathVariable Long id) {
+        return recruitmentService.getPost(email, id);
     }
 
     // 게시글 수정 -> 게시글 id를 가지고 찾아야됨 (http://localhost:8080/recruitment/edit/1) 이렇게 주소 주면 됨
