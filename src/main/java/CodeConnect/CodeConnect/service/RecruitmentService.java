@@ -138,11 +138,11 @@ public class RecruitmentService {
     private boolean validateMember(String email, Recruitment recruitment) {
         // 회원
         Member findMember = memberRepository.findByEmail(email);
-        String findMemberNickname = findMember.getNickname();
+        String memberEmail = findMember.getEmail();
 
         // 게시글
-        String recruitmentNickname = recruitment.getNickname();
+        String recruitmentEmail = recruitment.getMember().getEmail();
 
-        return !findMemberNickname.equals(recruitmentNickname);
+        return !memberEmail.equals(recruitmentEmail);
     }
 }
