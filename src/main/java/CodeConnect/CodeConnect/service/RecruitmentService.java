@@ -55,13 +55,7 @@ public class RecruitmentService {
 
     // 게시글 전체 조회
     @Transactional(readOnly = true)
-    public ResponseDto<List<Recruitment>> getAllPosts(String email) {
-
-        // 해당 회원 검증
-        Optional<Member> optionalMember = memberRepository.findById(email);
-        if (optionalMember.isEmpty()) {
-            return ResponseDto.setFail("존재하지 않는 회원입니다.");
-        }
+    public ResponseDto<List<Recruitment>> getAllPosts() {
 
         List<Recruitment> findAllRecruitments = recruitmentRepository.findAll();
 
@@ -75,11 +69,11 @@ public class RecruitmentService {
         Member findMember = memberRepository.findByEmail(email);
         String nickname = findMember.getNickname();
 
-        return ResponseDto.setSuccess("글 불러오기 성공", findRecruitmentBySameAddressAsMember(nickname)); // 주소를 기준으로 찾는것만 됨
+        return ResponseDto.setSuccess("글 불러오기 성공", findRecruitmentBySameAddressMember(nickname)); // 주소를 기준으로 찾는것만 됨
     }
 
     // 글을 쓴 회원 정보의 주소값과 게시글 정보의 주소값을 비교해서 같은 리스트를 반환해줌
-    public List<Recruitment> findRecruitmentBySameAddressAsMember(String nickname) {
+    public List<Recruitment> findRecruitmentBySameAddressMember(String nickname) {
         Member findMember = memberRepository.findByNickname(nickname);
         if (findMember == null) {
             return null;
@@ -148,6 +142,7 @@ public class RecruitmentService {
         return ResponseDto.setSuccess("게시글이 수정되었습니다.", recruitment);
     }
 
+    // 게시글 삭제
     public ResponseDto<String> deletePost(String email, Long id) {
 
         Optional<Recruitment> optionalRecruitment = recruitmentRepository.findById(id);

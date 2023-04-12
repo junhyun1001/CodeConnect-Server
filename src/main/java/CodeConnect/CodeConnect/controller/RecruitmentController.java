@@ -28,8 +28,8 @@ public class RecruitmentController {
 
     // 게시글 전체 조회
     @GetMapping("/list")
-    public ResponseDto<List<Recruitment>> getPosts(@AuthenticationPrincipal String email) {
-        return recruitmentService.getAllPosts(email);
+    public ResponseDto<List<Recruitment>> getPosts() {
+        return recruitmentService.getAllPosts();
     }
 
     // 게시글 단일 조회
