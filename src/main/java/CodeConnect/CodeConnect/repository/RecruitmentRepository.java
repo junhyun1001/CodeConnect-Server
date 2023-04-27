@@ -9,6 +9,7 @@ import java.util.List;
 @Repository
 public interface RecruitmentRepository extends JpaRepository<Recruitment, Long> {
 
-    List<Recruitment> findByAddress(String address);
+    List<Recruitment> findByAddressOrderByCurrentDateTimeDesc(String address); // 주소 기준 시간 내림차순 정렬
 
+    List<Recruitment> findAllByOrderByCurrentDateTimeDesc(); // 전체 게시글 시간 내림차순 정렬
 }

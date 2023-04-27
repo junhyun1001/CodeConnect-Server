@@ -2,6 +2,7 @@ package CodeConnect.CodeConnect.domain.post;
 
 import CodeConnect.CodeConnect.domain.Member;
 import CodeConnect.CodeConnect.dto.post.recruitment.CreateRecruitmentDto;
+import CodeConnect.CodeConnect.dto.post.recruitment.EditRecruitmentDto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
@@ -46,12 +47,19 @@ public class Recruitment extends Post {
         super.title = dto.getTitle();
         super.content = dto.getContent();
         super.nickname = nickname;
+        super.setCurrentDateTime(changeDateTimeFormat(LocalDateTime.now()));
         this.address = address;
-        this.setCurrentDateTime(LocalDateTime.now());
         this.count = dto.getCount();
         this.field = dto.getField();
     }
 
-    // 참여하기 버튼을 눌렀을 때 DB도 하나 더 만들어야됨
+    // 게시글 정보 업데이트
+    public void updatePost(EditRecruitmentDto dto) {
+        setTitle(dto.getTitle());
+        setContent(dto.getContent());
+        setCount(dto.getCount());
+        setField(dto.getField());
+        setModifiedDateTime(changeDateTimeFormat(LocalDateTime.now()));
+    }
 
 }

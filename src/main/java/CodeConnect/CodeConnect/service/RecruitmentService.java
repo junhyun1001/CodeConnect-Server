@@ -8,6 +8,7 @@ import CodeConnect.CodeConnect.dto.post.recruitment.EditRecruitmentDto;
 import CodeConnect.CodeConnect.repository.MemberRepository;
 import CodeConnect.CodeConnect.repository.RecruitmentRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,22 +17,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-/**
- * 게시글 쓰기
- * <p>
- * 게시글 수정
- * <p>
- * 게시글 삭제
- * <p>
- * 주소와 관심분야 기준으로 리스트 조회
- * <p>
- * 게시글 전체 조회
- */
-
-
 @Service
 @RequiredArgsConstructor
 @Transactional
+@Slf4j
 public class RecruitmentService {
 
     private final MemberRepository memberRepository;
@@ -50,6 +39,7 @@ public class RecruitmentService {
 
         findMember.setRecruitment(savedRecruitment); // 연관관계 메소드를 사용하여 회원 엔티티에 모집 게시글 엔티티를 설정해줌
 
+        log.info("{}회원 {}번 게시글 저장", email, savedRecruitment.getRecruitmentId());
         return ResponseDto.setSuccess("게시글이 저장되었습니다.", savedRecruitment);
     }
 
@@ -57,7 +47,7 @@ public class RecruitmentService {
     @Transactional(readOnly = true)
     public ResponseDto<List<Recruitment>> getAllPosts() {
 
-        List<Recruitment> findAllRecruitments = recruitmentRepository.findAll();
+        List<Recruitment> findAllRecruitments = recruitmentRepository.findAllByOrderByCurrentDateTimeDesc();
 
         return ResponseDto.setSuccess("전체 리스트 조회", findAllRecruitments);
 
@@ -80,7 +70,7 @@ public class RecruitmentService {
         }
         String address = findMember.getAddress();
 
-        return recruitmentRepository.findByAddress(address);
+        return recruitmentRepository.findByAddressOrderByCurrentDateTimeDesc(address);
     }
 
     // 게시글 단일 조회
@@ -91,21 +81,17 @@ public class RecruitmentService {
             return ResponseDto.setFail("존재하지 않는 회원입니다.");
         }
 
-        Optional<Recruitment> optionalRecruitment = recruitmentRepository.findById(id);
-        if (optionalRecruitment.isEmpty()) {
-            return ResponseDto.setFail("존재하지 않는 게시글 입니다.");
-        }
+        Recruitment recruitment = validateExistPost(id);
 
-        Recruitment recruitment = optionalRecruitment.get();
-
-        // 회원 검증 후 내 게시글이면 true, 아니면 false
+        // 회원 검증 후 내 게시글이면 HOST, 아니면 GUEST
         Map<Role, Recruitment> recruitmentMap = new HashMap<>();
         if (validateMember(email, recruitment)) { // false 값이 반환 될 때
             recruitmentMap.put(Role.GUEST, recruitment);
+            log.info("************************* GUEST로 게시글 조회 *************************");
             return ResponseDto.setSuccess("GUEST 게시글 조회", recruitmentMap);
-        }
-        else {
+        } else {
             recruitmentMap.put(Role.HOST, recruitment);
+            log.info("************************* HOST로 게시글 조회 *************************");
             return ResponseDto.setSuccess("HOST 게시글 조회", recruitmentMap);
         }
 
@@ -115,48 +101,58 @@ public class RecruitmentService {
     // 토큰 값이랑 현재 회원이랑 같은지 판단 해야됨
     public ResponseDto<Recruitment> editPost(EditRecruitmentDto dto, Long id, String email) {
 
-        // 수정 할 목록들을 dto로 받아옴
-        String title = dto.getTitle();
-        String content = dto.getContent();
-        int count = dto.getCount();
-        String field = dto.getField();
-
         // 해당 게시글을 id로 조회함
-        Optional<Recruitment> optionalRecruitment = recruitmentRepository.findById(id);
-        if (optionalRecruitment.isEmpty()) {
-            return ResponseDto.setFail("존재하지 않는 게시글 입니다.");
-        }
-
-        Recruitment recruitment = optionalRecruitment.get();
+        Recruitment recruitment = validateExistPost(id);
 
         // 회원 검증
         if (validateMember(email, recruitment))
-            return ResponseDto.setFail("접근 권한이 없습니다.");
+            return ResponseDto.setFail("해당 게시글의 수정 권한이 없습니다.");
 
         // 해당 게시글을 업데이트 시킴
-        recruitment.setTitle(title);
-        recruitment.setContent(content);
-        recruitment.setCount(count);
-        recruitment.setField(field);
+        recruitment.updatePost(dto);
+
         recruitmentRepository.save(recruitment);
+
+        log.info("************************* {}의 {}번 게시글이 수정되었습니다. *************************", email, recruitment.getRecruitmentId());
         return ResponseDto.setSuccess("게시글이 수정되었습니다.", recruitment);
     }
 
     // 게시글 삭제
     public ResponseDto<String> deletePost(String email, Long id) {
 
-        Optional<Recruitment> optionalRecruitment = recruitmentRepository.findById(id);
-        if (optionalRecruitment.isEmpty())
-            return ResponseDto.setFail("존재하지 않는 게시글 입니다.");
-
-        Recruitment recruitment = optionalRecruitment.get();
+        Recruitment recruitment = validateExistPost(id);
 
         // 회원 검증
         if (validateMember(email, recruitment))
-            return ResponseDto.setFail("접근 권한이 없습니다.");
+            return ResponseDto.setFail("해당 게시글의 삭제 권한이 없습니다.");
+
         recruitmentRepository.delete(recruitment);
 
-        return ResponseDto.setFail("게시글이 삭제되었습니다.");
+        log.info("************************* {}의 {}번 게시글이 삭제되었습니다. *************************", email, recruitment.getRecruitmentId());
+        return ResponseDto.setSuccess("게시글이 삭제되었습니다.", null);
+    }
+
+    // 참여하기에 대한 인원 수 증가
+//    public ResponseDto<Recruitment> addMember(String email, Long id) {
+//
+//        Recruitment recruitment = validateExistPost(id);
+//        int currentCount = recruitment.getCurrentCount();
+//
+//        if (!validateMember(email, recruitment))
+//            return ResponseDto.setFail("본인은 참여할 수 없습니다.");
+//
+//        recruitment.addCurrentCount(currentCount, email);
+//
+//        recruitmentRepository.save(recruitment);
+//
+//        return ResponseDto.setSuccess("인원이 추가되었습니다.", recruitment);
+//
+//    }
+
+    // 해당 게시글 존재 여부 확인
+    public Recruitment validateExistPost(Long id) {
+        Optional<Recruitment> optionalRecruitment = recruitmentRepository.findById(id);
+        return optionalRecruitment.orElse(null);
     }
 
     // 게시글 수정, 삭제 하려는 회원이 현재 로그인 된 회원의 email과 게시글의 email이 같은지 확인함

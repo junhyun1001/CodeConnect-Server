@@ -6,6 +6,7 @@ import lombok.Setter;
 import javax.persistence.MappedSuperclass;
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 /**
  * 게시글 정보 클래스
@@ -24,8 +25,13 @@ public abstract class Post {
 
     String nickname; // 작성자 닉네임
 
-    LocalDateTime currentDateTime; // 작성 날짜와 시간 정보
+    String currentDateTime; // 작성 날짜와 시간 정보
 
-    LocalDateTime modifiedDateTime; // 수정 날짜와 시간 정보
+    String modifiedDateTime; // 수정 날짜와 시간 정보
+
+    public String changeDateTimeFormat(LocalDateTime dateTime) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yy/MM/dd HH:mm");
+        return dateTime.format(formatter);
+    }
 
 }

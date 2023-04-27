@@ -26,6 +26,12 @@ public class RecruitmentController {
         return recruitmentService.createPost(createRequestDto, email);
     }
 
+    // 메인 화면에서 보여줄 게시글 리스트(로그인한 회원의 주소와 관심분야가 같은것. 현재는 같은 주소만 보여줌)
+    @GetMapping("/main")
+    public ResponseDto<List<Recruitment>> getPosts(@AuthenticationPrincipal String email) {
+        return recruitmentService.getPostsByAddressAndField(email);
+    }
+
     // 게시글 전체 조회
     @GetMapping("/list")
     public ResponseDto<List<Recruitment>> getPosts() {
@@ -47,7 +53,7 @@ public class RecruitmentController {
 
     // 게시글 삭제
     @DeleteMapping("/delete/{id}")
-    public ResponseDto<?> deletePost(@AuthenticationPrincipal String email, @PathVariable Long id) {
+    public ResponseDto<String> deletePost(@AuthenticationPrincipal String email, @PathVariable Long id) {
         return recruitmentService.deletePost(email, id);
     }
 
