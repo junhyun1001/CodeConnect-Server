@@ -6,6 +6,7 @@ import CodeConnect.CodeConnect.dto.member.*;
 import CodeConnect.CodeConnect.repository.MemberRepository;
 import CodeConnect.CodeConnect.security.TokenProvider;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +19,7 @@ import java.util.regex.Pattern;
 @Service
 @RequiredArgsConstructor
 @Transactional
+@Slf4j
 public class MemberService {
 
     private final MemberRepository memberRepository;
@@ -70,6 +72,7 @@ public class MemberService {
         // 회원 객체 DB 저장
         Member savedMember = memberRepository.save(member);
 
+        log.info("************************* 회원가입 성공 {} *************************", savedMember.getEmail());
         return ResponseDto.setSuccess("회원가입 성공", savedMember);
 
     }
@@ -112,9 +115,9 @@ public class MemberService {
 
         Member member = memberRepository.findByEmail(email);
 
-        // 존재하지 않는 회원 이메일 일 때
+        // 존재하지 않는 회원
         if (member == null)
-            return ResponseDto.setFail("존재하지 않는 이메일 입니다.");
+            return ResponseDto.setFail("존재하지 않는 회원 입니다.");
 
         // 비밀번호가 일치하지 않을 때
         if (!passwordEncoder.matches(password, member.getPassword()))
@@ -124,15 +127,12 @@ public class MemberService {
         String token = tokenProvider.create(email); // 토큰 생성
         int exprTime = 3600000;
 
+        log.info("************************* {} 로그인 성공 *************************", email);
         return ResponseDto.setSuccess("로그인 성공", new SignInResponseDto(token, exprTime, member));
 
     }
 
-
     // 회원 수정(프로필 이미지, 지역, 관심분야)
-    /*
-    문제: 3개를 다 업데이트 해줘야됨
-     */
     public ResponseDto<Member> editMember(EditMemberDto dto, String email) {
 
         // 수정할 데이터를 dto에서 가져옴
@@ -151,6 +151,8 @@ public class MemberService {
             updateMember.setFieldList(fieldList);
 
             memberRepository.save(updateMember);
+
+            log.info("************************* {} 회원 정보가 수정되었습니다. *************************", updateMember.getEmail());
             return ResponseDto.setSuccess("업데이트가 완료되었습니다.", updateMember);
         }
     }
@@ -166,6 +168,7 @@ public class MemberService {
 
         memberRepository.delete(member);
 
+        log.info("************************* {} 회원이 삭제되었습니다. *************************", member.getEmail());
         return ResponseDto.setSuccess("회원이 삭제되었습니다.", null);
     }
 

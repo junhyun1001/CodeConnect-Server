@@ -4,6 +4,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
@@ -18,6 +19,7 @@ import java.util.Date;
 
 @Service
 @AllArgsConstructor
+@Slf4j
 public class TokenProvider {
 
     private final SecretKey SECRET_KEY = Keys.secretKeyFor(SignatureAlgorithm.HS256);
@@ -46,7 +48,7 @@ public class TokenProvider {
                     .getSubject();
         } catch (Exception e) {
             // 토큰 검증 실패 시 예외 발생
-            e.printStackTrace();
+            log.error(e.getMessage());
             return null;
         }
     }
