@@ -33,21 +33,15 @@ public class QnaController {
         return qnaService.writeQna(dto, email);
     }
     //
-    @PutMapping("/update")
-    public ResponseDto<?> qna_update(@RequestBody QnaDto qnaDto){
-        return qnaService.update(qnaDto.getQnaId(), qnaDto.getTitle(), qnaDto.getContent());
+    @PutMapping("/update/{qnaId}")
+    public ResponseDto<?> qna_update(@PathVariable("qnaId") Long qnaId,@RequestBody QnaDto qnaDto,@AuthenticationPrincipal String email){
+        return qnaService.update(qnaId, qnaDto.getTitle(), qnaDto.getContent(),email);
     }
     //삭제
     @DeleteMapping("/delete/{qnaId}")
-    public ResponseDto<?> qna_delte(@RequestBody @PathVariable("qnaId") Long qnaId){
-        return qnaService.delete(qnaId);
+    public ResponseDto<?> qna_delte(@RequestBody @PathVariable("qnaId") Long qnaId,@AuthenticationPrincipal String email){
+        return qnaService.delete(qnaId,email);
     }
 
-    //댓글 생성
-//    @PostMapping("/{qnaId}/comment")
-//    public ResponseDto<?> addComment(@PathVariable Long qnaId,
-//                                     @RequestBody CommentRequestDto commentRequestDto,@AuthenticationPrincipal String email) {
-//        return qnaService.addComment(qnaId, commentRequestDto,email);
-//
-//    }
+
 }
