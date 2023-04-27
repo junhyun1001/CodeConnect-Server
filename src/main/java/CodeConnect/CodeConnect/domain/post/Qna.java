@@ -20,7 +20,7 @@ import java.util.List;
 public class Qna extends Post {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long qnaId;
 
     /**
@@ -30,23 +30,18 @@ public class Qna extends Post {
     @JoinColumn(name = "email")
     @JsonIgnore
     private Member member;
+    @Column(name = "comment_count")
+    private int commentCount; // 댓글 개수
 
-    /**
+     /**
      * 하나의 게시글이 여러개의 댓글과 관계를 가지므로 1:N 관계를 사용.
      */
     @OneToMany(mappedBy = "qna", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
+    @OrderBy("currentDateTime ASC") //qna 오름차순
     private final List<Comment> comments = new ArrayList<>();
 
-    public Qna(QnaRequestDto dto, String nickname) {
-        super.title = dto.getTitle();
-        super.content = dto.getContent();
-        super.nickname = nickname;
-    }
-    // 댓글 추가 메서드
-    public void addComment(Comment comment) {
-        comments.add(comment);
-        comment.setQna(this);
-    }
+
+
 
 }
