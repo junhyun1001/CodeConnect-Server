@@ -40,12 +40,17 @@ public class RecruitmentController {
 
     // 게시글 단일 조회
     @GetMapping("/{id}")
-    public ResponseDto<Map<Role, Recruitment>> getPost(@AuthenticationPrincipal String email, @PathVariable Long id) {
+    public ResponseDto<Map<Role, Object>> getPost(@AuthenticationPrincipal String email, @PathVariable Long id) {
         return recruitmentService.getPost(email, id);
     }
 
-    // 게시글 수정 -> 게시글 id를 가지고 찾아야됨 (http://localhost:8080/recruitment/edit/1) 이렇게 주소 주면 됨
-    // 클라이언트에서 해당 게시글의 id를 주소에 넣어야됨
+    // 게시글 제목+내용 기준으로 검색
+    @GetMapping("/search")
+    public ResponseDto<List<Recruitment>> getSearchList(@RequestParam String keyword) {
+        return recruitmentService.getContent(keyword);
+    }
+
+    // 게시글 수정
     @PutMapping("/edit/{id}")
     public ResponseDto<Recruitment> editPost(@RequestBody EditRecruitmentDto editRequestDto, @PathVariable Long id, @AuthenticationPrincipal String email) {
         return recruitmentService.editPost(editRequestDto, id, email);
@@ -55,6 +60,12 @@ public class RecruitmentController {
     @DeleteMapping("/delete/{id}")
     public ResponseDto<String> deletePost(@AuthenticationPrincipal String email, @PathVariable Long id) {
         return recruitmentService.deletePost(email, id);
+    }
+
+    // 스터디 게시글 참여 인원에 대한 처리
+    @PutMapping("participate/{id}")
+    public ResponseDto<Recruitment> participate(@AuthenticationPrincipal String email, @PathVariable Long id, @RequestParam Boolean isParticipating) {
+        return recruitmentService.participate(email, id, isParticipating);
     }
 
 }
