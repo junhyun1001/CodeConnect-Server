@@ -1,8 +1,6 @@
 package CodeConnect.CodeConnect.controller;
 
 import CodeConnect.CodeConnect.domain.post.Comment;
-import CodeConnect.CodeConnect.domain.post.Qna;
-import CodeConnect.CodeConnect.dto.QnaDto;
 import CodeConnect.CodeConnect.dto.ResponseDto;
 import CodeConnect.CodeConnect.dto.post.comment.CommentRequestDto;
 import CodeConnect.CodeConnect.dto.post.comment.CommentResponseDto;

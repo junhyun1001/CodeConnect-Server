@@ -6,6 +6,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,7 +43,14 @@ public class Qna extends Post {
     @OrderBy("currentDateTime ASC") //qna 오름차순
     private final List<Comment> comments = new ArrayList<>();
 
-
+    public Qna(QnaRequestDto dto,String nickname, String title, String content){
+        super.title = title;
+        super.nickname = nickname;
+        super.content = content;
+        this.commentCount = dto.getCommentCount();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yy/MM/dd HH:mm");
+        super.setCurrentDateTime(String.valueOf(LocalDateTime.now().format(formatter)));
+    }
 
 
 }
