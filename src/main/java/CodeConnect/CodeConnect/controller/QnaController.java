@@ -43,5 +43,11 @@ public class QnaController {
         return qnaService.delete(qnaId,email);
     }
 
+    //검색
+//    @GetMapping("/search/list")
+//    public ResponseDto<?> search_list(){
+//        return qnaService
+//    }
+
 
 }
