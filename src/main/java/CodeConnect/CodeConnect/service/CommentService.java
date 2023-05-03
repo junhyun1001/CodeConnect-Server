@@ -13,7 +13,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -49,7 +48,6 @@ public class CommentService {
         comment.setQna(qna);
 
 
-
         if (comment.getCommentId() != null) {
             comment.setCommentId(null);
         }
@@ -60,6 +58,7 @@ public class CommentService {
 
         return ResponseDto.setSuccess("댓글 쓰기 성공", savedComment);
     }
+
     //특정 Qna 들어왔을때 댓글 조회
     public ResponseDto<List<CommentResponseDto>> findComment(Long qnaId, String email) {
         // 해당 회원 검증
@@ -82,8 +81,9 @@ public class CommentService {
 
         return ResponseDto.setSuccess("해당 qna 댓글 조회 성공", commentResponseDtoList);
     }
+
     //댓글 삭제
-    public ResponseDto<?> deleteComment(Long commentId, String email){
+    public ResponseDto<?> deleteComment(Long commentId, String email) {
 
         Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new NoSuchElementException("댓글이 존재하지 않습니다"));
         if (validateMember(email, comment))
@@ -94,7 +94,7 @@ public class CommentService {
     }
 
     //댓글 수정
-    public ResponseDto<?> updateComment(Long commentId, String email, String comments){
+    public ResponseDto<?> updateComment(Long commentId, String email, String comments) {
         Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new NoSuchElementException("댓글이 존재하지 않습니다"));
         if (validateMember(email, comment))
             return ResponseDto.setFail("접근 권한이 없습니다");

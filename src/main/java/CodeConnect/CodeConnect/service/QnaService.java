@@ -25,23 +25,24 @@ public class QnaService {
 
 
     @Transactional
-    public ResponseDto<Qna> writeQna(QnaRequestDto dto, String email){
+    public ResponseDto<Qna> writeQna(QnaRequestDto dto, String email) {
 
         Member findMember = memberRepository.findByEmail(email);
         String nickname = findMember.getNickname();
         String title = dto.getTitle();
         String content = dto.getContent();
 
-        Qna qna = new Qna(dto,nickname,title,content);
+        Qna qna = new Qna(dto, nickname, title, content);
         qna.setTitle(title);
         qna.setNickname(nickname);
         qna.setContent(content);
+
+        findMember.setQnas(qna);
 
         Qna saveQna = qnaRepository.save(qna);
 
         return ResponseDto.setSuccess("QnA 글 작성 성공", saveQna);
     }
-
 
 
     //q&a 들어갔을때 전체 조회
@@ -54,7 +55,7 @@ public class QnaService {
     }
 
     //상세조회
-    public ResponseDto<Map<Role,Qna>> findOne(Long qnaId,String email) {
+    public ResponseDto<Map<Role, Qna>> findOne(Long qnaId, String email) {
 //        Qna qna = qnaRepository.findById(qnaId).orElseThrow(NullPointerException::new);
 //        return ResponseDto.setSuccess("QnA 글 상세 조회 성공", qna);
         Optional<Member> optionalMember = memberRepository.findById(email);
@@ -76,10 +77,11 @@ public class QnaService {
             return ResponseDto.setSuccess("HOST 게시글 조회", qnaMap);
         }
     }
+
     //삭제
     @Transactional
-    public ResponseDto<String> delete(Long qnaId, String email){
-        Qna qna = qnaRepository.findById(qnaId).orElseThrow(()-> new NoSuchElementException("값이 존재하지 않습니다"));
+    public ResponseDto<String> delete(Long qnaId, String email) {
+        Qna qna = qnaRepository.findById(qnaId).orElseThrow(() -> new NoSuchElementException("값이 존재하지 않습니다"));
 
         // 회원 검증
         if (validateMember(email, qna))
@@ -91,7 +93,7 @@ public class QnaService {
 
     //업데이트
     @Transactional
-    public ResponseDto<Qna> update(Long qnaId, String title, String content, String email){
+    public ResponseDto<Qna> update(Long qnaId, String title, String content, String email) {
         Qna qna = qnaRepository.findById(qnaId).orElseThrow(NullPointerException::new);
         // 회원 검증
         if (validateMember(email, qna))
@@ -103,10 +105,11 @@ public class QnaService {
         qna.setModifiedDateTime(String.valueOf(LocalDateTime.now().format(formatter)));
         return ResponseDto.setSuccess("업데이트 성공", qna);
     }
+
     //검색
     @Transactional
-    public ResponseDto<List<Qna>> search(String text){
-        List<Qna> qnaList = qnaRepository.findByContentContainingOrderByCurrentDateTimeDesc(text);
+    public ResponseDto<List<Qna>> search(String text) {
+        List<Qna> qnaList = qnaRepository.findByTitleContainingOrContentContainingOrderByCurrentDateTimeDesc(text, text);
 //        List<QnaRequestDto> qnaRequestDtoList = qnaList.stream()
 //                .map(QnaRequestDto::new)
 //                .collect(Collectors.toList());
