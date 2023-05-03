@@ -36,7 +36,7 @@ public class Comment {
 
     private LocalDateTime currentDateTime; // 댓글 작성 시간
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "qna_id")
     @JsonIgnore
     @OnDelete(action = OnDeleteAction.CASCADE) // 연관된 user가 삭제되면 같이 삭제됨
