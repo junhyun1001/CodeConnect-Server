@@ -4,7 +4,7 @@ import CodeConnect.CodeConnect.domain.Member;
 import CodeConnect.CodeConnect.domain.post.Recruitment;
 import CodeConnect.CodeConnect.dto.ResponseDto;
 import CodeConnect.CodeConnect.dto.post.recruitment.CreateRecruitmentDto;
-import CodeConnect.CodeConnect.dto.post.recruitment.EditRecruitmentDto;
+import CodeConnect.CodeConnect.dto.post.recruitment.UpdateRecruitmentDto;
 import CodeConnect.CodeConnect.repository.MemberRepository;
 import CodeConnect.CodeConnect.repository.RecruitmentRepository;
 import lombok.RequiredArgsConstructor;
@@ -128,7 +128,7 @@ public class RecruitmentService {
 
     // 게시글 수정 -> 게시글 id를 받아서 해당 게시글을 수정함(리스트로 여러개 있기 때문)
     // 토큰 값이랑 현재 회원이랑 같은지 판단 해야됨
-    public ResponseDto<Recruitment> editPost(EditRecruitmentDto dto, Long id, String email) {
+    public ResponseDto<Recruitment> editPost(UpdateRecruitmentDto dto, Long id, String email) {
 
         // 해당 게시글을 id로 조회함
         Recruitment recruitment = validateExistPost(id);

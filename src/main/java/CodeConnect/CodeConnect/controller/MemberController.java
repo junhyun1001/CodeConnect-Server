@@ -2,7 +2,7 @@ package CodeConnect.CodeConnect.controller;
 
 import CodeConnect.CodeConnect.domain.Member;
 import CodeConnect.CodeConnect.dto.ResponseDto;
-import CodeConnect.CodeConnect.dto.member.EditMemberDto;
+import CodeConnect.CodeConnect.dto.member.UpdateMemberDto;
 import CodeConnect.CodeConnect.dto.member.SignInRequestDto;
 import CodeConnect.CodeConnect.dto.member.SignInResponseDto;
 import CodeConnect.CodeConnect.dto.member.SignUpRequestDto;
@@ -37,8 +37,8 @@ public class MemberController {
      */
 
     @PutMapping("/edit")
-    public ResponseDto<Member> edit(@RequestBody EditMemberDto updateDto, @AuthenticationPrincipal String email) {
-        return memberService.editMember(updateDto, email);
+    public ResponseDto<Member> edit(@RequestBody UpdateMemberDto updateDto, @AuthenticationPrincipal String email) {
+        return memberService.updateMember(updateDto, email);
     }
 
     @DeleteMapping("/delete")
