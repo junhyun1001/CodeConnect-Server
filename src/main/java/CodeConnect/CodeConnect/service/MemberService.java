@@ -133,7 +133,7 @@ public class MemberService {
     }
 
     // 회원 수정(프로필 이미지, 지역, 관심분야)
-    public ResponseDto<Member> editMember(EditMemberDto dto, String email) {
+    public ResponseDto<Member> updateMember(UpdateMemberDto dto, String email) {
 
         // 수정할 데이터를 dto에서 가져옴
         String nickname = dto.getNickname();

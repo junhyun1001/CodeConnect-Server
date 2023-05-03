@@ -3,7 +3,7 @@ package CodeConnect.CodeConnect.controller;
 import CodeConnect.CodeConnect.domain.post.Recruitment;
 import CodeConnect.CodeConnect.dto.ResponseDto;
 import CodeConnect.CodeConnect.dto.post.recruitment.CreateRecruitmentDto;
-import CodeConnect.CodeConnect.dto.post.recruitment.EditRecruitmentDto;
+import CodeConnect.CodeConnect.dto.post.recruitment.UpdateRecruitmentDto;
 import CodeConnect.CodeConnect.service.RecruitmentService;
 import CodeConnect.CodeConnect.service.Role;
 import lombok.RequiredArgsConstructor;
@@ -59,8 +59,8 @@ public class RecruitmentController {
     }
 
     // 게시글 수정
-    @PutMapping("/edit/{id}")
-    public ResponseDto<Recruitment> editPost(@RequestBody EditRecruitmentDto editRequestDto, @PathVariable Long id, @AuthenticationPrincipal String email) {
+    @PutMapping("/update/{id}")
+    public ResponseDto<Recruitment> updatePost(@RequestBody UpdateRecruitmentDto editRequestDto, @PathVariable Long id, @AuthenticationPrincipal String email) {
         return recruitmentService.editPost(editRequestDto, id, email);
     }
 

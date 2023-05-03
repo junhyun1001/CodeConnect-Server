@@ -5,7 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class EditRecruitmentDto {
+public class UpdateRecruitmentDto {
 
     private String title;
 

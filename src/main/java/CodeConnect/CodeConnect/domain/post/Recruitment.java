@@ -2,7 +2,7 @@ package CodeConnect.CodeConnect.domain.post;
 
 import CodeConnect.CodeConnect.domain.Member;
 import CodeConnect.CodeConnect.dto.post.recruitment.CreateRecruitmentDto;
-import CodeConnect.CodeConnect.dto.post.recruitment.EditRecruitmentDto;
+import CodeConnect.CodeConnect.dto.post.recruitment.UpdateRecruitmentDto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
@@ -63,7 +63,7 @@ public class Recruitment extends Post {
     }
 
     // 게시글 정보 업데이트
-    public void updatePost(EditRecruitmentDto dto) {
+    public void updatePost(UpdateRecruitmentDto dto) {
         setTitle(dto.getTitle());
         setContent(dto.getContent());
         setCount(dto.getCount());

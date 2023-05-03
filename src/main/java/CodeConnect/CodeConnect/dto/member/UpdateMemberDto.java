@@ -7,7 +7,7 @@ import java.util.List;
 
 @Getter
 @Setter
-public class EditMemberDto {
+public class UpdateMemberDto {
 
     private String nickname;
 
