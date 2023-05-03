@@ -7,6 +7,7 @@ import CodeConnect.CodeConnect.dto.post.recruitment.EditRecruitmentDto;
 import CodeConnect.CodeConnect.service.RecruitmentService;
 import CodeConnect.CodeConnect.service.Role;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,6 +17,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/recruitments")
 @RequiredArgsConstructor
+@Slf4j
 public class RecruitmentController {
 
     private final RecruitmentService recruitmentService;
@@ -26,7 +28,7 @@ public class RecruitmentController {
         return recruitmentService.createPost(createRequestDto, email);
     }
 
-    // 메인 화면에서 보여줄 게시글 리스트(로그인한 회원의 주소와 관심분야가 같은것. 현재는 같은 주소만 보여줌)
+    // 메인 화면에서 보여줄 게시글 리스트(로그인한 회원의 주소와 관심분야가 같은것)
     @GetMapping("/main")
     public ResponseDto<List<Recruitment>> getPosts(@AuthenticationPrincipal String email) {
         return recruitmentService.getPostsByAddressAndField(email);
@@ -47,7 +49,13 @@ public class RecruitmentController {
     // 게시글 제목+내용 기준으로 검색
     @GetMapping("/search")
     public ResponseDto<List<Recruitment>> getSearchList(@RequestParam String keyword) {
-        return recruitmentService.getContent(keyword);
+        return recruitmentService.getContentBySearch(keyword);
+    }
+
+    // 주소로 게시글 검색
+    @GetMapping("/searchAddress")
+    public ResponseDto<List<Recruitment>> getListByAddress(@RequestParam String address) {
+        return recruitmentService.getPostsByAddress(address);
     }
 
     // 게시글 수정
