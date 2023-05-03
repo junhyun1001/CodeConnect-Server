@@ -106,7 +106,7 @@ public class QnaService {
     //검색
     @Transactional
     public ResponseDto<List<Qna>> search(String text){
-        List<Qna> qnaList = qnaRepository.findByContentContainingOrderByCurrentDateTimeDesc(text);
+        List<Qna> qnaList = qnaRepository.findByTitleContainingOrContentContainingOrderByCurrentDateTimeDesc(text, text);
 //        List<QnaRequestDto> qnaRequestDtoList = qnaList.stream()
 //                .map(QnaRequestDto::new)
 //                .collect(Collectors.toList());
