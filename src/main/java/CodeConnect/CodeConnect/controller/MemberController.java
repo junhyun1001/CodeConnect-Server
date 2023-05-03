@@ -36,8 +36,8 @@ public class MemberController {
      * 따라서 현재 인증된 사용자의 이메일 주소를 'email' 파라미터에 주입하는데 사용된다.
      */
 
-    @PutMapping("/edit")
-    public ResponseDto<Member> edit(@RequestBody UpdateMemberDto updateDto, @AuthenticationPrincipal String email) {
+    @PutMapping("/update")
+    public ResponseDto<Member> update(@RequestBody UpdateMemberDto updateDto, @AuthenticationPrincipal String email) {
         return memberService.updateMember(updateDto, email);
     }
 
