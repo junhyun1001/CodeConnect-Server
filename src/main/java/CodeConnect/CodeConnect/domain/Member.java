@@ -72,6 +72,11 @@ public class Member {
         recruitment.setMember(this);
     }
 
+    public void setQnas(Qna qna) {
+        this.qnas.add(qna);
+        qna.setMember(this);
+    }
+
     // 생성자
     public Member(SignUpRequestDto dto) {
         this.email = dto.getEmail();

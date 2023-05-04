@@ -4,7 +4,7 @@ import CodeConnect.CodeConnect.domain.Member;
 import CodeConnect.CodeConnect.domain.post.Recruitment;
 import CodeConnect.CodeConnect.dto.ResponseDto;
 import CodeConnect.CodeConnect.dto.post.recruitment.CreateRecruitmentDto;
-import CodeConnect.CodeConnect.dto.post.recruitment.EditRecruitmentDto;
+import CodeConnect.CodeConnect.dto.post.recruitment.UpdateRecruitmentDto;
 import CodeConnect.CodeConnect.repository.MemberRepository;
 import CodeConnect.CodeConnect.repository.RecruitmentRepository;
 import lombok.RequiredArgsConstructor;
@@ -53,28 +53,30 @@ public class RecruitmentService {
 
     }
 
-    // 주소 기준 게시글 조회
-    public ResponseDto<List<Recruitment>> getPostsByAddressAndField(String email) {
+    // 주소, 관심분야 기준 게시글 조회 또는 주소 기준 검색
+    @Transactional(readOnly = true)
+    public ResponseDto<List<Recruitment>> getPostsByAddressAndFieldOrSearchByAddress(String email, String searchAddress) {
         // 글을 작성한 회원의 정보
         Member findMember = memberRepository.findByEmail(email);
-        String nickname = findMember.getNickname();
-
-        return ResponseDto.setSuccess("글 불러오기 성공", findRecruitmentBySameAddressMember(nickname)); // 주소를 기준으로 찾는것만 됨
-    }
-
-    // 글을 쓴 회원 정보의 주소값과 게시글 정보의 주소값을 비교해서 같은 리스트를 반환해줌
-    public List<Recruitment> findRecruitmentBySameAddressMember(String nickname) {
-        Member findMember = memberRepository.findByNickname(nickname);
-        if (findMember == null) {
-            return null;
-        }
         String address = findMember.getAddress();
+        List<String> fieldList = findMember.getFieldList();
 
-        return recruitmentRepository.findByAddressOrderByCurrentDateTimeDesc(address);
+        List<Recruitment> recruitmentList;
+
+        if (searchAddress != null && !searchAddress.isEmpty()) {
+            log.info("주소 검색 리스트 반환");
+            recruitmentList = recruitmentRepository.findByAddressOrderByCurrentDateTimeDesc(searchAddress);
+        } else {
+            log.info("주소, 관심분야 같은 리스트 반환");
+            recruitmentList = recruitmentRepository.findByAddressAndFieldInOrderByCurrentDateTimeDesc(address, fieldList);
+        }
+        return ResponseDto.setSuccess("글 불러오기 성공", recruitmentList);
+
     }
 
     // 게시글 단일 조회
-    public ResponseDto<Map<Role, Recruitment>> getPost(String email, Long id) {
+    @Transactional(readOnly = true)
+    public ResponseDto<Map<Role, Object>> getPost(String email, Long id) {
 
         Optional<Member> optionalMember = memberRepository.findById(email);
         if (optionalMember.isEmpty()) {
@@ -84,22 +86,33 @@ public class RecruitmentService {
         Recruitment recruitment = validateExistPost(id);
 
         // 회원 검증 후 내 게시글이면 HOST, 아니면 GUEST
-        Map<Role, Recruitment> recruitmentMap = new HashMap<>();
+        // 조회 할 시점에 참여된 회원인지 아닌지 판별 할 수 있어야 함
+        Map<Role, Object> recruitmentMap = new HashMap<>();
         if (validateMember(email, recruitment)) { // false 값이 반환 될 때
+            boolean participantExist = isParticipantExist(recruitment, email);
             recruitmentMap.put(Role.GUEST, recruitment);
-            log.info("************************* GUEST로 게시글 조회 *************************");
+            recruitmentMap.put(Role.PARTICIPATION, participantExist);
             return ResponseDto.setSuccess("GUEST 게시글 조회", recruitmentMap);
         } else {
             recruitmentMap.put(Role.HOST, recruitment);
-            log.info("************************* HOST로 게시글 조회 *************************");
             return ResponseDto.setSuccess("HOST 게시글 조회", recruitmentMap);
         }
 
     }
 
+    // 게시글 내용 검색
+    @Transactional(readOnly = true)
+    public ResponseDto<List<Recruitment>> getContentBySearch(String keyword) {
+
+        List<Recruitment> recruitmentList = recruitmentRepository.findByTitleContainingOrContentContaining(keyword, keyword);
+
+        return ResponseDto.setSuccess("게시글 검색", recruitmentList);
+
+    }
+
     // 게시글 수정 -> 게시글 id를 받아서 해당 게시글을 수정함(리스트로 여러개 있기 때문)
     // 토큰 값이랑 현재 회원이랑 같은지 판단 해야됨
-    public ResponseDto<Recruitment> editPost(EditRecruitmentDto dto, Long id, String email) {
+    public ResponseDto<Recruitment> editPost(UpdateRecruitmentDto dto, Long id, String email) {
 
         // 해당 게시글을 id로 조회함
         Recruitment recruitment = validateExistPost(id);
@@ -132,22 +145,68 @@ public class RecruitmentService {
         return ResponseDto.setSuccess("게시글이 삭제되었습니다.", null);
     }
 
-    // 참여하기에 대한 인원 수 증가
-//    public ResponseDto<Recruitment> addMember(String email, Long id) {
-//
-//        Recruitment recruitment = validateExistPost(id);
-//        int currentCount = recruitment.getCurrentCount();
-//
-//        if (!validateMember(email, recruitment))
-//            return ResponseDto.setFail("본인은 참여할 수 없습니다.");
-//
-//        recruitment.addCurrentCount(currentCount, email);
-//
-//        recruitmentRepository.save(recruitment);
-//
-//        return ResponseDto.setSuccess("인원이 추가되었습니다.", recruitment);
-//
-//    }
+    // 스터디 참여 여부 처리
+    public ResponseDto<Recruitment> participate(String email, Long id, Boolean isParticipating) {
+
+        if (email.isBlank()) {
+            return ResponseDto.setFail("email이 빈칸 입니다.");
+        }
+
+        Recruitment recruitment = validateExistPost(id);
+
+        if (isParticipating)
+            return addMemberInPost(recruitment, email);
+        else
+            return subtractMemberInPost(recruitment, email);
+    }
+
+    // 참여 회원 추가
+    public ResponseDto<Recruitment> addMemberInPost(Recruitment recruitment, String email) {
+
+        log.info("참여 회원 추가 email:{}", email);
+
+        int count = recruitment.getCount();
+        int currentCount = recruitment.getCurrentCount();
+
+        if (count <= currentCount) {
+            return ResponseDto.setFail("더 이상 참여할 수 없습니다.");
+        }
+
+        if (isParticipantExist(recruitment, email)) {
+            return ResponseDto.setFail("이미 참여하였습니다.");
+        } else {
+            ++currentCount;
+            updateMemberInPost(recruitment, email, currentCount, true);
+            return ResponseDto.setSuccess("인원이 추가되었습니다.", null);
+        }
+    }
+
+    // 참여 회원 삭제
+    public ResponseDto<Recruitment> subtractMemberInPost(Recruitment recruitment, String email) {
+
+        int currentCount = recruitment.getCurrentCount();
+
+        if (isParticipantExist(recruitment, email)) {
+            --currentCount;
+            updateMemberInPost(recruitment, email, currentCount, false);
+            return ResponseDto.setSuccess("취소되었습니다.", null);
+        } else return ResponseDto.setFail("이미 취소하였거나 참여하지 않았습니다.");
+    }
+
+    // 참여 회원 정보 업데이트
+    public void updateMemberInPost(Recruitment recruitment, String email, int currentCount, Boolean bool) {
+        recruitment.setCurrentCount(currentCount);
+        if (bool)
+            recruitment.getCurrentParticipantMemberList().add(email);
+        else
+            recruitment.getCurrentParticipantMemberList().remove(email);
+        recruitmentRepository.save(recruitment);
+    }
+
+    // 스터디 참여 여부 확인(email)
+    public boolean isParticipantExist(Recruitment recruitment, String email) {
+        return recruitment.getCurrentParticipantMemberList().stream().anyMatch(participant -> participant.equals(email));
+    }
 
     // 해당 게시글 존재 여부 확인
     public Recruitment validateExistPost(Long id) {

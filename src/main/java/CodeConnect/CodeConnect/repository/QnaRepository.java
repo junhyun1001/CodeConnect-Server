@@ -9,5 +9,5 @@ import java.util.List;
 
 public interface QnaRepository extends JpaRepository<Qna, Long> {
     List<Qna> findAllByOrderByCurrentDateTimeDesc();
-    List<Qna> findByContentContainingOrderByCurrentDateTimeDesc(String text);
+    List<Qna> findByTitleContainingOrContentContainingOrderByCurrentDateTimeDesc(String title, String content);
 }
