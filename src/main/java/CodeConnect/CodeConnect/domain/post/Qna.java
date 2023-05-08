@@ -41,6 +41,12 @@ public class Qna extends Post {
         member.getQnas().add(this);
     }
 
+    // 연관관계 메소드
+    public void setMember(Member member) {
+        this.member = member;
+        member.getQnas().add(this);
+    }
+
      /**
      * 하나의 게시글이 여러개의 댓글과 관계를 가지므로 1:N 관계를 사용.
      */

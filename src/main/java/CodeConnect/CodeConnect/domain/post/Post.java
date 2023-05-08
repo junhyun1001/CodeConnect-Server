@@ -30,7 +30,7 @@ public abstract class Post {
     String modifiedDateTime; // 수정 날짜와 시간 정보
 
     public String changeDateTimeFormat(LocalDateTime dateTime) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yy/MM/dd HH:mm");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yy/MM/dd HH:mm:ss");
         return dateTime.format(formatter);
     }
 

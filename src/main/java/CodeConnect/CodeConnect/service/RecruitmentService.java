@@ -53,9 +53,9 @@ public class RecruitmentService {
 
     }
 
-    // 주소, 관심분야 기준 게시글 조회 또는 주소 기준 검색
+    // 주소 기준 게시글 조회
     @Transactional(readOnly = true)
-    public ResponseDto<List<Recruitment>> getPostsByAddressAndFieldOrSearchByAddress(String email, String searchAddress) {
+    public ResponseDto<List<Recruitment>> getPostsByAddressAndField(String email) {
         // 글을 작성한 회원의 정보
         Member findMember = memberRepository.findByEmail(email);
         String address = findMember.getAddress();
@@ -71,7 +71,6 @@ public class RecruitmentService {
             recruitmentList = recruitmentRepository.findByAddressAndFieldInOrderByCurrentDateTimeDesc(address, fieldList);
         }
         return ResponseDto.setSuccess("글 불러오기 성공", recruitmentList);
-
     }
 
     // 게시글 단일 조회
@@ -108,6 +107,15 @@ public class RecruitmentService {
 
         return ResponseDto.setSuccess("게시글 검색", recruitmentList);
 
+    }
+
+    // 주소 기준 게시글 검색
+    @Transactional(readOnly = true)
+    public ResponseDto<List<Recruitment>> getPostsByAddress(String address) {
+
+        List<Recruitment> recruitmentList = recruitmentRepository.findByAddressOrderByCurrentDateTimeDesc(address);
+
+        return ResponseDto.setSuccess("주소 기준 검색", recruitmentList);
     }
 
     // 게시글 수정 -> 게시글 id를 받아서 해당 게시글을 수정함(리스트로 여러개 있기 때문)
@@ -147,8 +155,8 @@ public class RecruitmentService {
 
     // 스터디 참여 여부 처리
     public ResponseDto<Recruitment> participate(String email, Long id, Boolean isParticipating) {
-
-        if (email.isBlank()) {
+        
+        if(email.isBlank()) {
             return ResponseDto.setFail("email이 빈칸 입니다.");
         }
 
@@ -175,9 +183,9 @@ public class RecruitmentService {
         if (isParticipantExist(recruitment, email)) {
             return ResponseDto.setFail("이미 참여하였습니다.");
         } else {
-            ++currentCount;
-            updateMemberInPost(recruitment, email, currentCount, true);
-            return ResponseDto.setSuccess("인원이 추가되었습니다.", null);
+        ++currentCount;
+        updateMemberInPost(recruitment, email, currentCount, true);
+        return ResponseDto.setSuccess("인원이 추가되었습니다.", null);
         }
     }
 
@@ -187,9 +195,9 @@ public class RecruitmentService {
         int currentCount = recruitment.getCurrentCount();
 
         if (isParticipantExist(recruitment, email)) {
-            --currentCount;
-            updateMemberInPost(recruitment, email, currentCount, false);
-            return ResponseDto.setSuccess("취소되었습니다.", null);
+        --currentCount;
+        updateMemberInPost(recruitment, email, currentCount, false);
+        return ResponseDto.setSuccess("취소되었습니다.", null);
         } else return ResponseDto.setFail("이미 취소하였거나 참여하지 않았습니다.");
     }
 
