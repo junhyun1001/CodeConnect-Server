@@ -17,7 +17,7 @@ public class CocommentRequestDto {
     private String currentDateTime;
     private String modifiedDateTime;
 
-    public Long getCommentId() {
+    public Long getCocommentId() {
         if (cocommentId == null) {
             return 0L; // 댓글 작성 시 cocommentId가 지정되지 않은 경우 0으로 처리
         }
