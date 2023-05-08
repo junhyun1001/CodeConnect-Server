@@ -1,9 +1,11 @@
 package CodeConnect.CodeConnect.service;
 
 import CodeConnect.CodeConnect.domain.Member;
+import CodeConnect.CodeConnect.domain.post.Comment;
 import CodeConnect.CodeConnect.domain.post.Qna;
 import CodeConnect.CodeConnect.dto.ResponseDto;
 import CodeConnect.CodeConnect.dto.post.qna.QnaRequestDto;
+import CodeConnect.CodeConnect.repository.CommentRepository;
 import CodeConnect.CodeConnect.repository.MemberRepository;
 import CodeConnect.CodeConnect.repository.QnaRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +24,8 @@ public class QnaService {
 
     private final QnaRepository qnaRepository;
     private final MemberRepository memberRepository;
+
+    private final CommentRepository commentRepository;
 
 
     @Transactional
@@ -48,40 +52,55 @@ public class QnaService {
     //q&a 들어갔을때 전체 조회
     public ResponseDto<List<Qna>> findQna() {
         List<Qna> qnaList = qnaRepository.findAllByOrderByCurrentDateTimeDesc();
-//        List<QnaDto> qnaDtoList = qnaList.stream()
-//                .map(QnaDto::new)
-//                .collect(Collectors.toList());
         return ResponseDto.setSuccess("QnA 전체 글 조회 성공", qnaList);
     }
 
     //상세조회
-    public ResponseDto<Map<Role, Qna>> findOne(Long qnaId, String email) {
-//        Qna qna = qnaRepository.findById(qnaId).orElseThrow(NullPointerException::new);
-//        return ResponseDto.setSuccess("QnA 글 상세 조회 성공", qna);
+    public ResponseDto<Map<Role, Object>> findOne(Long qnaId, String email) {
+        Qna qna = qnaRepository.findById(qnaId).orElseThrow(NullPointerException::new);
+        List<Comment> comments = commentRepository.findByQna(qna);
+
         Optional<Member> optionalMember = memberRepository.findById(email);
         if (optionalMember.isEmpty()) {
             return ResponseDto.setFail("존재하지 않는 회원입니다.");
         }
-
-        Qna qna = qnaRepository.findById(qnaId).orElseThrow(NullPointerException::new);
-
         // 회원 검증 후 내 게시글이면 HOST, 아니면 GUEST
-        Map<Role, Qna> qnaMap = new HashMap<>();
-        if (validateMember(email, qna)) { // false 값이 반환 될 때
-            qnaMap.put(Role.GUEST, qna);
-            log.info("************************* GUEST로 게시글 조회 *************************");
-            return ResponseDto.setSuccess("GUEST 게시글 조회", qnaMap);
-        } else {
+        Map<Role, Object> qnaMap = new LinkedHashMap<>();
+        if (validateMember(email, qna)) {
+            // 자신이 작성한 글인 경우
             qnaMap.put(Role.HOST, qna);
             log.info("************************* HOST로 게시글 조회 *************************");
-            return ResponseDto.setSuccess("HOST 게시글 조회", qnaMap);
+        } else {
+            // 자신이 작성하지 않은 글인 경우
+            qnaMap.put(Role.GUEST, qna);
+            log.info("************************* GUEST로 게시글 조회 *************************");
         }
+
+        // comment를 하나씩 검사하여 ROLE을 지정하고 qnaMap에 put
+        List<Comment> commentHostList = new ArrayList<>();
+        List<Comment> commentGuestList = new ArrayList<>();
+        for (Comment comment : comments) {
+            if (validateMember2(email, Collections.singletonList(comment))) {
+                commentHostList.add(comment);
+            } else {
+                commentGuestList.add(comment);
+            }
+        }
+        if (!commentHostList.isEmpty()) {
+            qnaMap.put(Role.COMMENT_HOST, commentHostList);
+        }
+        if (!commentGuestList.isEmpty()) {
+            qnaMap.put(Role.COMMENT_GUEST, commentGuestList);
+        }
+
+        return ResponseDto.setSuccess("게시글 조회", qnaMap);
     }
+
 
     //삭제
     @Transactional
-    public ResponseDto<String> delete(Long qnaId, String email) {
-        Qna qna = qnaRepository.findById(qnaId).orElseThrow(() -> new NoSuchElementException("값이 존재하지 않습니다"));
+    public ResponseDto<String> delete(Long qnaId, String email){
+        Qna qna = qnaRepository.findById(qnaId).orElseThrow(()-> new NoSuchElementException("값이 존재하지 않습니다"));
 
         // 회원 검증
         if (validateMember(email, qna))
@@ -110,9 +129,6 @@ public class QnaService {
     @Transactional
     public ResponseDto<List<Qna>> search(String text) {
         List<Qna> qnaList = qnaRepository.findByTitleContainingOrContentContainingOrderByCurrentDateTimeDesc(text, text);
-//        List<QnaRequestDto> qnaRequestDtoList = qnaList.stream()
-//                .map(QnaRequestDto::new)
-//                .collect(Collectors.toList());
         return ResponseDto.setSuccess("검색 성공", qnaList);
     }
 
@@ -124,6 +140,21 @@ public class QnaService {
         // Qna
         String recruitmentNickname = qna.getNickname();
 
-        return !findMemberNickname.equals(recruitmentNickname);
+        return findMemberNickname.equals(recruitmentNickname);
     }
+
+
+    private boolean validateMember2(String email, List<Comment> comments) {
+        Member findMember = memberRepository.findByEmail(email);
+        String findMemberNickname = findMember.getNickname();
+
+        for (Comment comment : comments) {
+            String commentNickname = comment.getNickname();
+            if (findMemberNickname.equals(commentNickname)) {
+                return true; // COMMENT_HOST
+            }
+        }
+        return false; // COMMENT_GUEST
+    }
+
 }

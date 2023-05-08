@@ -91,9 +91,11 @@ public class RecruitmentService {
             boolean participantExist = isParticipantExist(recruitment, email);
             recruitmentMap.put(Role.GUEST, recruitment);
             recruitmentMap.put(Role.PARTICIPATION, participantExist);
+            log.info("************************* GUEST로 게시글 조회 *************************");
             return ResponseDto.setSuccess("GUEST 게시글 조회", recruitmentMap);
         } else {
             recruitmentMap.put(Role.HOST, recruitment);
+            log.info("************************* HOST로 게시글 조회 *************************");
             return ResponseDto.setSuccess("HOST 게시글 조회", recruitmentMap);
         }
 
