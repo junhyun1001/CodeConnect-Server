@@ -58,25 +58,19 @@ public class RecruitmentService {
     public ResponseDto<List<Recruitment>> getPostsByAddressAndField(String email) {
         // 글을 작성한 회원의 정보
         Member findMember = memberRepository.findByEmail(email);
-        String nickname = findMember.getNickname();
-
-        List<Recruitment> postsByAddressAndField = findPostsByAddressAndField(nickname);
-
-        return ResponseDto.setSuccess("글 불러오기 성공", postsByAddressAndField); // 주소를 기준으로 찾는것만 됨
-    }
-
-    // 글을 쓴 회원 정보의 주소값과 게시글 정보의 주소값을 비교해서 같은 리스트를 반환해줌
-    public List<Recruitment> findPostsByAddressAndField(String nickname) {
-        Member findMember = memberRepository.findByNickname(nickname);
-        if (findMember == null) {
-            return null;
-        }
-
         String address = findMember.getAddress();
         List<String> fieldList = findMember.getFieldList();
 
-        return recruitmentRepository.findByAddressAndFieldInOrderByCurrentDateTimeDesc(address, fieldList);
+        List<Recruitment> recruitmentList;
 
+        if (searchAddress != null && !searchAddress.isEmpty()) {
+            log.info("주소 검색 리스트 반환");
+            recruitmentList = recruitmentRepository.findByAddressOrderByCurrentDateTimeDesc(searchAddress);
+        } else {
+            log.info("주소, 관심분야 같은 리스트 반환");
+            recruitmentList = recruitmentRepository.findByAddressAndFieldInOrderByCurrentDateTimeDesc(address, fieldList);
+        }
+        return ResponseDto.setSuccess("글 불러오기 성공", recruitmentList);
     }
 
     // 게시글 단일 조회
@@ -97,11 +91,9 @@ public class RecruitmentService {
             boolean participantExist = isParticipantExist(recruitment, email);
             recruitmentMap.put(Role.GUEST, recruitment);
             recruitmentMap.put(Role.PARTICIPATION, participantExist);
-            log.info("************************* GUEST로 게시글 조회 *************************");
             return ResponseDto.setSuccess("GUEST 게시글 조회", recruitmentMap);
         } else {
             recruitmentMap.put(Role.HOST, recruitment);
-            log.info("************************* HOST로 게시글 조회 *************************");
             return ResponseDto.setSuccess("HOST 게시글 조회", recruitmentMap);
         }
 
@@ -163,7 +155,7 @@ public class RecruitmentService {
 
     // 스터디 참여 여부 처리
     public ResponseDto<Recruitment> participate(String email, Long id, Boolean isParticipating) {
-
+        
         if(email.isBlank()) {
             return ResponseDto.setFail("email이 빈칸 입니다.");
         }

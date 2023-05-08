@@ -33,7 +33,13 @@ public class Qna extends Post {
     @JsonIgnore
     private Member member;
     @Column(name = "comment_count")
-    private int commentCount; // 댓글 개수
+    private int commentCount = 0; // 댓글 개수
+
+    // 연관관계 메소드
+    public void setMember(Member member) {
+        this.member = member;
+        member.getQnas().add(this);
+    }
 
     // 연관관계 메소드
     public void setMember(Member member) {
@@ -44,8 +50,9 @@ public class Qna extends Post {
      /**
      * 하나의 게시글이 여러개의 댓글과 관계를 가지므로 1:N 관계를 사용.
      */
-    @OneToMany(mappedBy = "qna", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "qna", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("currentDateTime ASC") //qna 오름차순
+    @JsonIgnore
     private final List<Comment> comments = new ArrayList<>();
 
     public Qna(QnaRequestDto dto,String nickname, String title, String content){
@@ -53,8 +60,7 @@ public class Qna extends Post {
         super.nickname = nickname;
         super.content = content;
         this.commentCount = dto.getCommentCount();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yy/MM/dd HH:mm");
-        super.setCurrentDateTime(String.valueOf(LocalDateTime.now().format(formatter)));
+        super.setCurrentDateTime(changeDateTimeFormat(LocalDateTime.now()));
     }
 
 

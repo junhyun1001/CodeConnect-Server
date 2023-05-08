@@ -1,6 +1,8 @@
 package CodeConnect.CodeConnect.domain;
 
 import CodeConnect.CodeConnect.converter.FieldConverter;
+import CodeConnect.CodeConnect.domain.post.Cocomment;
+import CodeConnect.CodeConnect.domain.post.Comment;
 import CodeConnect.CodeConnect.domain.post.Qna;
 import CodeConnect.CodeConnect.domain.post.Recruitment;
 import CodeConnect.CodeConnect.dto.member.SignUpRequestDto;
@@ -65,6 +67,15 @@ public class Member {
     @JsonIgnore
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Qna> qnas = new ArrayList<>();
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Comment> comments = new ArrayList<>();
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Cocomment> cocomments = new ArrayList<>();
+
 
     // 연관관계 메소드
     public void setRecruitment(Recruitment recruitment) {

@@ -26,7 +26,7 @@ public class QnaController {
 
     //상세조회
     @GetMapping("/detail/{qnaId}")
-    public ResponseDto<Map<Role, Qna>> qna_detail(@PathVariable("qnaId") Long qnaId, @AuthenticationPrincipal String email) {
+    public ResponseDto<Map<Role, Object>> qna_detail(@PathVariable("qnaId") Long qnaId, @AuthenticationPrincipal String email) {
         return qnaService.findOne(qnaId, email);
     }
 
