@@ -135,20 +135,13 @@ public class MemberService {
     // 회원 수정(프로필 이미지, 지역, 관심분야)
     public ResponseDto<Member> updateMember(UpdateMemberDto dto, String email) {
 
-        // 수정할 데이터를 dto에서 가져옴
-        String nickname = dto.getNickname();
-        String address = dto.getAddress();
-        List<String> fieldList = dto.getFieldList();
-
         // jwt로 해당 회원을 찾음
         Optional<Member> member = memberRepository.findById(email);
         if (member.isEmpty())
             return ResponseDto.setFail("존재하지 않는 회원 입니다");
         else {
             Member updateMember = member.get();
-            updateMember.setNickname(nickname);
-            updateMember.setAddress(address);
-            updateMember.setFieldList(fieldList);
+            updateMember.updateMember(dto);
 
             memberRepository.save(updateMember);
 
