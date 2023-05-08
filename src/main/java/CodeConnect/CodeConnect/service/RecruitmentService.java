@@ -63,11 +63,10 @@ public class RecruitmentService {
 
         List<Recruitment> recruitmentList;
 
+        // 주소 검색이 있을 때와 없을 때
         if (searchAddress != null && !searchAddress.isEmpty()) {
-            log.info("주소 검색 리스트 반환");
             recruitmentList = recruitmentRepository.findByAddressOrderByCurrentDateTimeDesc(searchAddress);
         } else {
-            log.info("주소, 관심분야 같은 리스트 반환");
             recruitmentList = recruitmentRepository.findByAddressAndFieldInOrderByCurrentDateTimeDesc(address, fieldList);
         }
         return ResponseDto.setSuccess("글 불러오기 성공", recruitmentList);
@@ -100,13 +99,30 @@ public class RecruitmentService {
 
     }
 
-    // 게시글 내용 검색
+    // 게시글 내용, 주소 동시 검색
     @Transactional(readOnly = true)
-    public ResponseDto<List<Recruitment>> getContentBySearch(String keyword) {
+    public ResponseDto<List<Recruitment>> getContentBySearch(String keyword, String searchAddress) {
 
-        List<Recruitment> recruitmentList = recruitmentRepository.findByTitleContainingOrContentContaining(keyword, keyword);
+        if (searchAddress == null || searchAddress.isEmpty()) {
+            // 주소 검색이 없고 검색어가 있는 경우
+            List<Recruitment> byTitleContainingOrContentContaining = recruitmentRepository.findByTitleContainingOrContentContaining(keyword, keyword);
+            return ResponseDto.setSuccess("주소x 검색o", byTitleContainingOrContentContaining);
+        } else {
+            // 주소 검색이 있는 경우
+            if (keyword == null || keyword.isEmpty()) {
+                // 검색어가 없는 경우
+                List<Recruitment> byAddressOrderByCurrentDateTimeDesc = recruitmentRepository.findByAddressOrderByCurrentDateTimeDesc(searchAddress);
+                return ResponseDto.setSuccess("주소o 검색x", byAddressOrderByCurrentDateTimeDesc);
+            } else {
+                // 검색어가 있는 경우
+                List<Recruitment> byAddressAndTitleContainingOrContentContaining = recruitmentRepository.findByAddressAndTitleContainingOrAddressAndContentContaining(searchAddress, keyword, searchAddress, keyword);
+                return ResponseDto.setSuccess("주소o 검색o", byAddressAndTitleContainingOrContentContaining);
+            }
+        }
 
-        return ResponseDto.setSuccess("게시글 검색", recruitmentList);
+//        List<Recruitment> byTitleContainingOrContentContaining = recruitmentRepository.findByTitleContainingOrContentContaining(keyword, keyword);
+
+//        return ResponseDto.setSuccess("주소와 검색어 리스트 반환", byTitleContainingOrContentContaining);
 
     }
 
@@ -168,8 +184,8 @@ public class RecruitmentService {
         int count = recruitment.getCount();
         int currentCount = recruitment.getCurrentCount();
 
-        if (count <= currentCount) {
-            return ResponseDto.setFail("더 이상 참여할 수 없습니다.");
+        if (count == currentCount) {
+            return ResponseDto.setSuccess("더 이상 참여할 수 없습니다.", -1);
         }
 
         if (isParticipantExist(recruitment, email)) {

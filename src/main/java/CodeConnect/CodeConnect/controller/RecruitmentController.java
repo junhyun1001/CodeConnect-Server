@@ -46,10 +46,10 @@ public class RecruitmentController {
         return recruitmentService.getPost(email, id);
     }
 
-    // 게시글 제목+내용 기준으로 검색
+    // 게시글 주소, 제목+내용 기준으로 검색
     @GetMapping("/search")
-    public ResponseDto<List<Recruitment>> getSearchList(@RequestParam String keyword) {
-        return recruitmentService.getContentBySearch(keyword);
+    public ResponseDto<List<Recruitment>> getSearchList(@RequestParam(required = false) String keyword, @RequestParam(required = false) String address) {
+        return recruitmentService.getContentBySearch(keyword, address);
     }
 
     // 게시글 수정
@@ -65,7 +65,7 @@ public class RecruitmentController {
     }
 
     // 스터디 게시글 참여 인원에 대한 처리
-    @PutMapping("participate/{id}")
+    @PutMapping("/participate/{id}")
     public ResponseDto<Integer> participate(@AuthenticationPrincipal String email, @PathVariable Long id, @RequestParam Boolean isParticipating) {
         return recruitmentService.participate(email, id, isParticipating);
     }
