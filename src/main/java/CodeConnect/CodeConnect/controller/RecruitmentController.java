@@ -28,10 +28,10 @@ public class RecruitmentController {
         return recruitmentService.createPost(createRequestDto, email);
     }
 
-    // 메인 화면에서 보여줄 게시글 리스트(로그인한 회원의 주소와 관심분야가 같은것) 또는 주소 기준 게시글 검색
+    // 메인 화면에서 보여줄 게시글 리스트(로그인한 회원의 주소와 관심분야가 같은것)
     @GetMapping("/main")
-    public ResponseDto<List<Recruitment>> getPosts(@AuthenticationPrincipal String email, @RequestParam(required = false) String address) {
-        return recruitmentService.getPostsByAddressAndFieldOrSearchByAddress(email, address);
+    public ResponseDto<List<Recruitment>> getPosts(@AuthenticationPrincipal String email) {
+        return recruitmentService.getPostsByAddressAndField(email);
     }
 
     // 게시글 전체 조회
@@ -50,6 +50,12 @@ public class RecruitmentController {
     @GetMapping("/search")
     public ResponseDto<List<Recruitment>> getSearchList(@RequestParam String keyword) {
         return recruitmentService.getContentBySearch(keyword);
+    }
+
+    // 주소로 게시글 검색
+    @GetMapping("/searchAddress")
+    public ResponseDto<List<Recruitment>> getListByAddress(@RequestParam String address) {
+        return recruitmentService.getPostsByAddress(address);
     }
 
     // 게시글 수정
