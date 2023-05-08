@@ -6,6 +6,7 @@ import CodeConnect.CodeConnect.domain.post.Comment;
 import CodeConnect.CodeConnect.domain.post.Qna;
 import CodeConnect.CodeConnect.domain.post.Recruitment;
 import CodeConnect.CodeConnect.dto.member.SignUpRequestDto;
+import CodeConnect.CodeConnect.dto.member.UpdateMemberDto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
@@ -96,6 +97,12 @@ public class Member {
         this.createMemberTime = dto.getCreateMemberTime();
         this.address = dto.getAddress();
         this.fieldList = dto.getFieldList();
+    }
+
+    public void updateMember(UpdateMemberDto dto) {
+        setNickname(dto.getNickname());
+        setAddress(dto.getAddress());
+        setFieldList(dto.getFieldList());
     }
 
 }
