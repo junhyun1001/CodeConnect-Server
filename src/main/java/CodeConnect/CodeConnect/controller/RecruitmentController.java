@@ -28,10 +28,10 @@ public class RecruitmentController {
         return recruitmentService.createPost(createRequestDto, email);
     }
 
-    // 메인 화면에서 보여줄 게시글 리스트(로그인한 회원의 주소와 관심분야가 같은것)
+    // 메인 화면에서 보여줄 게시글 리스트(로그인한 회원의 주소와 관심분야가 같은것) 또는 주소 기준 게시글 검색
     @GetMapping("/main")
-    public ResponseDto<List<Recruitment>> getPosts(@AuthenticationPrincipal String email) {
-        return recruitmentService.getPostsByAddressAndField(email);
+    public ResponseDto<List<Recruitment>> getPosts(@AuthenticationPrincipal String email, @RequestParam(required = false) String address) {
+        return recruitmentService.getPostsByAddressAndFieldOrSearchByAddress(email, address);
     }
 
     // 게시글 전체 조회
@@ -46,16 +46,10 @@ public class RecruitmentController {
         return recruitmentService.getPost(email, id);
     }
 
-    // 게시글 제목+내용 기준으로 검색
+    // 게시글 주소, 제목+내용 기준으로 검색
     @GetMapping("/search")
-    public ResponseDto<List<Recruitment>> getSearchList(@RequestParam String keyword) {
-        return recruitmentService.getContentBySearch(keyword);
-    }
-
-    // 주소로 게시글 검색
-    @GetMapping("/searchAddress")
-    public ResponseDto<List<Recruitment>> getListByAddress(@RequestParam String address) {
-        return recruitmentService.getPostsByAddress(address);
+    public ResponseDto<List<Recruitment>> getSearchList(@RequestParam(required = false) String keyword, @RequestParam(required = false) String address) {
+        return recruitmentService.getContentBySearch(keyword, address);
     }
 
     // 게시글 수정
@@ -71,8 +65,8 @@ public class RecruitmentController {
     }
 
     // 스터디 게시글 참여 인원에 대한 처리
-    @PutMapping("participate/{id}")
-    public ResponseDto<Recruitment> participate(@AuthenticationPrincipal String email, @PathVariable Long id, @RequestParam Boolean isParticipating) {
+    @PutMapping("/participate/{id}")
+    public ResponseDto<Integer> participate(@AuthenticationPrincipal String email, @PathVariable Long id, @RequestParam Boolean isParticipating) {
         return recruitmentService.participate(email, id, isParticipating);
     }
 
