@@ -103,7 +103,7 @@ public class QnaService {
         Qna qna = qnaRepository.findById(qnaId).orElseThrow(()-> new NoSuchElementException("값이 존재하지 않습니다"));
 
         // 회원 검증
-        if (validateMember(email, qna))
+        if (!validateMember(email, qna))
             return ResponseDto.setFail("접근 권한이 없습니다.");
         qnaRepository.delete(qna);
 
@@ -113,9 +113,9 @@ public class QnaService {
     //업데이트
     @Transactional
     public ResponseDto<Qna> update(Long qnaId, String title, String content, String email) {
-        Qna qna = qnaRepository.findById(qnaId).orElseThrow(NullPointerException::new);
+        Qna qna = qnaRepository.findById(qnaId).orElseThrow(()-> new NoSuchElementException("값이 존재하지 않습니다"));
         // 회원 검증
-        if (validateMember(email, qna))
+        if (!validateMember(email, qna))
             return ResponseDto.setFail("접근 권한이 없습니다.");
         //자바에서 직접 수정
         qna.setTitle(title); //Dirty Checking
