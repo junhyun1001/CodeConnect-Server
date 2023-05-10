@@ -49,7 +49,6 @@ public class CommentService {
         comment.setNickname(nickname);
         comment.setCommentId(requestDto.getCommentId());
         comment.setQna(qna);
-        comment.setMember(findMember);
 
         if (comment.getCommentId() != null) {
             comment.setCommentId(null);

@@ -33,7 +33,7 @@ public class Qna extends Post {
     @JsonIgnore
     private Member member;
     @Column(name = "comment_count")
-    private int commentCount = 0; // 댓글 개수
+    private Integer commentCount = 0; // 댓글 개수
 
     // 연관관계 메소드
     public void setMember(Member member) {
