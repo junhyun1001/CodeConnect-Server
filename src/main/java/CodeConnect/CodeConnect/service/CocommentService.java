@@ -3,7 +3,6 @@ package CodeConnect.CodeConnect.service;
 import CodeConnect.CodeConnect.domain.Member;
 import CodeConnect.CodeConnect.domain.post.Cocomment;
 import CodeConnect.CodeConnect.domain.post.Comment;
-import CodeConnect.CodeConnect.domain.post.Qna;
 import CodeConnect.CodeConnect.dto.ResponseDto;
 import CodeConnect.CodeConnect.dto.post.comment.CocommentRequestDto;
 import CodeConnect.CodeConnect.repository.CocommentRepository;
@@ -14,8 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Service

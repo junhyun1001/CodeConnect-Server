@@ -11,10 +11,7 @@ import CodeConnect.CodeConnect.repository.QnaRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-
 import javax.transaction.Transactional;
-import java.util.*;
-
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -50,6 +47,7 @@ public class CommentService {
         comment.setCommentId(requestDto.getCommentId());
         comment.setQna(qna);
 
+
         if (comment.getCommentId() != null) {
             comment.setCommentId(null);
         }
@@ -82,24 +80,7 @@ public class CommentService {
 
         return ResponseDto.setSuccess("해당 qna 댓글 조회 성공", commentResponseDtoList);
     }
-//    public ResponseDto<Map<Role, Object>> findComment(Long commentId, String email){
-//        Optional<Member> optionalMember = memberRepository.findById(email);
-//        if (optionalMember.isEmpty()) {
-//            return ResponseDto.setFail("존재하지 않는 회원입니다.");
-//        }
-//        Comment comment = commentRepository.findById(commentId).orElseThrow(NullPointerException::new);
-//        List<Comment> comments = commentRepository.findAllByOrderByCurrentDateTimeDesc();
-//        Map<Role, Object> commentMap = new HashMap<>();
-//        if(validateMember(email,comment)){
-//            commentMap.put(Role.COMMENT_HOST, comments);
-//            log.info("************************* HOST로 댓글 조회 *************************");
-//            return ResponseDto.setSuccess("COMMENT_HOST 댓글 조회", commentMap);
-//        } else {
-//            commentMap.put(Role.COMMENT_GUEST, comments);
-//            log.info("************************* GUEST로 댓글 조회 *************************");
-//            return ResponseDto.setSuccess("COMMENT_GUEST 댓글 조회", commentMap);
-//        }
-//    }
+
     //댓글 삭제
     public ResponseDto<String> deleteComment(Long commentId, String email){
 

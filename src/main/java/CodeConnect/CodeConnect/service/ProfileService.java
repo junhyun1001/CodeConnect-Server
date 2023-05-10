@@ -3,16 +3,13 @@ package CodeConnect.CodeConnect.service;
 import CodeConnect.CodeConnect.domain.Member;
 import CodeConnect.CodeConnect.dto.ResponseDto;
 import CodeConnect.CodeConnect.dto.member.ProfileDto;
-import CodeConnect.CodeConnect.dto.member.SignUpRequestDto;
 import CodeConnect.CodeConnect.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class ProfileService {

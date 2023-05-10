@@ -64,6 +64,7 @@ public class QnaService {
         if (optionalMember.isEmpty()) {
             return ResponseDto.setFail("존재하지 않는 회원입니다.");
         }
+
         // 회원 검증 후 내 게시글이면 HOST, 아니면 GUEST
         Map<Role, Object> qnaMap = new LinkedHashMap<>();
         if (validateMember(email, qna)) {
@@ -77,33 +78,51 @@ public class QnaService {
         }
 
         // comment를 하나씩 검사하여 ROLE을 지정하고 qnaMap에 put
-        List<Comment> commentHostList = new ArrayList<>();
-        List<Comment> commentGuestList = new ArrayList<>();
+        List<Map<String, Object>> commentHostList = new ArrayList<>();
+        List<Map<String, Object>> commentGuestList = new ArrayList<>();
         for (Comment comment : comments) {
+            Map<String, Object> commentMap = new LinkedHashMap<>();
+            Map<String, Object> commentDataMap = new LinkedHashMap<>();
             if (validateMember2(email, Collections.singletonList(comment))) {
-                commentHostList.add(comment);
+                commentDataMap.put("commentId", comment.getCommentId());
+                commentDataMap.put("comment", comment.getComment());
+                commentDataMap.put("nickname", comment.getNickname());
+                commentDataMap.put("currentDateTime", comment.getCurrentDateTime());
+                commentDataMap.put("modifiedDateTime", comment.getModifiedDateTime());
+                commentDataMap.put("cocommentCount", comment.getCocommentCount());
+                commentDataMap.put("role", Role.COMMENT_HOST);
+                commentMap.put("comment", commentDataMap);
+                commentHostList.add(commentMap);
             } else {
-                commentGuestList.add(comment);
+                commentDataMap.put("commentId", comment.getCommentId());
+                commentDataMap.put("comment", comment.getComment());
+                commentDataMap.put("nickname", comment.getNickname());
+                commentDataMap.put("currentDateTime", comment.getCurrentDateTime());
+                commentDataMap.put("modifiedDateTime", comment.getModifiedDateTime());
+                commentDataMap.put("cocommentCount", comment.getCocommentCount());
+                commentDataMap.put("role",Role.COMMENT_GUEST);
+                commentMap.put("comment", commentDataMap);
+                commentGuestList.add(commentMap);
             }
         }
+
         if (!commentHostList.isEmpty()) {
             qnaMap.put(Role.COMMENT_HOST, commentHostList);
         }
+
         if (!commentGuestList.isEmpty()) {
             qnaMap.put(Role.COMMENT_GUEST, commentGuestList);
         }
 
         return ResponseDto.setSuccess("게시글 조회", qnaMap);
     }
-
-
     //삭제
     @Transactional
     public ResponseDto<String> delete(Long qnaId, String email){
         Qna qna = qnaRepository.findById(qnaId).orElseThrow(()-> new NoSuchElementException("값이 존재하지 않습니다"));
 
         // 회원 검증
-        if (validateMember(email, qna))
+        if (!validateMember(email, qna))
             return ResponseDto.setFail("접근 권한이 없습니다.");
         qnaRepository.delete(qna);
 
@@ -113,9 +132,9 @@ public class QnaService {
     //업데이트
     @Transactional
     public ResponseDto<Qna> update(Long qnaId, String title, String content, String email) {
-        Qna qna = qnaRepository.findById(qnaId).orElseThrow(NullPointerException::new);
+        Qna qna = qnaRepository.findById(qnaId).orElseThrow(()-> new NoSuchElementException("값이 존재하지 않습니다"));
         // 회원 검증
-        if (validateMember(email, qna))
+        if (!validateMember(email, qna))
             return ResponseDto.setFail("접근 권한이 없습니다.");
         //자바에서 직접 수정
         qna.setTitle(title); //Dirty Checking
@@ -126,6 +145,8 @@ public class QnaService {
     }
 
     //검색
+
+
     @Transactional
     public ResponseDto<List<Qna>> search(String text) {
         List<Qna> qnaList = qnaRepository.findByTitleContainingOrContentContainingOrderByCurrentDateTimeDesc(text, text);
