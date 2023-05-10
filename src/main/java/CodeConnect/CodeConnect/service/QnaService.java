@@ -82,26 +82,23 @@ public class QnaService {
         List<Map<String, Object>> commentGuestList = new ArrayList<>();
         for (Comment comment : comments) {
             Map<String, Object> commentMap = new LinkedHashMap<>();
-            Map<String, Object> commentDataMap = new LinkedHashMap<>();
             if (validateMember2(email, Collections.singletonList(comment))) {
-                commentDataMap.put("commentId", comment.getCommentId());
-                commentDataMap.put("comment", comment.getComment());
-                commentDataMap.put("nickname", comment.getNickname());
-                commentDataMap.put("currentDateTime", comment.getCurrentDateTime());
-                commentDataMap.put("modifiedDateTime", comment.getModifiedDateTime());
-                commentDataMap.put("cocommentCount", comment.getCocommentCount());
-                commentDataMap.put("role", Role.COMMENT_HOST);
-                commentMap.put("comment", commentDataMap);
+                commentMap.put("commentId", comment.getCommentId());
+                commentMap.put("nickname", comment.getNickname());
+                commentMap.put("currentDateTime", comment.getCurrentDateTime());
+                commentMap.put("modifiedDateTime", comment.getModifiedDateTime());
+                commentMap.put("cocommentCount", comment.getCocommentCount());
+                commentMap.put("role", Role.COMMENT_HOST);
+
                 commentHostList.add(commentMap);
             } else {
-                commentDataMap.put("commentId", comment.getCommentId());
-                commentDataMap.put("comment", comment.getComment());
-                commentDataMap.put("nickname", comment.getNickname());
-                commentDataMap.put("currentDateTime", comment.getCurrentDateTime());
-                commentDataMap.put("modifiedDateTime", comment.getModifiedDateTime());
-                commentDataMap.put("cocommentCount", comment.getCocommentCount());
-                commentDataMap.put("role",Role.COMMENT_GUEST);
-                commentMap.put("comment", commentDataMap);
+                commentMap.put("commentId", comment.getCommentId());
+                commentMap.put("nickname", comment.getNickname());
+                commentMap.put("currentDateTime", comment.getCurrentDateTime());
+                commentMap.put("modifiedDateTime", comment.getModifiedDateTime());
+                commentMap.put("cocommentCount", comment.getCocommentCount());
+                commentMap.put("role", Role.COMMENT_GUEST);
+
                 commentGuestList.add(commentMap);
             }
         }
