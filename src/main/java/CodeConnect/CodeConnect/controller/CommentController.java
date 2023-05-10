@@ -4,7 +4,6 @@ import CodeConnect.CodeConnect.domain.post.Comment;
 import CodeConnect.CodeConnect.dto.ResponseDto;
 import CodeConnect.CodeConnect.dto.post.comment.CommentRequestDto;
 import CodeConnect.CodeConnect.service.CommentService;
-import CodeConnect.CodeConnect.service.Role;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
