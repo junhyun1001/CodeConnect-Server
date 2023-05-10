@@ -1,7 +1,6 @@
 package CodeConnect.CodeConnect.domain.post;
 
 import CodeConnect.CodeConnect.domain.Member;
-import CodeConnect.CodeConnect.dto.post.comment.CommentRequestDto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -40,8 +39,10 @@ public class Comment{
 
     private String currentDateTime; // 댓글 작성 시간
     private String modifiedDateTime;
+    @Getter @Setter
+    private String role;
     @Column(name = "cocomment_count")
-    private int cocommentCount = 0; // 대댓글 개수
+    private Integer cocommentCount = 0; // 대댓글 개수
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "qna_id")
     @JsonIgnore
