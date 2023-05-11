@@ -16,7 +16,6 @@ import java.util.List;
 @Table(name = "Recruitment")
 @Getter
 @Setter
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Slf4j
