@@ -66,7 +66,7 @@ public class RecruitmentController {
 
     // 스터디 게시글 참여 인원에 대한 처리
     @PutMapping("/participate/{id}")
-    public ResponseDto<Integer> participate(@AuthenticationPrincipal String email, @PathVariable Long id, @RequestParam Boolean isParticipating) {
+    public ResponseDto<?> participate(@AuthenticationPrincipal String email, @PathVariable Long id, @RequestParam Boolean isParticipating) {
         return recruitmentService.participate(email, id, isParticipating);
     }
 

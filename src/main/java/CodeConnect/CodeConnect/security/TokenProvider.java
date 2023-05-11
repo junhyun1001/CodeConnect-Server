@@ -39,18 +39,12 @@ public class TokenProvider {
 
     // 토큰 디코딩
     public String validate(String token) {
-        try {
-            return Jwts.parserBuilder()
-                    .setSigningKey(SECRET_KEY)
-                    .build()
-                    .parseClaimsJws(token)
-                    .getBody()
-                    .getSubject();
-        } catch (Exception e) {
-            // 토큰 검증 실패 시 예외 발생
-            log.error(e.getMessage());
-            return null;
-        }
+        return Jwts.parserBuilder()
+                .setSigningKey(SECRET_KEY)
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .getSubject();
     }
 
 }

@@ -25,6 +25,7 @@ public class RecruitmentService {
 
     private final MemberRepository memberRepository;
     private final RecruitmentRepository recruitmentRepository;
+    private final ChatService chatService;
 
     // 게시글 쓰기
     public ResponseDto<Recruitment> createPost(CreateRecruitmentDto dto, String email) {
@@ -122,10 +123,6 @@ public class RecruitmentService {
             }
         }
 
-//        List<Recruitment> byTitleContainingOrContentContaining = recruitmentRepository.findByTitleContainingOrContentContaining(keyword, keyword);
-
-//        return ResponseDto.setSuccess("주소와 검색어 리스트 반환", byTitleContainingOrContentContaining);
-
     }
 
     // 게시글 수정 -> 게시글 id를 받아서 해당 게시글을 수정함(리스트로 여러개 있기 때문)
@@ -164,7 +161,7 @@ public class RecruitmentService {
     }
 
     // 스터디 참여 여부 처리
-    public ResponseDto<Integer> participate(String email, Long id, Boolean isParticipating) {
+    public ResponseDto<?> participate(String email, Long id, Boolean isParticipating) {
 
         if (email.isBlank()) {
             return ResponseDto.setFail("email이 빈칸 입니다.");
@@ -179,9 +176,7 @@ public class RecruitmentService {
     }
 
     // 참여 회원 추가
-    public ResponseDto<Integer> addMemberInPost(Recruitment recruitment, String email) {
-
-        log.info("참여 회원 추가 email:{}", email);
+    public ResponseDto<?> addMemberInPost(Recruitment recruitment, String email) {
 
         int count = recruitment.getCount();
         int currentCount = recruitment.getCurrentCount();
@@ -192,6 +187,10 @@ public class RecruitmentService {
 
         if (isParticipantExist(recruitment, email)) {
             return ResponseDto.setFail("이미 참여하였습니다.");
+        } else if (count - 1 == currentCount) {
+            ++currentCount;
+            updateMemberInPost(recruitment, email, currentCount, true);
+            return chatService.createOrGetChatRoom(recruitment);
         } else {
             ++currentCount;
             updateMemberInPost(recruitment, email, currentCount, true);

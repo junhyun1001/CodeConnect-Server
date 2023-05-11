@@ -1,5 +1,6 @@
 package CodeConnect.CodeConnect.domain.post;
 
+import CodeConnect.CodeConnect.domain.chat.ChatRoom;
 import CodeConnect.CodeConnect.domain.Member;
 import CodeConnect.CodeConnect.dto.post.recruitment.CreateRecruitmentDto;
 import CodeConnect.CodeConnect.dto.post.recruitment.UpdateRecruitmentDto;
@@ -43,6 +44,10 @@ public class Recruitment extends Post {
     private List<String> currentParticipantMemberList;
 
     private String field; // 관심분야
+
+    @OneToOne(mappedBy = "recruitment")
+    @JsonIgnore
+    private ChatRoom chatRoom;
 
     // 연관관계 메소드
     public void setMember(Member member) {

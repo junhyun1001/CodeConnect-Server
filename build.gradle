@@ -42,9 +42,10 @@ dependencies {
 	implementation 'io.jsonwebtoken:jjwt-jackson:0.11.3'
 
 	// websocket
-	implementation 'org.webjars:webjars-locator-core'
-	implementation 'org.webjars:sockjs-client:1.0.2'
-	implementation 'org.webjars:stomp-websocket:2.3.3'
+	implementation 'org.springframework.boot:spring-boot-starter-websocket'
+
+	// Swagger
+	implementation group: 'io.springfox', name: 'springfox-boot-starter', version: '3.0.0'
 
 	// Swagger
 	implementation group: 'io.springfox', name: 'springfox-boot-starter', version: '3.0.0'
