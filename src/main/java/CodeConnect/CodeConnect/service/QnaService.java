@@ -85,6 +85,7 @@ public class QnaService {
             if (validateMember2(email, Collections.singletonList(comment))) {
                 commentMap.put("commentId", comment.getCommentId());
                 commentMap.put("nickname", comment.getNickname());
+                commentMap.put("comment", comment.getComment());
                 commentMap.put("currentDateTime", comment.getCurrentDateTime());
                 commentMap.put("modifiedDateTime", comment.getModifiedDateTime());
                 commentMap.put("cocommentCount", comment.getCocommentCount());
@@ -94,6 +95,7 @@ public class QnaService {
             } else {
                 commentMap.put("commentId", comment.getCommentId());
                 commentMap.put("nickname", comment.getNickname());
+                commentMap.put("comment", comment.getComment());
                 commentMap.put("currentDateTime", comment.getCurrentDateTime());
                 commentMap.put("modifiedDateTime", comment.getModifiedDateTime());
                 commentMap.put("cocommentCount", comment.getCocommentCount());
