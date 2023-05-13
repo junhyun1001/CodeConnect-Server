@@ -10,14 +10,13 @@ import java.util.Set;
 import java.util.UUID;
 
 @Getter
-@Setter
 public class ChatRoomDto {
 
     private final Long roomId;
 
     private final String title;
 
-    private int currentCount;
+    private final int currentCount;
 
     private final String hostNickname;
 
