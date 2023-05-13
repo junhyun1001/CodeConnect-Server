@@ -1,9 +1,11 @@
 package CodeConnect.CodeConnect.service;
 
+import CodeConnect.CodeConnect.converter.EntityToDto;
 import CodeConnect.CodeConnect.domain.Member;
 import CodeConnect.CodeConnect.domain.post.Recruitment;
 import CodeConnect.CodeConnect.dto.ResponseDto;
 import CodeConnect.CodeConnect.dto.post.recruitment.CreateRecruitmentDto;
+import CodeConnect.CodeConnect.dto.post.recruitment.RecruitmentDto;
 import CodeConnect.CodeConnect.dto.post.recruitment.UpdateRecruitmentDto;
 import CodeConnect.CodeConnect.repository.MemberRepository;
 import CodeConnect.CodeConnect.repository.RecruitmentRepository;
@@ -28,7 +30,7 @@ public class RecruitmentService {
     private final ChatRoomService chatRoomService;
 
     // 게시글 쓰기
-    public ResponseDto<Recruitment> createPost(CreateRecruitmentDto dto, String email) {
+    public ResponseDto<RecruitmentDto> createPost(CreateRecruitmentDto dto, String email) {
 
         Member findMember = memberRepository.findByEmail(email); // 토큰에 포함된 email 값으로 회원 조회
         String nickname = findMember.getNickname();
@@ -41,22 +43,24 @@ public class RecruitmentService {
         findMember.setRecruitment(savedRecruitment); // 연관관계 메소드를 사용하여 회원 엔티티에 모집 게시글 엔티티를 설정해줌
 
         log.info("************************* {}회원 {}번 모집게시글 저장 *************************", email, savedRecruitment.getRecruitmentId());
-        return ResponseDto.setSuccess("게시글이 저장되었습니다.", savedRecruitment);
+        return ResponseDto.setSuccess("게시글이 저장되었습니다.", new RecruitmentDto(savedRecruitment));
     }
 
     // 게시글 전체 조회
     @Transactional(readOnly = true)
-    public ResponseDto<List<Recruitment>> getAllPosts() {
+    public ResponseDto<List<RecruitmentDto>> getAllPosts() {
 
         List<Recruitment> findAllRecruitments = recruitmentRepository.findAllByOrderByCurrentDateTimeDesc();
 
-        return ResponseDto.setSuccess("전체 리스트 조회", findAllRecruitments);
+        List<RecruitmentDto> recruitmentDtoList = EntityToDto.mapListToDto(findAllRecruitments, RecruitmentDto::new);
+
+        return ResponseDto.setSuccess("전체 리스트 조회", recruitmentDtoList);
 
     }
 
     // 주소, 관심분야 기준 게시글 조회 또는 주소 기준 검색
     @Transactional(readOnly = true)
-    public ResponseDto<List<Recruitment>> getPostsByAddressAndFieldOrSearchByAddress(String email, String searchAddress) {
+    public ResponseDto<List<RecruitmentDto>> getPostsByAddressAndFieldOrSearchByAddress(String email, String searchAddress) {
         // 글을 작성한 회원의 정보
         Member findMember = memberRepository.findByEmail(email);
         String address = findMember.getAddress();
@@ -70,7 +74,10 @@ public class RecruitmentService {
         } else {
             recruitmentList = recruitmentRepository.findByAddressAndFieldInOrderByCurrentDateTimeDesc(address, fieldList);
         }
-        return ResponseDto.setSuccess("글 불러오기 성공", recruitmentList);
+
+        List<RecruitmentDto> recruitmentDtoList = EntityToDto.mapListToDto(recruitmentList, RecruitmentDto::new);
+
+        return ResponseDto.setSuccess("글 불러오기 성공", recruitmentDtoList);
 
     }
 
@@ -104,30 +111,34 @@ public class RecruitmentService {
 
     // 게시글 내용, 주소 동시 검색
     @Transactional(readOnly = true)
-    public ResponseDto<List<Recruitment>> getContentBySearch(String keyword, String searchAddress) {
+    public ResponseDto<List<RecruitmentDto>> getContentBySearch(String keyword, String searchAddress) {
+
+        List<Recruitment> searchList;
 
         if (searchAddress == null || searchAddress.isEmpty()) {
             // 주소 검색이 없고 검색어가 있는 경우
-            List<Recruitment> byTitleContainingOrContentContaining = recruitmentRepository.findByTitleContainingOrContentContaining(keyword, keyword);
-            return ResponseDto.setSuccess("주소x 검색o", byTitleContainingOrContentContaining);
+            searchList = recruitmentRepository.findByTitleContainingOrContentContaining(keyword, keyword);
         } else {
             // 주소 검색이 있는 경우
             if (keyword == null || keyword.isEmpty()) {
                 // 검색어가 없는 경우
-                List<Recruitment> byAddressOrderByCurrentDateTimeDesc = recruitmentRepository.findByAddressOrderByCurrentDateTimeDesc(searchAddress);
-                return ResponseDto.setSuccess("주소o 검색x", byAddressOrderByCurrentDateTimeDesc);
+                searchList = recruitmentRepository.findByAddressOrderByCurrentDateTimeDesc(searchAddress);
             } else {
                 // 검색어가 있는 경우
-                List<Recruitment> byAddressAndTitleContainingOrContentContaining = recruitmentRepository.findByAddressAndTitleContainingOrAddressAndContentContaining(searchAddress, keyword, searchAddress, keyword);
-                return ResponseDto.setSuccess("주소o 검색o", byAddressAndTitleContainingOrContentContaining);
+                searchList = recruitmentRepository.findByAddressAndTitleContainingOrAddressAndContentContaining(searchAddress, keyword, searchAddress, keyword);
             }
         }
 
+        List<RecruitmentDto> recruitmentDtoList = EntityToDto.mapListToDto(searchList, RecruitmentDto::new);
+
+        String successMessage = (searchAddress == null || searchAddress.isEmpty()) ? "주소x 검색o" : "주소o 검색" + ((keyword == null || keyword.isEmpty()) ? "x" : "o");
+        return ResponseDto.setSuccess(successMessage, recruitmentDtoList);
     }
+
 
     // 게시글 수정 -> 게시글 id를 받아서 해당 게시글을 수정함(리스트로 여러개 있기 때문)
     // 토큰 값이랑 현재 회원이랑 같은지 판단 해야됨
-    public ResponseDto<Recruitment> editPost(UpdateRecruitmentDto dto, Long id, String email) {
+    public ResponseDto<RecruitmentDto> editPost(UpdateRecruitmentDto dto, Long id, String email) {
 
         // 해당 게시글을 id로 조회함
         Recruitment recruitment = validateExistPost(id);
@@ -141,8 +152,10 @@ public class RecruitmentService {
 
         recruitmentRepository.save(recruitment);
 
+        RecruitmentDto recruitmentDto = new RecruitmentDto(recruitment);
+
         log.info("************************* {}의 {}번 모집게시글이 수정되었습니다. *************************", email, recruitment.getRecruitmentId());
-        return ResponseDto.setSuccess("게시글이 수정되었습니다.", recruitment);
+        return ResponseDto.setSuccess("게시글이 수정되었습니다.", recruitmentDto);
     }
 
     // 게시글 삭제
