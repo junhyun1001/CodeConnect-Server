@@ -24,7 +24,6 @@ import java.util.List;
 @Table(name = "Member") // Entity와 매핑할 테이블 지정
 @Getter
 @Setter
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class Member {

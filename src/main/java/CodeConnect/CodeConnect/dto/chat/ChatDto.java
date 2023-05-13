@@ -18,7 +18,7 @@ public class ChatDto {
 
     private String message;
 
-    private String currentDateTime;
+    private String currentDateTime = changeDateTimeFormat(LocalDateTime.now());
 
     public String changeDateTimeFormat(LocalDateTime dateTime) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yy/MM/dd HH:mm:ss");

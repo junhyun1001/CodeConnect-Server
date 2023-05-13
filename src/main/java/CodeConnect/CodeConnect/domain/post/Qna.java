@@ -14,7 +14,6 @@ import java.util.List;
 @Table(name = "Qna")
 @Getter
 @Setter
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 

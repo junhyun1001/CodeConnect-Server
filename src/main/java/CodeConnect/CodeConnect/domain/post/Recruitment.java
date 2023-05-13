@@ -16,7 +16,6 @@ import java.util.List;
 @Table(name = "Recruitment")
 @Getter
 @Setter
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Slf4j
@@ -60,7 +59,6 @@ public class Recruitment extends Post {
         super.title = dto.getTitle();
         super.content = dto.getContent();
         super.nickname = nickname;
-        this.currentCount = 0;
         super.setCurrentDateTime(changeDateTimeFormat(LocalDateTime.now()));
         this.address = address;
         this.count = dto.getCount();

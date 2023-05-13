@@ -77,7 +77,7 @@ public class QnaService {
             log.info("************************* GUEST로 게시글 조회 *************************");
         }
 
-        // comment를 하나씩 검사하여 ROLE을 지정하고 qnaMap에 put
+// comment를 하나씩 검사하여 ROLE을 지정하고 qnaMap에 put
         List<Map<String, Object>> commentHostList = new ArrayList<>();
         List<Map<String, Object>> commentGuestList = new ArrayList<>();
         for (Comment comment : comments) {
