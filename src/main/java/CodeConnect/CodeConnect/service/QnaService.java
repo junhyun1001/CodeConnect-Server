@@ -58,7 +58,7 @@ public class QnaService {
     //상세조회
     public ResponseDto<Map<Role, Object>> findOne(Long qnaId, String email) {
         Qna qna = qnaRepository.findById(qnaId).orElseThrow(NullPointerException::new);
-        List<Comment> comments = commentRepository.findByQna(qna);
+        List<Comment> comments = commentRepository.findAllByQnaOrderByCurrentDateTimeDesc(qna);
 
         Optional<Member> optionalMember = memberRepository.findById(email);
         if (optionalMember.isEmpty()) {
