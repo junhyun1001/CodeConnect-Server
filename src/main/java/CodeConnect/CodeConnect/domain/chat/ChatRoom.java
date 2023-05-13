@@ -1,21 +1,16 @@
 package CodeConnect.CodeConnect.domain.chat;
 
 import CodeConnect.CodeConnect.domain.post.Recruitment;
-import CodeConnect.CodeConnect.dto.chat.ChatDto;
-import CodeConnect.CodeConnect.service.ChatService;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.web.socket.WebSocketSession;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @Table(name = "Chat_Room")
@@ -30,6 +25,8 @@ public class ChatRoom {
 
     private String title; // 방 제목
 
+    private int currentCount; // 참여인원 수
+
     private String hostNickname; // 방장
 
     private String currentDateTime; // 방 생성 시간
@@ -39,14 +36,22 @@ public class ChatRoom {
     @JsonIgnore
     private Recruitment recruitment; // 게시글 정보
 
-    @OneToMany(mappedBy = "chatRoom", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "chatRoom", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<Chat> chatList = new ArrayList<>();
+
+    @ElementCollection
+    @CollectionTable(joinColumns = @JoinColumn(name = "room_id"))
+    @JsonIgnore
+    private List<String> currentParticipantMemberList;
 
     public ChatRoom(Recruitment recruitment) {
         this.recruitment = recruitment;
         this.title = recruitment.getTitle();
         this.hostNickname = recruitment.getNickname();
         this.currentDateTime = changeDateTimeFormat(LocalDateTime.now());
+        this.currentParticipantMemberList = new ArrayList<>(recruitment.getCurrentParticipantMemberList());
+        this.currentCount = currentParticipantMemberList.size();
     }
 
     public String changeDateTimeFormat(LocalDateTime dateTime) {
