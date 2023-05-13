@@ -11,4 +11,5 @@ import java.util.List;
 public interface CommentRepository extends JpaRepository<Comment, Long> {
 
     List<Comment> findByQna(Qna qna);
+    List<Comment> findAllByQnaOrderByCurrentDateTimeDesc(Qna qna);
 }

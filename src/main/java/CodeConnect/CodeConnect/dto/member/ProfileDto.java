@@ -5,9 +5,7 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
 import javax.validation.constraints.Email;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
@@ -17,10 +15,6 @@ import java.util.List;
 public class ProfileDto {
     @Email
     private String email;
-
-//    private String password;
-//
-//    private String passwordCheck;
 
     private String nickname;
 
