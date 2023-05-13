@@ -72,7 +72,7 @@ public class MemberService {
         // 회원 객체 DB 저장
         Member savedMember = memberRepository.save(member);
 
-        log.info("************************* 회원가입 성공 {} *************************", savedMember.getEmail());
+        log.info("************************* {} 회원가입 성공 *************************", savedMember.getEmail());
         return ResponseDto.setSuccess("회원가입 성공", savedMember);
 
     }

@@ -1,6 +1,8 @@
 package CodeConnect.CodeConnect.filter;
 
+import CodeConnect.CodeConnect.dto.ResponseDto;
 import CodeConnect.CodeConnect.security.TokenProvider;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
@@ -51,6 +53,20 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
             securityContext.setAuthentication(authenticationToken);
             SecurityContextHolder.setContext(securityContext);
+
+            // 오류 응답 객체 생성 및 데이터 설정
+            ObjectMapper objectMapper = new ObjectMapper();
+
+            // 오류 응답 객체를 JSON으로 변환
+            String jsonResponse = objectMapper.writeValueAsString(ResponseDto.setFail("유효하지 않은 토큰입니다."));
+
+            // 응답 객체를 설정
+            response.setContentType("application/json;charset=UTF-8");
+            response.getWriter().write(jsonResponse);
+            response.getWriter().flush();
+            response.getWriter().close();
+
+            return;
         }
 
         filterChain.doFilter(request, response);

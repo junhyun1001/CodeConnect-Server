@@ -25,7 +25,7 @@ public class RecruitmentService {
 
     private final MemberRepository memberRepository;
     private final RecruitmentRepository recruitmentRepository;
-    private final ChatService chatService;
+    private final ChatRoomService chatRoomService;
 
     // 게시글 쓰기
     public ResponseDto<Recruitment> createPost(CreateRecruitmentDto dto, String email) {
@@ -40,7 +40,7 @@ public class RecruitmentService {
 
         findMember.setRecruitment(savedRecruitment); // 연관관계 메소드를 사용하여 회원 엔티티에 모집 게시글 엔티티를 설정해줌
 
-        log.info("{}회원 {}번 게시글 저장", email, savedRecruitment.getRecruitmentId());
+        log.info("************************* {}회원 {}번 모집게시글 저장 *************************", email, savedRecruitment.getRecruitmentId());
         return ResponseDto.setSuccess("게시글이 저장되었습니다.", savedRecruitment);
     }
 
@@ -65,7 +65,7 @@ public class RecruitmentService {
         List<Recruitment> recruitmentList;
 
         // 주소 검색이 있을 때와 없을 때
-        if (searchAddress != null && !searchAddress.isEmpty()) {
+        if (searchAddress != null) {
             recruitmentList = recruitmentRepository.findByAddressOrderByCurrentDateTimeDesc(searchAddress);
         } else {
             recruitmentList = recruitmentRepository.findByAddressAndFieldInOrderByCurrentDateTimeDesc(address, fieldList);
@@ -92,11 +92,11 @@ public class RecruitmentService {
             boolean participantExist = isParticipantExist(recruitment, email);
             recruitmentMap.put(Role.GUEST, recruitment);
             recruitmentMap.put(Role.PARTICIPATION, participantExist);
-            log.info("************************* GUEST로 게시글 조회 *************************");
+            log.info("************************* GUEST로 {}번 모집게시글 조회 *************************", recruitment.getRecruitmentId());
             return ResponseDto.setSuccess("GUEST 게시글 조회", recruitmentMap);
         } else {
             recruitmentMap.put(Role.HOST, recruitment);
-            log.info("************************* HOST로 게시글 조회 *************************");
+            log.info("************************* HOST로 {}번 모집게시글 조회 *************************", recruitment.getRecruitmentId());
             return ResponseDto.setSuccess("HOST 게시글 조회", recruitmentMap);
         }
 
@@ -134,14 +134,14 @@ public class RecruitmentService {
 
         // 회원 검증
         if (validateMember(email, recruitment))
-            return ResponseDto.setFail("해당 게시글의 수정 권한이 없습니다.");
+            return ResponseDto.setFail("해당 모집게시글의 수정 권한이 없습니다.");
 
         // 해당 게시글을 업데이트 시킴
         recruitment.updatePost(dto);
 
         recruitmentRepository.save(recruitment);
 
-        log.info("************************* {}의 {}번 게시글이 수정되었습니다. *************************", email, recruitment.getRecruitmentId());
+        log.info("************************* {}의 {}번 모집게시글이 수정되었습니다. *************************", email, recruitment.getRecruitmentId());
         return ResponseDto.setSuccess("게시글이 수정되었습니다.", recruitment);
     }
 
@@ -156,7 +156,7 @@ public class RecruitmentService {
 
         recruitmentRepository.delete(recruitment);
 
-        log.info("************************* {}의 {}번 게시글이 삭제되었습니다. *************************", email, recruitment.getRecruitmentId());
+        log.info("************************* {}의 {}번 모집게시글이 삭제되었습니다. *************************", email, recruitment.getRecruitmentId());
         return ResponseDto.setSuccess("게시글이 삭제되었습니다.", null);
     }
 
@@ -182,32 +182,47 @@ public class RecruitmentService {
         int currentCount = recruitment.getCurrentCount();
 
         if (count == currentCount) {
+            log.info("************************* {}번 모집게시글 더 이상 참여 불가 *************************", recruitment.getRecruitmentId());
             return ResponseDto.setSuccess("더 이상 참여할 수 없습니다.", -1);
         }
 
         if (isParticipantExist(recruitment, email)) {
+            log.info("************************* {}회원, {}번 모집게시글은 이미 참여한 게시글 *************************", recruitment.getRecruitmentId(), email);
             return ResponseDto.setFail("이미 참여하였습니다.");
         } else if (count - 1 == currentCount) {
             ++currentCount;
             updateMemberInPost(recruitment, email, currentCount, true);
-            return chatService.createOrGetChatRoom(recruitment);
+            log.info("************************* {}회원, {}번 모집게시글은 마지막 회원 참여 *************************", recruitment.getRecruitmentId(), email);
+            return chatRoomService.createOrGetChatRoom(recruitment);
         } else {
             ++currentCount;
             updateMemberInPost(recruitment, email, currentCount, true);
+            log.info("************************* {}회원, {}번 모집게시글 인원 추가 *************************", recruitment.getRecruitmentId(), email);
             return ResponseDto.setSuccess("인원이 추가되었습니다.", currentCount);
         }
+
     }
 
     // 참여 회원 삭제
-    public ResponseDto<Integer> subtractMemberInPost(Recruitment recruitment, String email) {
+    public ResponseDto<Object> subtractMemberInPost(Recruitment recruitment, String email) {
 
+        int count = recruitment.getCount();
         int currentCount = recruitment.getCurrentCount();
+
+        if (count == currentCount) {
+            log.info("************************* {}번 모집게시글 모집 완료 *************************", recruitment.getRecruitmentId());
+            return ResponseDto.setSuccess("모집이 완료되었습니다.", -1);
+        }
 
         if (isParticipantExist(recruitment, email)) {
             --currentCount;
             updateMemberInPost(recruitment, email, currentCount, false);
+            log.info("************************* {}회원, {}번 모집게시글 참여 취소 *************************", recruitment.getRecruitmentId(), email);
             return ResponseDto.setSuccess("취소되었습니다.", currentCount);
-        } else return ResponseDto.setFail("이미 취소하였거나 참여하지 않았습니다.");
+        } else {
+            log.info("************************* {}회원, {}번 모집게시글은 이미 취소하거나 참여하지 않음 *************************", recruitment.getRecruitmentId(), email);
+            return ResponseDto.setFail("이미 취소하였거나 참여하지 않았습니다.");
+        }
     }
 
     // 참여 회원 정보 업데이트
