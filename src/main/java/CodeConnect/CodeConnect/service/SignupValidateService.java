@@ -1,6 +1,6 @@
 package CodeConnect.CodeConnect.service;
 
-import CodeConnect.CodeConnect.domain.Member;
+import CodeConnect.CodeConnect.domain.member.Member;
 import CodeConnect.CodeConnect.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

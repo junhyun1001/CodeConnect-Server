@@ -1,6 +1,6 @@
 package CodeConnect.CodeConnect.domain.post;
 
-import CodeConnect.CodeConnect.domain.Member;
+import CodeConnect.CodeConnect.domain.member.Member;
 import CodeConnect.CodeConnect.dto.post.qna.QnaRequestDto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;

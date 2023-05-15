@@ -1,11 +1,11 @@
 package CodeConnect.CodeConnect.controller;
 
-import CodeConnect.CodeConnect.domain.Member;
+import CodeConnect.CodeConnect.domain.member.Member;
 import CodeConnect.CodeConnect.dto.ResponseDto;
-import CodeConnect.CodeConnect.dto.member.UpdateMemberDto;
 import CodeConnect.CodeConnect.dto.member.SignInRequestDto;
 import CodeConnect.CodeConnect.dto.member.SignInResponseDto;
 import CodeConnect.CodeConnect.dto.member.SignUpRequestDto;
+import CodeConnect.CodeConnect.dto.member.UpdateMemberDto;
 import CodeConnect.CodeConnect.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;

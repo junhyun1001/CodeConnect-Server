@@ -1,6 +1,6 @@
 package CodeConnect.CodeConnect.dto.member;
 
-import CodeConnect.CodeConnect.domain.Member;
+import CodeConnect.CodeConnect.domain.member.Member;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

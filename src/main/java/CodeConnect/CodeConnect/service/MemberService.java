@@ -1,6 +1,6 @@
 package CodeConnect.CodeConnect.service;
 
-import CodeConnect.CodeConnect.domain.Member;
+import CodeConnect.CodeConnect.domain.member.Member;
 import CodeConnect.CodeConnect.dto.ResponseDto;
 import CodeConnect.CodeConnect.dto.member.SignInRequestDto;
 import CodeConnect.CodeConnect.dto.member.SignInResponseDto;
