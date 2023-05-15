@@ -37,7 +37,7 @@ public class MemberController {
      */
 
     @PutMapping("/update")
-    public ResponseDto<Member> update(@RequestBody UpdateMemberDto updateDto, @AuthenticationPrincipal String email) {
+    public ResponseDto<UpdateMemberDto> update(@RequestBody UpdateMemberDto updateDto, @AuthenticationPrincipal String email) {
         return memberService.updateMember(updateDto, email);
     }
 
