@@ -1,4 +1,4 @@
-package CodeConnect.CodeConnect.domain;
+package CodeConnect.CodeConnect.domain.member;
 
 import CodeConnect.CodeConnect.converter.FieldConverter;
 import CodeConnect.CodeConnect.domain.post.Cocomment;

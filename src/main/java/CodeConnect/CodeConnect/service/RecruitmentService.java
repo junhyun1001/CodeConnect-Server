@@ -1,7 +1,7 @@
 package CodeConnect.CodeConnect.service;
 
 import CodeConnect.CodeConnect.converter.EntityToDto;
-import CodeConnect.CodeConnect.domain.Member;
+import CodeConnect.CodeConnect.domain.member.Member;
 import CodeConnect.CodeConnect.domain.post.Recruitment;
 import CodeConnect.CodeConnect.dto.ResponseDto;
 import CodeConnect.CodeConnect.dto.post.recruitment.CreateRecruitmentDto;
@@ -25,6 +25,7 @@ import java.util.Optional;
 @Slf4j
 public class RecruitmentService {
 
+    private final MemberService memberService;
     private final MemberRepository memberRepository;
     private final RecruitmentRepository recruitmentRepository;
     private final ChatRoomService chatRoomService;
@@ -32,18 +33,19 @@ public class RecruitmentService {
     // 게시글 쓰기
     public ResponseDto<RecruitmentDto> createPost(CreateRecruitmentDto dto, String email) {
 
-        Member findMember = memberRepository.findByEmail(email); // 토큰에 포함된 email 값으로 회원 조회
-        String nickname = findMember.getNickname();
-        String address = findMember.getAddress();
+        Member member = memberService.validateExistMember(email);
+        String nickname = member.getNickname();
+        String address = member.getAddress();
 
         Recruitment recruitment = new Recruitment(dto, nickname, address); // 받아온 게시글 데이터로 게시글 생성
 
-        Recruitment savedRecruitment = recruitmentRepository.save(recruitment); // 게시글 영속화
+        recruitmentRepository.save(recruitment); // 게시글 영속화
 
-        findMember.setRecruitment(savedRecruitment); // 연관관계 메소드를 사용하여 회원 엔티티에 모집 게시글 엔티티를 설정해줌
+        member.setRecruitment(recruitment); // 연관관계 메소드를 사용하여 회원 엔티티에 모집 게시글 엔티티를 설정해줌
 
-        log.info("************************* {}회원 {}번 모집게시글 저장 *************************", email, savedRecruitment.getRecruitmentId());
-        return ResponseDto.setSuccess("게시글이 저장되었습니다.", new RecruitmentDto(savedRecruitment));
+        log.info("************************* {}회원 {}번 모집게시글 저장 *************************", email, recruitment.getRecruitmentId());
+        return ResponseDto.setSuccess("게시글이 저장되었습니다.", new RecruitmentDto(recruitment));
+
     }
 
     // 게시글 전체 조회
@@ -62,9 +64,9 @@ public class RecruitmentService {
     @Transactional(readOnly = true)
     public ResponseDto<List<RecruitmentDto>> getPostsByAddressAndFieldOrSearchByAddress(String email, String searchAddress) {
         // 글을 작성한 회원의 정보
-        Member findMember = memberRepository.findByEmail(email);
-        String address = findMember.getAddress();
-        List<String> fieldList = findMember.getFieldList();
+        Member member = memberService.validateExistMember(email);
+        String address = member.getAddress();
+        List<String> fieldList = member.getFieldList();
 
         List<Recruitment> recruitmentList;
 
@@ -85,17 +87,14 @@ public class RecruitmentService {
     @Transactional(readOnly = true)
     public ResponseDto<Map<Role, Object>> getPost(String email, Long id) {
 
-        Optional<Member> optionalMember = memberRepository.findById(email);
-        if (optionalMember.isEmpty()) {
-            return ResponseDto.setFail("존재하지 않는 회원입니다.");
-        }
+        memberService.validateExistMember(email);
 
         Recruitment recruitment = validateExistPost(id);
 
         // 회원 검증 후 내 게시글이면 HOST, 아니면 GUEST
         // 조회 할 시점에 참여된 회원인지 아닌지 판별 할 수 있어야 함
         Map<Role, Object> recruitmentMap = new HashMap<>();
-        if (validateMember(email, recruitment)) { // false 값이 반환 될 때
+        if (validateAuthorizedMember(email, recruitment)) { // false 값이 반환 될 때
             boolean participantExist = isParticipantExist(recruitment, email);
             recruitmentMap.put(Role.GUEST, recruitment);
             recruitmentMap.put(Role.PARTICIPATION, participantExist);
@@ -140,11 +139,13 @@ public class RecruitmentService {
     // 토큰 값이랑 현재 회원이랑 같은지 판단 해야됨
     public ResponseDto<RecruitmentDto> editPost(UpdateRecruitmentDto dto, Long id, String email) {
 
+        memberService.validateExistMember(email);
+
         // 해당 게시글을 id로 조회함
         Recruitment recruitment = validateExistPost(id);
 
-        // 회원 검증
-        if (validateMember(email, recruitment))
+        // 회원 권한 검증
+        if (validateAuthorizedMember(email, recruitment))
             return ResponseDto.setFail("해당 모집게시글의 수정 권한이 없습니다.");
 
         // 해당 게시글을 업데이트 시킴
@@ -161,10 +162,12 @@ public class RecruitmentService {
     // 게시글 삭제
     public ResponseDto<String> deletePost(String email, Long id) {
 
+        memberService.validateExistMember(email);
+
         Recruitment recruitment = validateExistPost(id);
 
         // 회원 검증
-        if (validateMember(email, recruitment))
+        if (validateAuthorizedMember(email, recruitment))
             return ResponseDto.setFail("해당 게시글의 삭제 권한이 없습니다.");
 
         recruitmentRepository.delete(recruitment);
@@ -176,9 +179,7 @@ public class RecruitmentService {
     // 스터디 참여 여부 처리
     public ResponseDto<?> participate(String email, Long id, Boolean isParticipating) {
 
-        if (email.isBlank()) {
-            return ResponseDto.setFail("email이 빈칸 입니다.");
-        }
+        memberService.validateExistMember(email);
 
         Recruitment recruitment = validateExistPost(id);
 
@@ -218,6 +219,8 @@ public class RecruitmentService {
 
     // 참여 회원 삭제
     public ResponseDto<Object> subtractMemberInPost(Recruitment recruitment, String email) {
+
+        memberService.validateExistMember(email);
 
         int count = recruitment.getCount();
         int currentCount = recruitment.getCurrentCount();
@@ -260,7 +263,7 @@ public class RecruitmentService {
     }
 
     // 게시글 수정, 삭제 하려는 회원이 현재 로그인 된 회원의 email과 게시글의 email이 같은지 확인함
-    private boolean validateMember(String email, Recruitment recruitment) {
+    private boolean validateAuthorizedMember(String email, Recruitment recruitment) {
         // 회원
         Member findMember = memberRepository.findByEmail(email);
         String memberEmail = findMember.getEmail();
