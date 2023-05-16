@@ -51,7 +51,7 @@ public class ChatRoom {
         this.hostNickname = recruitment.getNickname();
         this.currentDateTime = changeDateTimeFormat(LocalDateTime.now());
         this.currentParticipantMemberList = new ArrayList<>(recruitment.getCurrentParticipantMemberList());
-        this.currentCount = currentParticipantMemberList.size();
+        this.currentCount = recruitment.getCurrentCount();
     }
 
     public String changeDateTimeFormat(LocalDateTime dateTime) {

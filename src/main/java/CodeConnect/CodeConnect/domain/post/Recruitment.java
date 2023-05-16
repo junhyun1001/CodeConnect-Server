@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -40,7 +41,7 @@ public class Recruitment extends Post {
     @ElementCollection
     @CollectionTable(joinColumns = @JoinColumn(name = "recruitment_id"))
     @JsonIgnore
-    private List<String> currentParticipantMemberList;
+    private List<String> currentParticipantMemberList = new ArrayList<>();
 
     private String field; // 관심분야
 
