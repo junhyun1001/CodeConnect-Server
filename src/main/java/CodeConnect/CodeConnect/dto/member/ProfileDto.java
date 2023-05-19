@@ -1,6 +1,7 @@
 package CodeConnect.CodeConnect.dto.member;
 
 import CodeConnect.CodeConnect.domain.member.Member;
+import CodeConnect.CodeConnect.service.Role;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,6 +22,8 @@ public class ProfileDto {
     private String address;
 
     private List<String> fieldList;
+
+    private Role role;
 
     public ProfileDto(Member member){
         this.email = member.getEmail();

@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
@@ -21,6 +22,11 @@ public class ProfileController {
     @GetMapping("/profile")
     public ResponseDto<List<ProfileDto>> getProfile(@AuthenticationPrincipal String email){
         return profileService.showProfile(email);
+    }
+
+    @GetMapping("/profile/{nickname}")
+    public ResponseDto<Object> getProfile(@AuthenticationPrincipal String email, @PathVariable String nickname){
+        return profileService.showProfile(email, nickname);
     }
 
 }

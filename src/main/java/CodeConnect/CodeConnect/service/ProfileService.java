@@ -26,4 +26,26 @@ public class ProfileService {
             return ResponseDto.setFail("회원을 찾을 수 없습니다.");
         }
     }
+
+    public ResponseDto<Object> showProfile(String email, String nickname) {
+        Member findMember = memberRepository.findByEmail(email);
+        String findMemberNickname = findMember.getNickname();
+
+        if (findMemberNickname.equals(nickname)) {
+            ProfileDto profileDto = new ProfileDto(findMember);
+            profileDto.setRole(Role.HOST);
+
+            return ResponseDto.setSuccess("본인 프로필 조회 성공", profileDto);
+        } else {
+            Member otherMember = memberRepository.findByNickname(nickname);
+            if (otherMember != null) {
+                ProfileDto otherProfileDto = new ProfileDto(otherMember);
+                otherProfileDto.setRole(Role.GUEST);
+
+                return ResponseDto.setSuccess("다른 사용자 프로필 조회 성공", otherProfileDto);
+            } else {
+                return ResponseDto.setFail("사용자를 찾을 수 없습니다.");
+            }
+        }
+    }
 }
