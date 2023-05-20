@@ -26,8 +26,6 @@ public class ProfileDto {
     private List<String> fieldList;
     private Role role;
 
-//    private List<RecruitmentDto> recruitmentsList;
-//    private List<QnaRequestDto> qnaList;
 
     public ProfileDto(Member member){
         this.email = member.getEmail();
@@ -36,11 +34,4 @@ public class ProfileDto {
         this.fieldList = member.getFieldList();
     }
 
-//    public void setQnaList(List<QnaRequestDto> qnaDtoList) {
-//        this.qnaList=qnaDtoList;
-//    }
-//
-//    public void setRecruitmentList(List<RecruitmentDto> recruitmentDtoList) {
-//        this.recruitmentsList = recruitmentDtoList;
-//    }
 }

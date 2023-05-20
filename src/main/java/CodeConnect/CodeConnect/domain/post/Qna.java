@@ -48,6 +48,7 @@ public class Qna extends Post {
     @JsonIgnore
     private final List<Comment> comments = new ArrayList<>();
 
+
     public Qna(QnaRequestDto dto,String nickname, String title, String content){
         super.title = title;
         super.nickname = nickname;

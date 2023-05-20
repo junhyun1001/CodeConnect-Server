@@ -29,8 +29,6 @@ public class QnaService {
 
     private final CommentRepository commentRepository;
 
-
-
     @Transactional
     public ResponseDto<Qna> writeQna(QnaRequestDto dto, String email) {
 
@@ -38,6 +36,8 @@ public class QnaService {
         String nickname = findMember.getNickname();
         String title = dto.getTitle();
         String content = dto.getContent();
+
+
 
         Qna qna = new Qna(dto, nickname, title, content);
         qna.setTitle(title);
