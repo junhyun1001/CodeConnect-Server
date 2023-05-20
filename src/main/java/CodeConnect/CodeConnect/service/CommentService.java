@@ -1,6 +1,6 @@
 package CodeConnect.CodeConnect.service;
 
-import CodeConnect.CodeConnect.domain.Member;
+import CodeConnect.CodeConnect.domain.member.Member;
 import CodeConnect.CodeConnect.domain.post.Comment;
 import CodeConnect.CodeConnect.domain.post.Qna;
 import CodeConnect.CodeConnect.dto.ResponseDto;
@@ -10,8 +10,11 @@ import CodeConnect.CodeConnect.repository.MemberRepository;
 import CodeConnect.CodeConnect.repository.QnaRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.Hibernate;
 import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -36,7 +39,7 @@ public class CommentService {
 
         Optional<Qna> optionalQna = qnaRepository.findById(qnaId);
         if (optionalQna.isEmpty()) {
-            return null;
+            return ResponseDto.setFail("존재하지 않는 Qna입니다.");
         }
         Qna qna = optionalQna.get();
 
@@ -82,13 +85,17 @@ public class CommentService {
     }
 
     //댓글 삭제
+    @Transactional
     public ResponseDto<String> deleteComment(Long commentId, String email){
 
         Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new NoSuchElementException("댓글이 존재하지 않습니다"));
         if (validateMember(email, comment))
             return ResponseDto.setFail("접근 권한이 없습니다");
-        commentRepository.delete(comment);
 
+        Qna qna = qnaRepository.findById(comment.getQna().getQnaId()).orElseThrow(() -> new NoSuchElementException("Qna가 존재하지 않습니다"));
+        qna.setCommentCount(qna.getCommentCount()-1);
+
+        commentRepository.delete(comment);
         return ResponseDto.setSuccess("댓글 삭제 성공", null);
     }
 
@@ -97,7 +104,10 @@ public class CommentService {
         Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new NoSuchElementException("댓글이 존재하지 않습니다"));
         if (validateMember(email, comment))
             return ResponseDto.setFail("접근 권한이 없습니다");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yy/MM/dd HH:mm:ss");
+        comment.setModifiedDateTime(LocalDateTime.now().format(formatter));
         comment.setComment(comments);
+
         return ResponseDto.setSuccess("댓글 수정 성공", comment);
     }
 

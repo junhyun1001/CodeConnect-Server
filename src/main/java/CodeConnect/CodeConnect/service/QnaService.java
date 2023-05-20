@@ -1,6 +1,6 @@
 package CodeConnect.CodeConnect.service;
 
-import CodeConnect.CodeConnect.domain.Member;
+import CodeConnect.CodeConnect.domain.member.Member;
 import CodeConnect.CodeConnect.domain.post.Comment;
 import CodeConnect.CodeConnect.domain.post.Qna;
 import CodeConnect.CodeConnect.dto.ResponseDto;
@@ -11,8 +11,10 @@ import CodeConnect.CodeConnect.repository.QnaRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -28,6 +30,7 @@ public class QnaService {
     private final CommentRepository commentRepository;
 
 
+
     @Transactional
     public ResponseDto<Qna> writeQna(QnaRequestDto dto, String email) {
 
@@ -41,7 +44,9 @@ public class QnaService {
         qna.setNickname(nickname);
         qna.setContent(content);
 
-        findMember.setQnas(qna);
+
+
+        findMember.setQna(qna);
 
         Qna saveQna = qnaRepository.save(qna);
 
@@ -50,6 +55,7 @@ public class QnaService {
 
 
     //q&a 들어갔을때 전체 조회
+    @Transactional
     public ResponseDto<List<Qna>> findQna() {
         List<Qna> qnaList = qnaRepository.findAllByOrderByCurrentDateTimeDesc();
         return ResponseDto.setSuccess("QnA 전체 글 조회 성공", qnaList);
@@ -77,7 +83,7 @@ public class QnaService {
             log.info("************************* GUEST로 게시글 조회 *************************");
         }
 
-        // comment를 하나씩 검사하여 ROLE을 지정하고 qnaMap에 put
+// comment를 하나씩 검사하여 ROLE을 지정하고 qnaMap에 put
         List<Map<String, Object>> commentHostList = new ArrayList<>();
         List<Map<String, Object>> commentGuestList = new ArrayList<>();
         for (Comment comment : comments) {
@@ -140,6 +146,7 @@ public class QnaService {
         qna.setContent(content); //Dirty Checking
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yy/MM/dd HH:mm");
         qna.setModifiedDateTime(String.valueOf(LocalDateTime.now().format(formatter)));
+
         return ResponseDto.setSuccess("업데이트 성공", qna);
     }
 
@@ -176,5 +183,6 @@ public class QnaService {
         }
         return false; // COMMENT_GUEST
     }
+
 
 }

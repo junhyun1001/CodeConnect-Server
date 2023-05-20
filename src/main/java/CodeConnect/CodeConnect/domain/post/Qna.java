@@ -1,9 +1,10 @@
 package CodeConnect.CodeConnect.domain.post;
 
-import CodeConnect.CodeConnect.domain.Member;
+import CodeConnect.CodeConnect.domain.member.Member;
 import CodeConnect.CodeConnect.dto.post.qna.QnaRequestDto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -14,7 +15,6 @@ import java.util.List;
 @Table(name = "Qna")
 @Getter
 @Setter
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 
@@ -27,7 +27,7 @@ public class Qna extends Post {
     /**
      * 작성자 정보에 대한 매핑 정보를 통해 작성자(Member) 엔티티를 참조할 수 있다.
      */
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "email")
     @JsonIgnore
     private Member member;
@@ -55,6 +55,7 @@ public class Qna extends Post {
         this.commentCount = dto.getCommentCount();
         super.setCurrentDateTime(changeDateTimeFormat(LocalDateTime.now()));
     }
+
 
 
 }

@@ -1,16 +1,13 @@
 package CodeConnect.CodeConnect.dto.post.recruitment;
 
-import CodeConnect.CodeConnect.domain.post.Post;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
-public class CreateRecruitmentDto extends Post {
+public class CreateRecruitmentDto {
+
+    private String title; // 제목
+
+    private String content; // 내용
 
     private int count; // 인원수
 

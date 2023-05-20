@@ -1,6 +1,6 @@
 package CodeConnect.CodeConnect.domain.post;
 
-import CodeConnect.CodeConnect.domain.Member;
+import CodeConnect.CodeConnect.domain.member.Member;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,6 +11,7 @@ import org.hibernate.annotations.OnDeleteAction;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 
 @Entity
 @Table(name = "Cocomment")
@@ -46,7 +47,7 @@ public class Cocomment {
     public Cocomment( String nickname, String cocomment){
         this.nickname = nickname;
         this.cocomment = cocomment;
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yy/MM/dd HH:mm");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yy/MM/dd HH:mm:ss");
         this.setCurrentDateTime(String.valueOf(LocalDateTime.now().format(formatter)));
     }
 }

@@ -1,6 +1,6 @@
 package CodeConnect.CodeConnect.service;
 
-import CodeConnect.CodeConnect.domain.Member;
+import CodeConnect.CodeConnect.domain.member.Member;
 import CodeConnect.CodeConnect.domain.post.Cocomment;
 import CodeConnect.CodeConnect.domain.post.Comment;
 import CodeConnect.CodeConnect.dto.ResponseDto;
@@ -13,6 +13,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Service
@@ -22,7 +24,7 @@ public class CocommentService {
     private final CocommentRepository cocommentRepository;
     private final MemberRepository memberRepository;
     private final CommentRepository commentRepository;
-
+    @Transactional
     public ResponseDto<Cocomment> createCocomment(Long commentId, CocommentRequestDto dto, String email){
         Member findMember = memberRepository.findByEmail(email);
         String nickname = findMember.getNickname();
@@ -81,20 +83,26 @@ public class CocommentService {
     public ResponseDto<Cocomment> update(Long cocomentId,String cocomment, String email) {
         Cocomment cocomments = cocommentRepository.findById(cocomentId).orElseThrow(NullPointerException::new);
         // 회원 검증
-        if (validateMember(email, cocomments))
+        if (!validateMember(email, cocomments))
             return ResponseDto.setFail("접근 권한이 없습니다");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yy/MM/dd HH:mm:ss");
+        cocomments.setModifiedDateTime(LocalDateTime.now().format(formatter));
         cocomments.setCocomment(cocomment);
-        return ResponseDto.setSuccess("댓글 수정 성공", cocomments);
+        return ResponseDto.setSuccess("대댓글 수정 성공", cocomments);
     }
     //댓글 삭제
+    @Transactional
     public ResponseDto<String> delete(Long cocommentId, String email){
 
-        Cocomment cocomment = cocommentRepository.findById(cocommentId).orElseThrow(() -> new NoSuchElementException("댓글이 존재하지 않습니다"));
-        if (validateMember(email, cocomment))
+        Cocomment cocomment = cocommentRepository.findById(cocommentId).orElseThrow(() -> new NoSuchElementException("대댓글이 존재하지 않습니다"));
+        if (!validateMember(email, cocomment))
             return ResponseDto.setFail("접근 권한이 없습니다");
+
+        Comment comment = commentRepository.findById(cocomment.getComment().getCommentId()).orElseThrow(() -> new NoSuchElementException("댓글이 존재하지 않습니다"));
+        comment.setCocommentCount(comment.getCocommentCount()-1);
         cocommentRepository.delete(cocomment);
 
-        return ResponseDto.setSuccess("댓글 삭제 성공", null);
+        return ResponseDto.setSuccess("대댓글 삭제 성공", null);
     }
     private boolean validateMember(String email, Cocomment cocomment) {
         // 회원
@@ -118,19 +126,5 @@ public class CocommentService {
         }
         return false; // COCOMMENT_GUEST
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 }

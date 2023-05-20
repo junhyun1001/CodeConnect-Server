@@ -14,4 +14,5 @@ public class UpdateMemberDto {
     private String address;
 
     private List<String> fieldList;
+
 }

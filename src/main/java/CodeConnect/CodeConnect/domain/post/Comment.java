@@ -1,6 +1,6 @@
 package CodeConnect.CodeConnect.domain.post;
 
-import CodeConnect.CodeConnect.domain.Member;
+import CodeConnect.CodeConnect.domain.member.Member;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -65,8 +65,9 @@ public class Comment{
     public Comment( String nickname, String comment){
         this.nickname = nickname;
         this.comment = comment;
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yy/MM/dd HH:mm");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yy/MM/dd HH:mm:ss");
         this.setCurrentDateTime(String.valueOf(LocalDateTime.now().format(formatter)));
+
     }
 
 

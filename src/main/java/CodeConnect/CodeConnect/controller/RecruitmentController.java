@@ -3,6 +3,7 @@ package CodeConnect.CodeConnect.controller;
 import CodeConnect.CodeConnect.domain.post.Recruitment;
 import CodeConnect.CodeConnect.dto.ResponseDto;
 import CodeConnect.CodeConnect.dto.post.recruitment.CreateRecruitmentDto;
+import CodeConnect.CodeConnect.dto.post.recruitment.RecruitmentDto;
 import CodeConnect.CodeConnect.dto.post.recruitment.UpdateRecruitmentDto;
 import CodeConnect.CodeConnect.service.RecruitmentService;
 import CodeConnect.CodeConnect.service.Role;
@@ -24,19 +25,19 @@ public class RecruitmentController {
 
     // 게시글 쓰기
     @PostMapping("/create")
-    public ResponseDto<Recruitment> writePost(@RequestBody CreateRecruitmentDto createRequestDto, @AuthenticationPrincipal String email) {
+    public ResponseDto<RecruitmentDto> writePost(@RequestBody CreateRecruitmentDto createRequestDto, @AuthenticationPrincipal String email) {
         return recruitmentService.createPost(createRequestDto, email);
     }
 
     // 메인 화면에서 보여줄 게시글 리스트(로그인한 회원의 주소와 관심분야가 같은것) 또는 주소 기준 게시글 검색
     @GetMapping("/main")
-    public ResponseDto<List<Recruitment>> getPosts(@AuthenticationPrincipal String email, @RequestParam(required = false) String address) {
+    public ResponseDto<List<RecruitmentDto>> getPosts(@AuthenticationPrincipal String email, @RequestParam(required = false) String address) {
         return recruitmentService.getPostsByAddressAndFieldOrSearchByAddress(email, address);
     }
 
     // 게시글 전체 조회
     @GetMapping("/list")
-    public ResponseDto<List<Recruitment>> getPosts() {
+    public ResponseDto<List<RecruitmentDto>> getPosts() {
         return recruitmentService.getAllPosts();
     }
 
@@ -48,13 +49,13 @@ public class RecruitmentController {
 
     // 게시글 주소, 제목+내용 기준으로 검색
     @GetMapping("/search")
-    public ResponseDto<List<Recruitment>> getSearchList(@RequestParam(required = false) String keyword, @RequestParam(required = false) String address) {
+    public ResponseDto<List<RecruitmentDto>> getSearchList(@RequestParam(required = false) String keyword, @RequestParam(required = false) String address) {
         return recruitmentService.getContentBySearch(keyword, address);
     }
 
     // 게시글 수정
     @PutMapping("/update/{id}")
-    public ResponseDto<Recruitment> updatePost(@RequestBody UpdateRecruitmentDto editRequestDto, @PathVariable Long id, @AuthenticationPrincipal String email) {
+    public ResponseDto<RecruitmentDto> updatePost(@RequestBody UpdateRecruitmentDto editRequestDto, @PathVariable Long id, @AuthenticationPrincipal String email) {
         return recruitmentService.editPost(editRequestDto, id, email);
     }
 

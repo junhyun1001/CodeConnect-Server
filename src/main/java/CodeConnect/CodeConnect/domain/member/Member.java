@@ -1,4 +1,4 @@
-package CodeConnect.CodeConnect.domain;
+package CodeConnect.CodeConnect.domain.member;
 
 import CodeConnect.CodeConnect.converter.FieldConverter;
 import CodeConnect.CodeConnect.domain.post.Cocomment;
@@ -24,7 +24,6 @@ import java.util.List;
 @Table(name = "Member") // Entity와 매핑할 테이블 지정
 @Getter
 @Setter
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class Member {
@@ -84,7 +83,7 @@ public class Member {
         recruitment.setMember(this);
     }
 
-    public void setQnas(Qna qna) {
+    public void setQna(Qna qna) {
         this.qnas.add(qna);
         qna.setMember(this);
     }
