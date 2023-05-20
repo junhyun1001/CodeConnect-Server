@@ -32,15 +32,15 @@ public class QnaController {
     }
 
     //생성
-//    @PostMapping("/create")
-//    public ResponseDto<Qna> writeQna(@RequestBody QnaRequestDto dto, @AuthenticationPrincipal String email) {
-//        return qnaService.writeQna(dto, email);
-//    }
-
     @PostMapping("/create")
-    public ResponseDto<Qna> writeQna(@RequestBody QnaRequestDto dto,  @AuthenticationPrincipal String email) {
+    public ResponseDto<Qna> writeQna(@RequestBody QnaRequestDto dto, @AuthenticationPrincipal String email) {
         return qnaService.writeQna(dto, email);
     }
+
+//    @PostMapping("/create")
+//    public ResponseDto<Qna> writeQna(@RequestBody QnaRequestDto dto, @RequestParam("imageFile") MultipartFile imageFile, @AuthenticationPrincipal String email) {
+//        return qnaService.writeQna(dto, email,imageFile);
+//    }
     //
     @PutMapping("/update/{qnaId}")
     public ResponseDto<Qna> qna_update(@PathVariable("qnaId") Long qnaId, @RequestBody QnaRequestDto qnaDto, @AuthenticationPrincipal String email) {
