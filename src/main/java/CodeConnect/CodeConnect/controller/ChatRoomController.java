@@ -1,12 +1,12 @@
 package CodeConnect.CodeConnect.controller;
 
-import CodeConnect.CodeConnect.domain.chat.ChatRoom;
 import CodeConnect.CodeConnect.dto.ResponseDto;
 import CodeConnect.CodeConnect.dto.chat.ChatRoomDto;
 import CodeConnect.CodeConnect.service.ChatRoomService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -22,6 +22,11 @@ public class ChatRoomController {
     @GetMapping("/list")
     public ResponseDto<List<ChatRoomDto>> getChatRoomList(@AuthenticationPrincipal String email) {
         return chatRoomService.getChatRoomList(email);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseDto<ChatRoomDto> getChatRoom(@AuthenticationPrincipal String email, @PathVariable Long id) {
+        return chatRoomService.getChatRoom(email, id);
     }
 
 }

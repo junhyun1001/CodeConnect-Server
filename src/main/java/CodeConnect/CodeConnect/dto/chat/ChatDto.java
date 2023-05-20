@@ -9,7 +9,6 @@ import java.time.format.DateTimeFormatter;
 
 @Getter
 @Setter
-@NoArgsConstructor
 public class ChatDto {
 
     private Long roomId;
@@ -21,7 +20,7 @@ public class ChatDto {
     private String currentDateTime = changeDateTimeFormat(LocalDateTime.now());
 
     public String changeDateTimeFormat(LocalDateTime dateTime) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yy/MM/dd HH:mm:ss");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
         return dateTime.format(formatter);
     }
 

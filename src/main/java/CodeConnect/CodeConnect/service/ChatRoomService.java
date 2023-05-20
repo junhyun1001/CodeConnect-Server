@@ -11,7 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -19,13 +19,24 @@ import java.util.stream.Collectors;
 public class ChatRoomService {
 
     private final ChatRoomRepository chatRoomRepository;
+    private final MemberService memberService;
+
+    public ResponseDto<ChatRoomDto> getChatRoom(String email, Long id) {
+
+        memberService.validateExistMember(email);
+
+        ChatRoom chatRoom = validateExistChatRoom(id);
+
+        return ResponseDto.setSuccess("채팅방 조회", new ChatRoomDto(chatRoom));
+
+    }
 
     public ResponseDto<List<ChatRoomDto>> getChatRoomList(String email) {
         List<ChatRoom> chatRoomList = chatRoomRepository.findByCurrentParticipantMemberListContaining(email);
 
         List<ChatRoomDto> chatRoomDtoList = EntityToDto.mapListToDto(chatRoomList, ChatRoomDto::new);
 
-        return ResponseDto.setSuccess("가입한 모집 목록", chatRoomDtoList);
+        return ResponseDto.setSuccess("참여한 채팅 목록", chatRoomDtoList);
     }
 
 
@@ -43,6 +54,12 @@ public class ChatRoomService {
 
         return ResponseDto.setSuccess(resultMessage, new ChatRoomDto(chatRoom));
 
+    }
+
+    // 해당 게시글 존재 여부 확인
+    public ChatRoom validateExistChatRoom(Long id) {
+        Optional<ChatRoom> optionalChatRoom = chatRoomRepository.findById(id);
+        return optionalChatRoom.orElse(null);
     }
 
 }
