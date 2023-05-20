@@ -131,7 +131,6 @@ public class ProfileService {
         for (Recruitment recruitment : recruitmentList) {
             recruitment.setNickname(updatedNickname);
             recruitment.setAddress(updatedAddress);
-            recruitment.setField(updatedFieldList.toString());
         }
 
         log.info("************************* {} 회원 정보가 수정되었습니다. *************************", findMember.getEmail());
