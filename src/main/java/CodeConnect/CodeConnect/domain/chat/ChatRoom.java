@@ -31,9 +31,7 @@ public class ChatRoom {
 
     private String currentDateTime; // 방 생성 시간
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "recruitment_id")
-    @JsonIgnore
+    @OneToOne(mappedBy = "chatRoom")
     private Recruitment recruitment; // 게시글 정보
 
     @OneToMany(mappedBy = "chatRoom", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
@@ -46,7 +44,6 @@ public class ChatRoom {
     private List<String> currentParticipantMemberList;
 
     public ChatRoom(Recruitment recruitment) {
-        this.recruitment = recruitment;
         this.title = recruitment.getTitle();
         this.hostNickname = recruitment.getNickname();
         this.currentDateTime = changeDateTimeFormat(LocalDateTime.now());

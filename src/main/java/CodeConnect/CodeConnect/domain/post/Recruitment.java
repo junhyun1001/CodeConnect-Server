@@ -45,8 +45,7 @@ public class Recruitment extends Post {
 
     private String field; // 관심분야
 
-    @OneToOne(mappedBy = "recruitment")
-    @JsonIgnore
+    @OneToOne(fetch = FetchType.LAZY)
     private ChatRoom chatRoom;
 
     // 연관관계 메소드
