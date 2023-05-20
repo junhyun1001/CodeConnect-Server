@@ -37,14 +37,10 @@ public class QnaService {
         String title = dto.getTitle();
         String content = dto.getContent();
 
-
-
         Qna qna = new Qna(dto, nickname, title, content);
         qna.setTitle(title);
         qna.setNickname(nickname);
         qna.setContent(content);
-
-
 
         findMember.setQna(qna);
 
@@ -52,8 +48,6 @@ public class QnaService {
 
         return ResponseDto.setSuccess("QnA 글 작성 성공", saveQna);
     }
-
-
     //q&a 들어갔을때 전체 조회
     @Transactional
     public ResponseDto<List<Qna>> findQna() {
