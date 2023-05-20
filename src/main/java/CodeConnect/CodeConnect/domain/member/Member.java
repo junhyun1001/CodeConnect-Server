@@ -83,7 +83,7 @@ public class Member {
         recruitment.setMember(this);
     }
 
-    public void setQnas(Qna qna) {
+    public void setQna(Qna qna) {
         this.qnas.add(qna);
         qna.setMember(this);
     }

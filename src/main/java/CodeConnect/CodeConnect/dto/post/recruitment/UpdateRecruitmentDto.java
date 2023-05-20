@@ -9,6 +9,8 @@ public class UpdateRecruitmentDto {
 
     private String title;
 
+    private String nickname;
+
     private String content;
 
     private int count;
