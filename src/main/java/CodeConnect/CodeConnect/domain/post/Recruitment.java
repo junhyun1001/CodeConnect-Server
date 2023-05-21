@@ -72,6 +72,8 @@ public class Recruitment extends Post {
         setCount(dto.getCount());
         setField(dto.getField());
         setModifiedDateTime(changeDateTimeFormat(LocalDateTime.now()));
+
     }
+
 
 }

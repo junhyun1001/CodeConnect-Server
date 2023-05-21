@@ -8,6 +8,7 @@ import CodeConnect.CodeConnect.service.Role;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Map;
@@ -36,6 +37,10 @@ public class QnaController {
         return qnaService.writeQna(dto, email);
     }
 
+//    @PostMapping("/create")
+//    public ResponseDto<Qna> writeQna(@RequestBody QnaRequestDto dto, @RequestParam("imageFile") MultipartFile imageFile, @AuthenticationPrincipal String email) {
+//        return qnaService.writeQna(dto, email,imageFile);
+//    }
     //
     @PutMapping("/update/{qnaId}")
     public ResponseDto<Qna> qna_update(@PathVariable("qnaId") Long qnaId, @RequestBody QnaRequestDto qnaDto, @AuthenticationPrincipal String email) {

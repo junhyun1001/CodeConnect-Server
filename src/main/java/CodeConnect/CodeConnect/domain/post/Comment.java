@@ -65,8 +65,9 @@ public class Comment{
     public Comment( String nickname, String comment){
         this.nickname = nickname;
         this.comment = comment;
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yy/MM/dd HH:mm");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yy/MM/dd HH:mm:ss");
         this.setCurrentDateTime(String.valueOf(LocalDateTime.now().format(formatter)));
+
     }
 
 

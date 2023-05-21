@@ -1,12 +1,14 @@
 package CodeConnect.CodeConnect.service;
 
 import CodeConnect.CodeConnect.domain.member.Member;
+import CodeConnect.CodeConnect.domain.post.Recruitment;
 import CodeConnect.CodeConnect.dto.ResponseDto;
 import CodeConnect.CodeConnect.dto.member.SignInRequestDto;
 import CodeConnect.CodeConnect.dto.member.SignInResponseDto;
 import CodeConnect.CodeConnect.dto.member.SignUpRequestDto;
 import CodeConnect.CodeConnect.dto.member.UpdateMemberDto;
 import CodeConnect.CodeConnect.repository.MemberRepository;
+import CodeConnect.CodeConnect.repository.RecruitmentRepository;
 import CodeConnect.CodeConnect.security.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +30,7 @@ public class MemberService {
     private final TokenProvider tokenProvider;
     private final PasswordEncoder passwordEncoder;
     private final SignupValidateService signupValidateService;
+    private final RecruitmentRepository recruitmentRepository;
 
     // 회원가입
     public ResponseDto<Member> signUp(SignUpRequestDto dto) {
@@ -102,6 +105,7 @@ public class MemberService {
     }
 
     // 회원 수정(프로필 이미지, 지역, 관심분야)
+    @Transactional
     public ResponseDto<UpdateMemberDto> updateMember(UpdateMemberDto updateMemberDto, String email) {
 
         Member updateMember = validateExistMember(email);
