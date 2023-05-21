@@ -5,10 +5,7 @@ import CodeConnect.CodeConnect.dto.chat.ChatRoomDto;
 import CodeConnect.CodeConnect.service.ChatRoomService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -29,4 +26,8 @@ public class ChatRoomController {
         return chatRoomService.getChatRoom(email, id);
     }
 
+    @DeleteMapping("/{id}")
+    public void leaveChatRoom(@AuthenticationPrincipal String email, @PathVariable Long id) {
+        chatRoomService.leaveChatRoom(email, id);
+    }
 }
