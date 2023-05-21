@@ -56,4 +56,8 @@ public class ChatRoom {
         return dateTime.format(formatter);
     }
 
+    public void setChatList(Chat chat) {
+        this.chatList.add(chat);
+        chat.setChatRoom(this);
+    }
 }
