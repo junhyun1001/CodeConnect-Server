@@ -33,7 +33,7 @@ public class ChatRoomService {
         }
 
         String resultMessage = (chatRoom == recruitment.getChatRoom()) ? "이미 존재하는 채팅방 입니다." : "채팅방이 생성되었습니다.";
-        log.info("************************* " + resultMessage + ": {}, {} *************************", chatRoom.getRoomId(), chatRoom.getTitle());
+        log.info("******************** \"************************* \" + resultMessage + \": {}, {} *************************\", chatRoom.getRoomId(), chatRoom.getTitle());\n***** " + resultMessage + ": {}, {} *************************", chatRoom.getRoomId(), chatRoom.getTitle());
 
         return ResponseDto.setSuccess(resultMessage, new ChatRoomDto(chatRoom));
 
@@ -61,7 +61,7 @@ public class ChatRoomService {
 
     }
 
-    public void leaveChatRoom(String email, Long id) {
+    public ResponseDto<?> leaveChatRoom(String email, Long id) {
 
         ChatRoom chatRoom = validateExistChatRoom(id);
 
@@ -69,6 +69,9 @@ public class ChatRoomService {
 
         chatRoomRepository.save(chatRoom);
 
+        log.info("******************** {}회원이 {}번 채팅방을 나갔습니다.", email, id);
+
+        return ResponseDto.setSuccess("채팅방을 나갔습니다.", null);
     }
 
 

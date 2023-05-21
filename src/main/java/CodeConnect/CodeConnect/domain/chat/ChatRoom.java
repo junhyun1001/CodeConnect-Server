@@ -56,6 +56,7 @@ public class ChatRoom {
         return dateTime.format(formatter);
     }
 
+    // 연관관계 메소드
     public void setChatList(Chat chat) {
         this.chatList.add(chat);
         chat.setChatRoom(this);
