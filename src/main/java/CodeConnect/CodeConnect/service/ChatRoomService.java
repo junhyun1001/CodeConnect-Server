@@ -1,17 +1,23 @@
 package CodeConnect.CodeConnect.service;
 
 import CodeConnect.CodeConnect.converter.EntityToDto;
+import CodeConnect.CodeConnect.domain.chat.Chat;
 import CodeConnect.CodeConnect.domain.chat.ChatRoom;
+import CodeConnect.CodeConnect.domain.member.Member;
 import CodeConnect.CodeConnect.domain.post.Recruitment;
 import CodeConnect.CodeConnect.dto.ResponseDto;
+import CodeConnect.CodeConnect.dto.chat.ChatResponseDto;
 import CodeConnect.CodeConnect.dto.chat.ChatRoomDto;
+import CodeConnect.CodeConnect.repository.ChatRepository;
 import CodeConnect.CodeConnect.repository.ChatRoomRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -20,8 +26,9 @@ import java.util.Optional;
 @Transactional
 public class ChatRoomService {
 
-    private final ChatRoomRepository chatRoomRepository;
     private final MemberService memberService;
+    private final ChatRoomRepository chatRoomRepository;
+    private final ChatRepository chatRepository;
 
     public ResponseDto<ChatRoomDto> createOrGetChatRoom(Recruitment recruitment) {
 
@@ -40,13 +47,26 @@ public class ChatRoomService {
     }
 
     @Transactional(readOnly = true)
-    public ResponseDto<ChatRoomDto> getChatRoom(String email, Long id) {
+    public ResponseDto<Map<Object, Object>> getChatRoom(String email, Long id) {
 
-        memberService.validateExistMember(email);
+        Member member = memberService.validateExistMember(email);
+        String nickname = member.getNickname();
 
         ChatRoom chatRoom = validateExistChatRoom(id);
 
-        return ResponseDto.setSuccess("채팅방 조회", new ChatRoomDto(chatRoom));
+        List<Chat> byChatRoom = chatRepository.findByChatRoom(chatRoom);
+
+        // dto 생성
+        ChatRoomDto chatRoomDto = new ChatRoomDto(chatRoom);
+        List<ChatResponseDto> chatResponseDtos = EntityToDto.mapListToDto(byChatRoom, ChatResponseDto::new);
+
+        // return Map 생성
+        Map<Object, Object> chatRoomChatMap = new HashMap<>();
+        chatRoomChatMap.put("ROOM_INFO", chatRoomDto);
+        chatRoomChatMap.put("CHAT", chatResponseDtos);
+        chatRoomChatMap.put("MY_NICKNAME", nickname);
+
+        return ResponseDto.setSuccess("채팅방 조회", chatRoomChatMap);
 
     }
 
