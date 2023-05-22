@@ -69,13 +69,13 @@ public class ProfileService {
             return ResponseDto.setFail("회원을 찾을 수 없습니다.");
         }
         if (findMemberNickname.equals(nickname)) {
-            List<Recruitment> recruitmentList = recruitmentRepository.findByMember(findMember);
+            List<Recruitment> recruitmentList = recruitmentRepository.findAllByOrderByCurrentDateTimeDesc(findMember);
             return ResponseDto.setSuccess("프로필 회원 본인이 작성한 스터디 게시글 조회 성공",recruitmentList);
         }else {
             Member otherMember = memberRepository.findByNickname(nickname);
             if (otherMember != null) {
                 // 다른 사용자가 작성한 Recruitment 게시글 조회
-                List<Recruitment> recruitmentList = recruitmentRepository.findByMember(otherMember);
+                List<Recruitment> recruitmentList = recruitmentRepository.findAllByOrderByCurrentDateTimeDesc(otherMember);
                 return ResponseDto.setSuccess("다른 사용자 스터디 게시글 조회 성공", recruitmentList);
             } else {
                 return ResponseDto.setFail("사용자를 찾을 수 없습니다.");
@@ -94,13 +94,13 @@ public class ProfileService {
             return ResponseDto.setFail("회원을 찾을 수 없습니다.");
         }
         if (findMemberNickname.equals(nickname)) {
-            List<Qna> qnaList = qnaRepository.findByMember(findMember);
+            List<Qna> qnaList = qnaRepository.findByTitleContainingOrContentContainingOrderByCurrentDateTimeDesc(findMember);
             return ResponseDto.setSuccess("프로필 회원 본인이 작성한 Qna 게시글 조회 성공", qnaList);
         } else {
             Member otherMember = memberRepository.findByNickname(nickname);
             if (otherMember != null) {
                 // 다른 사용자가 작성한 Qna 게시글 조회
-                List<Qna> qnaList = qnaRepository.findByMember(otherMember);
+                List<Qna> qnaList = qnaRepository.findByTitleContainingOrContentContainingOrderByCurrentDateTimeDesc(otherMember);
                 return ResponseDto.setSuccess("다른 사용자 Qna 게시글 조회 성공", qnaList);
             } else {
                 return ResponseDto.setFail("사용자를 찾을 수 없습니다.");
@@ -121,13 +121,13 @@ public class ProfileService {
         memberRepository.save(findMember);
 
         // Qna 게시글 업데이트
-        List<Qna> qnaList = qnaRepository.findByMember(findMember);
+        List<Qna> qnaList = qnaRepository.findByTitleContainingOrContentContainingOrderByCurrentDateTimeDesc(findMember);
         for (Qna qna : qnaList) {
             qna.setNickname(updatedNickname);
         }
 
         // Recruitment 게시글 업데이트
-        List<Recruitment> recruitmentList = recruitmentRepository.findByMember(findMember);
+        List<Recruitment> recruitmentList = recruitmentRepository.findAllByOrderByCurrentDateTimeDesc(findMember);
         for (Recruitment recruitment : recruitmentList) {
             recruitment.setNickname(updatedNickname);
             recruitment.setAddress(updatedAddress);
