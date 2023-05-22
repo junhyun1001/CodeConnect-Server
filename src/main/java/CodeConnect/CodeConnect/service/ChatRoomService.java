@@ -61,20 +61,6 @@ public class ChatRoomService {
 
     }
 
-    public ResponseDto<?> leaveChatRoom(String email, Long id) {
-
-        ChatRoom chatRoom = validateExistChatRoom(id);
-
-        chatRoom.getCurrentParticipantMemberList().remove(email);
-
-        chatRoomRepository.save(chatRoom);
-
-        log.info("******************** {}회원이 {}번 채팅방을 나갔습니다.", email, id);
-
-        return ResponseDto.setSuccess("채팅방을 나갔습니다.", null);
-    }
-
-
     // 해당 게시글 존재 여부 확인
     public ChatRoom validateExistChatRoom(Long id) {
         Optional<ChatRoom> optionalChatRoom = chatRoomRepository.findById(id);

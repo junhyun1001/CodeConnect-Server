@@ -28,9 +28,4 @@ public class ChatRoomController {
         return chatRoomService.getChatRoom(email, id);
     }
 
-    // 채팅방 나가기
-    @DeleteMapping("/{id}")
-    public ResponseDto<?> leaveChatRoom(@AuthenticationPrincipal String email, @PathVariable Long id) {
-        return chatRoomService.leaveChatRoom(email, id);
-    }
 }
