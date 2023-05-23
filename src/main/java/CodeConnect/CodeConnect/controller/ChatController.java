@@ -21,10 +21,10 @@ public class ChatController {
     //stompConfig에서 설정한 applicationDestinationPrefixes와 @MessageMapping 경로가 병합됨
     //"/pub/chat/enter"
     @MessageMapping("/chat/enter")
-    public void enter(ChatRequestDto chatRequestDto) {
+    public void enter(Long id) {
 //        chatRequestDto.setMessage(chatRequestDto.getNickname() + "님이 채팅방에 참여하였습니다.");
-        List<ChatResponseDto> chatList = chatService.getChatList(chatRequestDto.getRoomId());
-        template.convertAndSend("/sub/chat/room/" + chatRequestDto.getRoomId(), chatList);
+        List<ChatResponseDto> chatList = chatService.getChatList(id);
+        template.convertAndSend("/sub/chat/room/" + id, chatList);
     }
 
     @MessageMapping("/chat/message")
