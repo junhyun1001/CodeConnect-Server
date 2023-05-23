@@ -26,6 +26,7 @@ public class ProfileService {
     private final RecruitmentRepository recruitmentRepository;
 
     public ResponseDto<Object> showUserInfo(String email, String nickname) {
+
         Member findMember = memberRepository.findByEmail(email);
         if (findMember == null) {
             return ResponseDto.setFail("회원을 찾을 수 없습니다.");
