@@ -55,45 +55,27 @@ public class ProfileService {
         }
     }
 // 조회한 회원 프로필에 해당 회원이 참여한 스터디
-@Transactional
-public ResponseDto<?> showJoinRecruitment(String email, String nickname) {
-    Member findMember = memberRepository.findByEmail(email);
-    if (findMember == null) {
-        return ResponseDto.setFail("회원을 찾을 수 없습니다.");
-    }
-
-    String findMemberNickname = findMember.getNickname();
-    if (findMemberNickname == null || findMemberNickname.isEmpty()) {
-        return ResponseDto.setFail("회원을 찾을 수 없습니다.");
-    }
-
-    if (findMemberNickname.equals(nickname)) {
-        List<Recruitment> ownRecruitmentList = recruitmentRepository.findByMemberOrderByCurrentDateTimeDesc(findMember);
-        List<Recruitment> joinedRecruitments = recruitmentRepository.findByCurrentParticipantMemberListContainingOrderByCurrentDateTimeDesc(email);
-
-        List<Recruitment> joinedRecruitmentList = new ArrayList<>();
-        for (Recruitment recruitment : ownRecruitmentList) {
-            if (!recruitment.getCurrentParticipantMemberList().contains(email) && !joinedRecruitmentList.contains(recruitment)) {
-                joinedRecruitmentList.add(recruitment);
-            }
+    @Transactional
+    public ResponseDto<?> showJoinRecruitment(String email, String nickname) {
+        Member findMember = memberRepository.findByEmail(email);
+        if (findMember == null) {
+            return ResponseDto.setFail("회원을 찾을 수 없습니다.");
         }
-        for (Recruitment recruitment : joinedRecruitments) {
-            if (!joinedRecruitmentList.contains(recruitment)) {
-                joinedRecruitmentList.add(recruitment);
-            }
-        }
-        joinedRecruitmentList.sort(Comparator.comparing(Recruitment::getCurrentDateTime).reversed());
 
-        return ResponseDto.setSuccess("프로필 회원 본인이 작성한 스터디 게시글 조회 성공", joinedRecruitmentList);
-    } else {
-        Member otherMember = memberRepository.findByNickname(nickname);
-        if (otherMember != null) {
-            List<Recruitment> recruitmentList = recruitmentRepository.findByMemberOrderByCurrentDateTimeDesc(otherMember);
-            List<Recruitment> joinedRecruitments = recruitmentRepository.findByCurrentParticipantMemberListContainingOrderByCurrentDateTimeDesc(otherMember.getEmail());
+        String findMemberNickname = findMember.getNickname();
+        if (findMemberNickname == null || findMemberNickname.isEmpty()) {
+            return ResponseDto.setFail("회원을 찾을 수 없습니다.");
+        }
+
+        if (findMemberNickname.equals(nickname)) {
+            List<Recruitment> ownRecruitmentList = recruitmentRepository.findByMemberOrderByCurrentDateTimeDesc(findMember);
+            List<Recruitment> joinedRecruitments = recruitmentRepository.findByCurrentParticipantMemberListContainingOrderByCurrentDateTimeDesc(email);
 
             List<Recruitment> joinedRecruitmentList = new ArrayList<>();
-            for (Recruitment recruitment : recruitmentList) {
-                joinedRecruitmentList.add(recruitment);
+            for (Recruitment recruitment : ownRecruitmentList) {
+                if (!recruitment.getCurrentParticipantMemberList().contains(email) && !joinedRecruitmentList.contains(recruitment)) {
+                    joinedRecruitmentList.add(recruitment);
+                }
             }
             for (Recruitment recruitment : joinedRecruitments) {
                 if (!joinedRecruitmentList.contains(recruitment)) {
@@ -102,12 +84,30 @@ public ResponseDto<?> showJoinRecruitment(String email, String nickname) {
             }
             joinedRecruitmentList.sort(Comparator.comparing(Recruitment::getCurrentDateTime).reversed());
 
-            return ResponseDto.setSuccess("다른 사용자 스터디 게시글 조회 성공", joinedRecruitmentList);
+            return ResponseDto.setSuccess("프로필 회원 본인이 작성한 스터디 게시글 조회 성공", joinedRecruitmentList);
         } else {
-            return ResponseDto.setFail("사용자를 찾을 수 없습니다.");
+            Member otherMember = memberRepository.findByNickname(nickname);
+            if (otherMember != null) {
+                List<Recruitment> recruitmentList = recruitmentRepository.findByMemberOrderByCurrentDateTimeDesc(otherMember);
+                List<Recruitment> joinedRecruitments = recruitmentRepository.findByCurrentParticipantMemberListContainingOrderByCurrentDateTimeDesc(otherMember.getEmail());
+
+                List<Recruitment> joinedRecruitmentList = new ArrayList<>();
+                for (Recruitment recruitment : recruitmentList) {
+                    joinedRecruitmentList.add(recruitment);
+                }
+                for (Recruitment recruitment : joinedRecruitments) {
+                    if (!joinedRecruitmentList.contains(recruitment)) {
+                        joinedRecruitmentList.add(recruitment);
+                    }
+                }
+                joinedRecruitmentList.sort(Comparator.comparing(Recruitment::getCurrentDateTime).reversed());
+
+                return ResponseDto.setSuccess("다른 사용자 스터디 게시글 조회 성공", joinedRecruitmentList);
+            } else {
+                return ResponseDto.setFail("사용자를 찾을 수 없습니다.");
+            }
         }
     }
-}
 
     //조회한 회원 프로필에 해당 회원이 작성한 스터디 게시글
     public ResponseDto<Object> showUserRecruitment(String email, String nickname) {
