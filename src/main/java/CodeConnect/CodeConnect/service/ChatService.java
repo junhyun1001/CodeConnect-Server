@@ -41,15 +41,6 @@ public class ChatService {
 
     }
 
-    public List<ChatResponseDto> getChatList(Long id) {
-
-        ChatRoom chatRoom = validateExistChatRoom(id);
-
-        List<Chat> byChatRoom = chatRepository.findByChatRoom(chatRoom);
-
-        return EntityToDto.mapListToDto(byChatRoom, ChatResponseDto::new);
-    }
-
     // 해당 채팅방 존재 여부 확인
     public ChatRoom validateExistChatRoom(Long id) {
         Optional<ChatRoom> optionalChatRoom = chatRoomRepository.findById(id);
