@@ -14,7 +14,7 @@ public interface QnaRepository extends JpaRepository<Qna, Long> {
 
     List<Qna> findByTitleContainingOrContentContainingOrderByCurrentDateTimeDesc(String title, String content);
 
-    List<Qna> findByMember(Member findMember);
+    List<Qna> findByTitleContainingOrContentContainingOrderByCurrentDateTimeDesc(Member findMember);
 
     List<Qna> findByQnaId(Long qnaId);
 }

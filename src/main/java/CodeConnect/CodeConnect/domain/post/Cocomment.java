@@ -9,6 +9,7 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -22,6 +23,7 @@ public class Cocomment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long cocommentId; // 댓글 id
+    @NotBlank
     private String cocomment; // 댓글 내용
 
     private String nickname; // 회원 닉네임
