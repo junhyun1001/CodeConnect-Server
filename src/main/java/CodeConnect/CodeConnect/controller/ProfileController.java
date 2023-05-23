@@ -20,10 +20,11 @@ public class ProfileController {
         return profileService.showUserInfo(email, nickname);
     }
 
-//    @GetMapping("/profile/{nickname}")
-//    public ResponseDto<?> joinRecruitment(@AuthenticationPrincipal String email, @PathVariable String nickname){
-//        return profileService.showJoinRecruitment(email,nickname);
-//    }
+    @GetMapping("/profile/{nickname}")
+    public ResponseDto<?> joinRecruitment(@AuthenticationPrincipal String email, @PathVariable String nickname){
+        return profileService.showJoinRecruitment(email,nickname);
+    }
+
     @GetMapping("/profile/userRecruitment/{nickname}")
     public ResponseDto<Object> getUserRecruitment(@AuthenticationPrincipal String email,@PathVariable String nickname){
         return profileService.showUserRecruitment(email,nickname);
