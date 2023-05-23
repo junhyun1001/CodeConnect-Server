@@ -1,7 +1,6 @@
 package CodeConnect.CodeConnect.controller;
 
 import CodeConnect.CodeConnect.dto.ResponseDto;
-import CodeConnect.CodeConnect.dto.chat.ChatResponseDto;
 import CodeConnect.CodeConnect.dto.chat.ChatRoomDto;
 import CodeConnect.CodeConnect.service.ChatRoomService;
 import lombok.RequiredArgsConstructor;
