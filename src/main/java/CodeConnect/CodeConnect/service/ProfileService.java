@@ -11,6 +11,7 @@ import CodeConnect.CodeConnect.repository.QnaRepository;
 import CodeConnect.CodeConnect.repository.RecruitmentRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.Hibernate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -53,9 +54,59 @@ public class ProfileService {
         }
     }
 // 조회한 회원 프로필에 해당 회원이 참여한 스터디
-//    public ResponseDto<?> showJoinRecruitment(String email, String nickname){
-//
-//    }
+@Transactional
+public ResponseDto<?> showJoinRecruitment(String email, String nickname) {
+    Member findMember = memberRepository.findByEmail(email);
+    if (findMember == null) {
+        return ResponseDto.setFail("회원을 찾을 수 없습니다.");
+    }
+
+    String findMemberNickname = findMember.getNickname();
+    if (findMemberNickname == null || findMemberNickname.isEmpty()) {
+        return ResponseDto.setFail("회원을 찾을 수 없습니다.");
+    }
+
+    if (findMemberNickname.equals(nickname)) {
+        List<Recruitment> ownRecruitmentList = recruitmentRepository.findByMemberOrderByCurrentDateTimeDesc(findMember);
+        List<Recruitment> joinedRecruitments = recruitmentRepository.findByCurrentParticipantMemberListContainingOrderByCurrentDateTimeDesc(email);
+
+        List<Recruitment> joinedRecruitmentList = new ArrayList<>();
+        for (Recruitment recruitment : ownRecruitmentList) {
+            if (!recruitment.getCurrentParticipantMemberList().contains(email) && !joinedRecruitmentList.contains(recruitment)) {
+                joinedRecruitmentList.add(recruitment);
+            }
+        }
+        for (Recruitment recruitment : joinedRecruitments) {
+            if (!joinedRecruitmentList.contains(recruitment)) {
+                joinedRecruitmentList.add(recruitment);
+            }
+        }
+        joinedRecruitmentList.sort(Comparator.comparing(Recruitment::getCurrentDateTime).reversed());
+
+        return ResponseDto.setSuccess("프로필 회원 본인이 작성한 스터디 게시글 조회 성공", joinedRecruitmentList);
+    } else {
+        Member otherMember = memberRepository.findByNickname(nickname);
+        if (otherMember != null) {
+            List<Recruitment> recruitmentList = recruitmentRepository.findByMemberOrderByCurrentDateTimeDesc(otherMember);
+            List<Recruitment> joinedRecruitments = recruitmentRepository.findByCurrentParticipantMemberListContainingOrderByCurrentDateTimeDesc(otherMember.getEmail());
+
+            List<Recruitment> joinedRecruitmentList = new ArrayList<>();
+            for (Recruitment recruitment : recruitmentList) {
+                joinedRecruitmentList.add(recruitment);
+            }
+            for (Recruitment recruitment : joinedRecruitments) {
+                if (!joinedRecruitmentList.contains(recruitment)) {
+                    joinedRecruitmentList.add(recruitment);
+                }
+            }
+            joinedRecruitmentList.sort(Comparator.comparing(Recruitment::getCurrentDateTime).reversed());
+
+            return ResponseDto.setSuccess("다른 사용자 스터디 게시글 조회 성공", joinedRecruitmentList);
+        } else {
+            return ResponseDto.setFail("사용자를 찾을 수 없습니다.");
+        }
+    }
+}
 
     //조회한 회원 프로필에 해당 회원이 작성한 스터디 게시글
     public ResponseDto<Object> showUserRecruitment(String email, String nickname) {
@@ -69,13 +120,13 @@ public class ProfileService {
             return ResponseDto.setFail("회원을 찾을 수 없습니다.");
         }
         if (findMemberNickname.equals(nickname)) {
-            List<Recruitment> recruitmentList = recruitmentRepository.findByMember(findMember);
+            List<Recruitment> recruitmentList = recruitmentRepository.findByMemberOrderByCurrentDateTimeDesc(findMember);
             return ResponseDto.setSuccess("프로필 회원 본인이 작성한 스터디 게시글 조회 성공",recruitmentList);
         }else {
             Member otherMember = memberRepository.findByNickname(nickname);
             if (otherMember != null) {
                 // 다른 사용자가 작성한 Recruitment 게시글 조회
-                List<Recruitment> recruitmentList = recruitmentRepository.findByMember(otherMember);
+                List<Recruitment> recruitmentList = recruitmentRepository.findByMemberOrderByCurrentDateTimeDesc(otherMember);
                 return ResponseDto.setSuccess("다른 사용자 스터디 게시글 조회 성공", recruitmentList);
             } else {
                 return ResponseDto.setFail("사용자를 찾을 수 없습니다.");
@@ -94,13 +145,13 @@ public class ProfileService {
             return ResponseDto.setFail("회원을 찾을 수 없습니다.");
         }
         if (findMemberNickname.equals(nickname)) {
-            List<Qna> qnaList = qnaRepository.findByMember(findMember);
+            List<Qna> qnaList = qnaRepository.findByMemberOrderByCurrentDateTimeDesc(findMember);
             return ResponseDto.setSuccess("프로필 회원 본인이 작성한 Qna 게시글 조회 성공", qnaList);
         } else {
             Member otherMember = memberRepository.findByNickname(nickname);
             if (otherMember != null) {
                 // 다른 사용자가 작성한 Qna 게시글 조회
-                List<Qna> qnaList = qnaRepository.findByMember(otherMember);
+                List<Qna> qnaList = qnaRepository.findByMemberOrderByCurrentDateTimeDesc(otherMember);
                 return ResponseDto.setSuccess("다른 사용자 Qna 게시글 조회 성공", qnaList);
             } else {
                 return ResponseDto.setFail("사용자를 찾을 수 없습니다.");
@@ -121,13 +172,13 @@ public class ProfileService {
         memberRepository.save(findMember);
 
         // Qna 게시글 업데이트
-        List<Qna> qnaList = qnaRepository.findByMember(findMember);
+        List<Qna> qnaList = qnaRepository.findByMemberOrderByCurrentDateTimeDesc(findMember);
         for (Qna qna : qnaList) {
             qna.setNickname(updatedNickname);
         }
 
         // Recruitment 게시글 업데이트
-        List<Recruitment> recruitmentList = recruitmentRepository.findByMember(findMember);
+        List<Recruitment> recruitmentList = recruitmentRepository.findByMemberOrderByCurrentDateTimeDesc(findMember);
         for (Recruitment recruitment : recruitmentList) {
             recruitment.setNickname(updatedNickname);
             recruitment.setAddress(updatedAddress);
