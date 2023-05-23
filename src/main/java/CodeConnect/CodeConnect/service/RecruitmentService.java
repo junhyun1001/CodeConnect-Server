@@ -38,6 +38,7 @@ public class RecruitmentService {
         String address = member.getAddress();
 
         Recruitment recruitment = new Recruitment(dto, nickname, address); // 받아온 게시글 데이터로 게시글 생성
+        recruitment.getCurrentParticipantMemberList().add(email);
 
         recruitmentRepository.save(recruitment); // 게시글 영속화
 
