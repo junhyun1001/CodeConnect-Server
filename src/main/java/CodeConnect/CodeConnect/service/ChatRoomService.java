@@ -47,7 +47,7 @@ public class ChatRoomService {
     }
 
     @Transactional(readOnly = true)
-    public ResponseDto<Map<Object, Object>> getChatRoom(String email, Long id) {
+    public ResponseDto<Map<String, Object>> getChatRoom(String email, Long id) {
 
         Member member = memberService.validateExistMember(email);
         String nickname = member.getNickname();
@@ -61,7 +61,7 @@ public class ChatRoomService {
         List<ChatResponseDto> chatResponseDtos = EntityToDto.mapListToDto(byChatRoom, ChatResponseDto::new);
 
         // return Map 생성
-        Map<Object, Object> chatRoomChatMap = new HashMap<>();
+        Map<String, Object> chatRoomChatMap = new HashMap<>();
         chatRoomChatMap.put("ROOM_INFO", chatRoomDto);
         chatRoomChatMap.put("CHAT", chatResponseDtos);
         chatRoomChatMap.put("MY_NICKNAME", nickname);

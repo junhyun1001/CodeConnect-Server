@@ -28,7 +28,7 @@ public class ChatRoomController {
 
     // 단일 채팅방 조회
     @GetMapping("/{id}")
-    public ResponseDto<Map<Object, Object>> getChatRoom(@AuthenticationPrincipal String email, @PathVariable Long id) {
+    public ResponseDto<Map<String, Object>> getChatRoom(@AuthenticationPrincipal String email, @PathVariable Long id) {
         return chatRoomService.getChatRoom(email, id);
     }
 
