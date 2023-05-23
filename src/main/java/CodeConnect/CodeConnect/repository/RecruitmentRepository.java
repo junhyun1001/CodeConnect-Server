@@ -21,5 +21,6 @@ public interface RecruitmentRepository extends JpaRepository<Recruitment, Long> 
     List<Recruitment> findByAddressAndTitleContainingOrAddressAndContentContaining(String address1, String keyword1, String address2, String keyword2); // 주소, 키워드로 찾기
 
     List<Recruitment> findByMember(Member findMember);
+
 }
 
