@@ -40,7 +40,7 @@ public class ChatRoomService {
         }
 
         String resultMessage = (chatRoom == recruitment.getChatRoom()) ? "이미 존재하는 채팅방 입니다." : "채팅방이 생성되었습니다.";
-        log.info("******************** \"************************* \" + resultMessage + \": {}, {} *************************\", chatRoom.getRoomId(), chatRoom.getTitle());\n***** " + resultMessage + ": {}, {} *************************", chatRoom.getRoomId(), chatRoom.getTitle());
+        log.info("************************* " + resultMessage + ": {}, {} *************************", chatRoom.getRoomId(), chatRoom.getTitle());
 
         return ResponseDto.setSuccess(resultMessage, new ChatRoomDto(chatRoom));
 
