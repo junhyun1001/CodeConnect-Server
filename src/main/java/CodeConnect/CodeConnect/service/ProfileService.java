@@ -4,6 +4,7 @@ import CodeConnect.CodeConnect.domain.member.Member;
 import CodeConnect.CodeConnect.domain.post.Qna;
 import CodeConnect.CodeConnect.domain.post.Recruitment;
 import CodeConnect.CodeConnect.dto.ResponseDto;
+import CodeConnect.CodeConnect.dto.post.recruitment.RecruitmentDto;
 import CodeConnect.CodeConnect.dto.profile.ProfileDto;
 import CodeConnect.CodeConnect.dto.member.UpdateMemberDto;
 import CodeConnect.CodeConnect.repository.MemberRepository;
@@ -54,7 +55,21 @@ public class ProfileService {
             }
         }
     }
+    // 그냥 본인꺼 프로필 조회
+    public ResponseDto<Object> showUserInfo2(String email) {
+        Member findMember = memberRepository.findByEmail(email);
+        if (findMember == null) {
+            return ResponseDto.setFail("회원을 찾을 수 없습니다.");
+        }
+
+        ProfileDto profileDto = new ProfileDto(findMember);
+        profileDto.setRole(Role.HOST);
+
+        return ResponseDto.setSuccess("본인 프로필 조회 성공", profileDto);
+    }
+
 // 조회한 회원 프로필에 해당 회원이 참여한 스터디
+
     @Transactional
     public ResponseDto<?> showJoinRecruitment(String email, String nickname) {
         Member findMember = memberRepository.findByEmail(email);
@@ -71,43 +86,56 @@ public class ProfileService {
             List<Recruitment> ownRecruitmentList = recruitmentRepository.findByMemberOrderByCurrentDateTimeDesc(findMember);
             List<Recruitment> joinedRecruitments = recruitmentRepository.findByCurrentParticipantMemberListContainingOrderByCurrentDateTimeDesc(email);
 
-            List<Recruitment> joinedRecruitmentList = new ArrayList<>();
+            Set<Recruitment> joinedRecruitmentSet = new HashSet<>();
+
             for (Recruitment recruitment : ownRecruitmentList) {
-                if (!recruitment.getCurrentParticipantMemberList().contains(email) && !joinedRecruitmentList.contains(recruitment)) {
-                    joinedRecruitmentList.add(recruitment);
+                if (!recruitment.getCurrentParticipantMemberList().contains(email)) {
+                    joinedRecruitmentSet.add(recruitment);
                 }
             }
             for (Recruitment recruitment : joinedRecruitments) {
-                if (!joinedRecruitmentList.contains(recruitment)) {
-                    joinedRecruitmentList.add(recruitment);
-                }
+                joinedRecruitmentSet.add(recruitment);
             }
-            joinedRecruitmentList.sort(Comparator.comparing(Recruitment::getCurrentDateTime).reversed());
 
-            return ResponseDto.setSuccess("프로필 회원 본인이 작성한 스터디 게시글 조회 성공", joinedRecruitmentList);
+            List<RecruitmentDto> joinedRecruitmentDtoList = new ArrayList<>();
+            for (Recruitment recruitment : joinedRecruitmentSet) {
+                RecruitmentDto recruitmentDto = new RecruitmentDto(recruitment);
+                joinedRecruitmentDtoList.add(recruitmentDto);
+            }
+
+            joinedRecruitmentDtoList.sort(Comparator.comparing(RecruitmentDto::getCurrentDateTime).reversed());
+
+            return ResponseDto.setSuccess("프로필 회원 본인이 참여한 스터디 게시글 조회 성공", joinedRecruitmentDtoList);
         } else {
             Member otherMember = memberRepository.findByNickname(nickname);
             if (otherMember != null) {
                 List<Recruitment> recruitmentList = recruitmentRepository.findByMemberOrderByCurrentDateTimeDesc(otherMember);
                 List<Recruitment> joinedRecruitments = recruitmentRepository.findByCurrentParticipantMemberListContainingOrderByCurrentDateTimeDesc(otherMember.getEmail());
 
-                List<Recruitment> joinedRecruitmentList = new ArrayList<>();
+                Set<Recruitment> joinedRecruitmentSet = new HashSet<>();
+
                 for (Recruitment recruitment : recruitmentList) {
-                    joinedRecruitmentList.add(recruitment);
+                    joinedRecruitmentSet.add(recruitment);
                 }
                 for (Recruitment recruitment : joinedRecruitments) {
-                    if (!joinedRecruitmentList.contains(recruitment)) {
-                        joinedRecruitmentList.add(recruitment);
-                    }
+                    joinedRecruitmentSet.add(recruitment);
                 }
-                joinedRecruitmentList.sort(Comparator.comparing(Recruitment::getCurrentDateTime).reversed());
 
-                return ResponseDto.setSuccess("다른 사용자 스터디 게시글 조회 성공", joinedRecruitmentList);
+                List<RecruitmentDto> joinedRecruitmentDtoList = new ArrayList<>();
+                for (Recruitment recruitment : joinedRecruitmentSet) {
+                    RecruitmentDto recruitmentDto = new RecruitmentDto(recruitment);
+                    joinedRecruitmentDtoList.add(recruitmentDto);
+                }
+
+                joinedRecruitmentDtoList.sort(Comparator.comparing(RecruitmentDto::getCurrentDateTime).reversed());
+
+                return ResponseDto.setSuccess("다른 사용자가 참여한 스터디 게시글 조회 성공", joinedRecruitmentDtoList);
             } else {
                 return ResponseDto.setFail("사용자를 찾을 수 없습니다.");
             }
         }
     }
+
 
     //조회한 회원 프로필에 해당 회원이 작성한 스터디 게시글
     public ResponseDto<Object> showUserRecruitment(String email, String nickname) {

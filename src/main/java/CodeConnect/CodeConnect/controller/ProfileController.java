@@ -19,6 +19,10 @@ public class ProfileController {
     public ResponseDto<Object> getUserInfo(@AuthenticationPrincipal String email, @PathVariable String nickname){
         return profileService.showUserInfo(email, nickname);
     }
+    @GetMapping("/profile/myinfo")
+    public ResponseDto<Object> getUserInfo2(@AuthenticationPrincipal String email){
+        return profileService.showUserInfo2(email);
+    }
 
     @GetMapping("/profile/{nickname}")
     public ResponseDto<?> joinRecruitment(@AuthenticationPrincipal String email, @PathVariable String nickname){

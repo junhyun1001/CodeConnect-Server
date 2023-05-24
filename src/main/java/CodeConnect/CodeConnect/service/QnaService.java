@@ -15,6 +15,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -29,25 +32,83 @@ public class QnaService {
 
     private final CommentRepository commentRepository;
 
-    @Transactional
-    public ResponseDto<Qna> writeQna(QnaRequestDto dto, String email) {
+//    @Transactional
+//    public ResponseDto<Qna> writeQna(QnaRequestDto dto, String email) {
+//
+//        Member findMember = memberRepository.findByEmail(email);
+//        String nickname = findMember.getNickname();
+//        String title = dto.getTitle();
+//        String content = dto.getContent();
+//
+//
+//        Qna qna = new Qna(dto, nickname, title, content);
+//        qna.setTitle(title);
+//        qna.setNickname(nickname);
+//        qna.setContent(content);
+//
+//
+//        findMember.setQna(qna);
+//
+//        Qna saveQna = qnaRepository.save(qna);
+//
+//        return ResponseDto.setSuccess("QnA 글 작성 성공", saveQna);
+//    }
+@Transactional
+public ResponseDto<Qna> writeQna(QnaRequestDto dto, String email) {
+    Member findMember = memberRepository.findByEmail(email);
+    String nickname = findMember.getNickname();
+    String title = dto.getTitle();
+    String content = dto.getContent();
 
-        Member findMember = memberRepository.findByEmail(email);
-        String nickname = findMember.getNickname();
-        String title = dto.getTitle();
-        String content = dto.getContent();
+    Qna qna = new Qna(dto, nickname, title, content);
 
-        Qna qna = new Qna(dto, nickname, title, content);
-        qna.setTitle(title);
-        qna.setNickname(nickname);
-        qna.setContent(content);
-
-        findMember.setQna(qna);
-
-        Qna saveQna = qnaRepository.save(qna);
-
-        return ResponseDto.setSuccess("QnA 글 작성 성공", saveQna);
+    // 이미지 데이터 처리
+    String base64Image = dto.getBase64Image();
+    if (base64Image != null && !base64Image.isEmpty()) {
+        // 이미지 파일로 저장하고 파일 경로 설정
+        String filePath = saveImageFromBase64(base64Image);
+        if (filePath != null) {
+            qna.setImagePath(filePath);
+        } else {
+            // 이미지 파일 저장 실패 시 예외 처리 방법을 선택하거나 오류 메시지 반환
+            return ResponseDto.setFail("이미지 파일 저장에 실패했습니다.");
+        }
     }
+
+    qna.setTitle(title);
+    qna.setNickname(nickname);
+    qna.setContent(content);
+
+    Qna saveQna = qnaRepository.save(qna);
+
+    return ResponseDto.setSuccess("QnA 글 작성 성공", saveQna);
+}
+
+    private String saveImageFromBase64(String base64Image) {
+        try {
+            // 이미지 파일 저장 디렉토리 설정
+            String uploadDir = "src/main/resources/image/qna";
+            String fileName = UUID.randomUUID().toString() + ".png";
+            String filePath = uploadDir + "/" + fileName;
+
+            // 디렉토리 생성
+            Files.createDirectories(Paths.get(uploadDir).toAbsolutePath().normalize());
+
+            // base64 인코딩된 이미지 데이터 디코딩하여 파일로 저장
+            byte[] imageBytes = Base64.getDecoder().decode(base64Image);
+            Path path = Paths.get(uploadDir, fileName);
+            Files.write(path, imageBytes);
+
+            return filePath;
+        } catch (IOException e) {
+            // 예외 처리
+            e.printStackTrace();
+            // 파일 저장 실패 시 예외 처리 방법을 선택하거나 null 등을 반환
+            return null;
+        }
+    }
+
+
     //q&a 들어갔을때 전체 조회
     @Transactional
     public ResponseDto<List<Qna>> findQna() {

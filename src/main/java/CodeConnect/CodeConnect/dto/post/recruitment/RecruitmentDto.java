@@ -2,6 +2,7 @@ package CodeConnect.CodeConnect.dto.post.recruitment;
 
 import CodeConnect.CodeConnect.domain.post.Recruitment;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 public class RecruitmentDto {
@@ -38,5 +39,7 @@ public class RecruitmentDto {
         this.currentCount = recruitment.getCurrentCount();
         this.field = recruitment.getField();
     }
+
+
 
 }

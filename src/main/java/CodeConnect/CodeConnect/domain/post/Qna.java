@@ -34,6 +34,10 @@ public class Qna extends Post {
     @Column(name = "comment_count")
     private Integer commentCount = 0; // 댓글 개수
 
+    @Column(name = "image_path")
+    private String imagePath; // 이미지 파일 경로
+
+
     // 연관관계 메소드
     public void setMember(Member member) {
         this.member = member;
