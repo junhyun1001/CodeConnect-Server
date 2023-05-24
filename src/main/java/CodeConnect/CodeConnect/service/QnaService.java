@@ -78,6 +78,7 @@ public ResponseDto<Qna> writeQna(QnaRequestDto dto, String email) {
     qna.setTitle(title);
     qna.setNickname(nickname);
     qna.setContent(content);
+    findMember.setQna(qna);
 
     Qna saveQna = qnaRepository.save(qna);
 
@@ -95,7 +96,14 @@ public ResponseDto<Qna> writeQna(QnaRequestDto dto, String email) {
             Files.createDirectories(Paths.get(uploadDir).toAbsolutePath().normalize());
 
             // base64 인코딩된 이미지 데이터 디코딩하여 파일로 저장
-            byte[] imageBytes = Base64.getDecoder().decode(base64Image);
+            byte[] imageBytes;
+            try {
+                imageBytes = Base64.getDecoder().decode(base64Image);
+            } catch (IllegalArgumentException e) {
+                // 잘못된 Base64 문자가 포함된 경우 예외 처리 방법을 선택하거나 오류 메시지 반환
+                return null;
+            }
+
             Path path = Paths.get(uploadDir, fileName);
             Files.write(path, imageBytes);
 
