@@ -6,6 +6,8 @@ import CodeConnect.CodeConnect.dto.post.qna.QnaRequestDto;
 import CodeConnect.CodeConnect.service.QnaService;
 import CodeConnect.CodeConnect.service.Role;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -33,6 +35,7 @@ public class QnaController {
 
     //생성
     @PostMapping("/create")
+
     public ResponseDto<Qna> writeQna(@RequestBody QnaRequestDto dto, @AuthenticationPrincipal String email) {
         return qnaService.writeQna(dto, email);
     }

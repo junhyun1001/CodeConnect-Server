@@ -14,7 +14,7 @@ public class QnaRequestDto{
     private int commentCount;
     private String currentDateTime;
     private String modifiedDateTime;
-
+    private String base64Image;
 
 
     public QnaRequestDto(Qna qna){
@@ -26,4 +26,8 @@ public class QnaRequestDto{
         this.currentDateTime=qna.getCurrentDateTime();
         this.modifiedDateTime = qna.getModifiedDateTime();
     }
+
+
+
+
 }
