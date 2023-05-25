@@ -4,15 +4,14 @@ import CodeConnect.CodeConnect.domain.member.Member;
 import CodeConnect.CodeConnect.domain.post.Qna;
 import CodeConnect.CodeConnect.domain.post.Recruitment;
 import CodeConnect.CodeConnect.dto.ResponseDto;
+import CodeConnect.CodeConnect.dto.member.UpdateMemberRequestDto;
 import CodeConnect.CodeConnect.dto.post.recruitment.RecruitmentDto;
 import CodeConnect.CodeConnect.dto.profile.ProfileDto;
-import CodeConnect.CodeConnect.dto.member.UpdateMemberDto;
 import CodeConnect.CodeConnect.repository.MemberRepository;
 import CodeConnect.CodeConnect.repository.QnaRepository;
 import CodeConnect.CodeConnect.repository.RecruitmentRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.Hibernate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -188,11 +187,11 @@ public class ProfileService {
         }
     }
     @Transactional
-    public ResponseDto<UpdateMemberDto> updateProfile(UpdateMemberDto updateMemberDto, String email) {
+    public ResponseDto<UpdateMemberRequestDto> updateProfile(UpdateMemberRequestDto updateMemberRequestDto, String email) {
         Member findMember = memberRepository.findByEmail(email);
-        String updatedNickname = updateMemberDto.getNickname();
-        String updatedAddress = updateMemberDto.getAddress();
-        List<String> updatedFieldList = updateMemberDto.getFieldList();
+        String updatedNickname = updateMemberRequestDto.getNickname();
+        String updatedAddress = updateMemberRequestDto.getAddress();
+        List<String> updatedFieldList = updateMemberRequestDto.getFieldList();
 
         // 회원 정보 업데이트
         findMember.setNickname(updatedNickname);
@@ -214,7 +213,7 @@ public class ProfileService {
         }
 
         log.info("************************* {} 회원 정보가 수정되었습니다. *************************", findMember.getEmail());
-        return ResponseDto.setSuccess("업데이트가 완료되었습니다.", updateMemberDto);
+        return ResponseDto.setSuccess("업데이트가 완료되었습니다.", updateMemberRequestDto);
     }
 
 

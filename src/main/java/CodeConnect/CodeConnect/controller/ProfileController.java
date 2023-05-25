@@ -1,7 +1,7 @@
 package CodeConnect.CodeConnect.controller;
 
 import CodeConnect.CodeConnect.dto.ResponseDto;
-import CodeConnect.CodeConnect.dto.member.UpdateMemberDto;
+import CodeConnect.CodeConnect.dto.member.UpdateMemberRequestDto;
 import CodeConnect.CodeConnect.service.MemberService;
 import CodeConnect.CodeConnect.service.ProfileService;
 import lombok.RequiredArgsConstructor;
@@ -40,7 +40,7 @@ public class ProfileController {
     }
 
     @PutMapping("/profile/update")
-    public ResponseDto<UpdateMemberDto> update(@RequestBody UpdateMemberDto updateDto, @AuthenticationPrincipal String email) {
+    public ResponseDto<UpdateMemberRequestDto> update(@RequestBody UpdateMemberRequestDto updateDto, @AuthenticationPrincipal String email) {
         return profileService.updateProfile(updateDto, email);
     }
 

@@ -91,18 +91,19 @@ public class RecruitmentService {
         memberService.validateExistMember(email);
 
         Recruitment recruitment = validateExistPost(id);
+        RecruitmentDto recruitmentDto = new RecruitmentDto(recruitment);
 
         // 회원 검증 후 내 게시글이면 HOST, 아니면 GUEST
         // 조회 할 시점에 참여된 회원인지 아닌지 판별 할 수 있어야 함
         Map<Role, Object> recruitmentMap = new HashMap<>();
         if (validateAuthorizedMember(email, recruitment)) { // false 값이 반환 될 때
             boolean participantExist = isParticipantExist(recruitment, email);
-            recruitmentMap.put(Role.GUEST, recruitment);
+            recruitmentMap.put(Role.GUEST, recruitmentDto);
             recruitmentMap.put(Role.PARTICIPATION, participantExist);
             log.info("************************* GUEST로 {}번 모집게시글 조회 *************************", recruitment.getRecruitmentId());
             return ResponseDto.setSuccess("GUEST 게시글 조회", recruitmentMap);
         } else {
-            recruitmentMap.put(Role.HOST, recruitment);
+            recruitmentMap.put(Role.HOST, recruitmentDto);
             log.info("************************* HOST로 {}번 모집게시글 조회 *************************", recruitment.getRecruitmentId());
             return ResponseDto.setSuccess("HOST 게시글 조회", recruitmentMap);
         }
