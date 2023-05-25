@@ -14,7 +14,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -32,27 +34,6 @@ public class QnaService {
 
     private final CommentRepository commentRepository;
 
-//    @Transactional
-//    public ResponseDto<Qna> writeQna(QnaRequestDto dto, String email) {
-//
-//        Member findMember = memberRepository.findByEmail(email);
-//        String nickname = findMember.getNickname();
-//        String title = dto.getTitle();
-//        String content = dto.getContent();
-//
-//
-//        Qna qna = new Qna(dto, nickname, title, content);
-//        qna.setTitle(title);
-//        qna.setNickname(nickname);
-//        qna.setContent(content);
-//
-//
-//        findMember.setQna(qna);
-//
-//        Qna saveQna = qnaRepository.save(qna);
-//
-//        return ResponseDto.setSuccess("QnA 글 작성 성공", saveQna);
-//    }
 @Transactional
 public ResponseDto<Qna> writeQna(QnaRequestDto dto, String email) {
     Member findMember = memberRepository.findByEmail(email);
@@ -78,7 +59,7 @@ public ResponseDto<Qna> writeQna(QnaRequestDto dto, String email) {
     qna.setTitle(title);
     qna.setNickname(nickname);
     qna.setContent(content);
-
+    findMember.setQna(qna);
     Qna saveQna = qnaRepository.save(qna);
 
     return ResponseDto.setSuccess("QnA 글 작성 성공", saveQna);
@@ -95,7 +76,14 @@ public ResponseDto<Qna> writeQna(QnaRequestDto dto, String email) {
             Files.createDirectories(Paths.get(uploadDir).toAbsolutePath().normalize());
 
             // base64 인코딩된 이미지 데이터 디코딩하여 파일로 저장
-            byte[] imageBytes = Base64.getDecoder().decode(base64Image);
+            byte[] imageBytes;
+            try {
+                imageBytes = Base64.getDecoder().decode(base64Image);
+            } catch (IllegalArgumentException e) {
+                // 잘못된 Base64 문자가 포함된 경우 예외 처리 방법을 선택하거나 오류 메시지 반환
+                return null;
+            }
+
             Path path = Paths.get(uploadDir, fileName);
             Files.write(path, imageBytes);
 
