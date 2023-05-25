@@ -1,6 +1,8 @@
 package CodeConnect.CodeConnect.domain.chat;
 
+import CodeConnect.CodeConnect.domain.member.Member;
 import CodeConnect.CodeConnect.dto.chat.ChatRequestDto;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -27,7 +29,13 @@ public class Chat {
     private String currentDateTime; // 현재 시간
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "email")
+    @JsonIgnore
+    private Member member;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "room_id")
+    @JsonIgnore
     private ChatRoom chatRoom;
 
     public Chat(ChatRequestDto chatRequestDto) {
@@ -40,6 +48,11 @@ public class Chat {
     public void setChatRoom(ChatRoom chatRoom) {
         this.chatRoom = chatRoom;
         chatRoom.getChatList().add(this);
+    }
+
+    public void setMember(Member member) {
+        this.member = member;
+        member.getChats().add(this);
     }
 
     public String changeDateTimeFormat(LocalDateTime dateTime) {

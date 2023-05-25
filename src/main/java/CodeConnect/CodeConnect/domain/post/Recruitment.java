@@ -47,6 +47,7 @@ public class Recruitment extends Post {
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "recruitment_id")
+    @JsonIgnore
     private ChatRoom chatRoom;
 
     // 연관관계 메소드

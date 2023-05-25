@@ -2,7 +2,6 @@ package CodeConnect.CodeConnect.dto.post.recruitment;
 
 import CodeConnect.CodeConnect.domain.post.Recruitment;
 import lombok.Getter;
-import lombok.Setter;
 
 @Getter
 public class RecruitmentDto {
@@ -27,6 +26,8 @@ public class RecruitmentDto {
 
     private final String field; // 관심분야
 
+    private final String profileImagePath; // 회원 프로필
+
     public RecruitmentDto(Recruitment recruitment) {
         this.recruitmentId = recruitment.getRecruitmentId();
         this.title = recruitment.getTitle();
@@ -38,6 +39,7 @@ public class RecruitmentDto {
         this.count = recruitment.getCount();
         this.currentCount = recruitment.getCurrentCount();
         this.field = recruitment.getField();
+        this.profileImagePath = recruitment.getMember().getProfileImagePath();
     }
 
 

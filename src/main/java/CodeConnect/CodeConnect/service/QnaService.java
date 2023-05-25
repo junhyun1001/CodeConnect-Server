@@ -1,5 +1,6 @@
 package CodeConnect.CodeConnect.service;
 
+import CodeConnect.CodeConnect.converter.Base64Converter;
 import CodeConnect.CodeConnect.domain.member.Member;
 import CodeConnect.CodeConnect.domain.post.Comment;
 import CodeConnect.CodeConnect.domain.post.Qna;
@@ -11,15 +12,8 @@ import CodeConnect.CodeConnect.repository.QnaRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -31,10 +25,9 @@ public class QnaService {
 
     private final QnaRepository qnaRepository;
     private final MemberRepository memberRepository;
-
     private final CommentRepository commentRepository;
 
-//    @Transactional
+    //    @Transactional
 //    public ResponseDto<Qna> writeQna(QnaRequestDto dto, String email) {
 //
 //        Member findMember = memberRepository.findByEmail(email);
@@ -55,68 +48,36 @@ public class QnaService {
 //
 //        return ResponseDto.setSuccess("QnA 글 작성 성공", saveQna);
 //    }
-@Transactional
-public ResponseDto<Qna> writeQna(QnaRequestDto dto, String email) {
-    Member findMember = memberRepository.findByEmail(email);
-    String nickname = findMember.getNickname();
-    String title = dto.getTitle();
-    String content = dto.getContent();
+    @Transactional
+    public ResponseDto<Qna> writeQna(QnaRequestDto dto, String email) {
+        Member findMember = memberRepository.findByEmail(email);
+        String nickname = findMember.getNickname();
+        String title = dto.getTitle();
+        String content = dto.getContent();
 
-    Qna qna = new Qna(dto, nickname, title, content);
+        Qna qna = new Qna(dto, nickname, title, content);
 
-    // 이미지 데이터 처리
-    String base64Image = dto.getBase64Image();
-    if (base64Image != null && !base64Image.isEmpty()) {
-        // 이미지 파일로 저장하고 파일 경로 설정
-        String filePath = saveImageFromBase64(base64Image);
-        if (filePath != null) {
-            qna.setImagePath(filePath);
-        } else {
-            // 이미지 파일 저장 실패 시 예외 처리 방법을 선택하거나 오류 메시지 반환
-            return ResponseDto.setFail("이미지 파일 저장에 실패했습니다.");
-        }
-    }
-
-    qna.setTitle(title);
-    qna.setNickname(nickname);
-    qna.setContent(content);
-    findMember.setQna(qna);
-    Qna saveQna = qnaRepository.save(qna);
-
-    return ResponseDto.setSuccess("QnA 글 작성 성공", saveQna);
-}
-
-    private String saveImageFromBase64(String base64Image) {
-        try {
-            // 이미지 파일 저장 디렉토리 설정
-            String uploadDir = "src/main/resources/image/qna";
-            String fileName = UUID.randomUUID().toString() + ".png";
-            String filePath = uploadDir + "/" + fileName;
-
-            // 디렉토리 생성
-            Files.createDirectories(Paths.get(uploadDir).toAbsolutePath().normalize());
-
-            // base64 인코딩된 이미지 데이터 디코딩하여 파일로 저장
-            byte[] imageBytes;
-            try {
-                imageBytes = Base64.getDecoder().decode(base64Image);
-            } catch (IllegalArgumentException e) {
-                // 잘못된 Base64 문자가 포함된 경우 예외 처리 방법을 선택하거나 오류 메시지 반환
-                return null;
+        // 이미지 데이터 처리
+        String base64Image = dto.getBase64Image();
+        if (base64Image != null && !base64Image.isEmpty()) {
+            // 이미지 파일로 저장하고 파일 경로 설정
+            String filePath = Base64Converter.saveImageFromBase64("qna", base64Image);
+            if (filePath != null) {
+                qna.setImagePath(filePath);
+            } else {
+                // 이미지 파일 저장 실패 시 예외 처리 방법을 선택하거나 오류 메시지 반환
+                return ResponseDto.setFail("이미지 파일 저장에 실패했습니다.");
             }
-
-            Path path = Paths.get(uploadDir, fileName);
-            Files.write(path, imageBytes);
-
-            return filePath;
-        } catch (IOException e) {
-            // 예외 처리
-            e.printStackTrace();
-            // 파일 저장 실패 시 예외 처리 방법을 선택하거나 null 등을 반환
-            return null;
         }
-    }
 
+        qna.setTitle(title);
+        qna.setNickname(nickname);
+        qna.setContent(content);
+        findMember.setQna(qna);
+        Qna saveQna = qnaRepository.save(qna);
+
+        return ResponseDto.setSuccess("QnA 글 작성 성공", saveQna);
+    }
 
     //q&a 들어갔을때 전체 조회
     @Transactional
@@ -128,6 +89,7 @@ public ResponseDto<Qna> writeQna(QnaRequestDto dto, String email) {
     //상세조회
     public ResponseDto<Map<Role, Object>> findOne(Long qnaId, String email) {
         Qna qna = qnaRepository.findById(qnaId).orElseThrow(NullPointerException::new);
+
         List<Comment> comments = commentRepository.findAllByQnaOrderByCurrentDateTimeDesc(qna);
 
         Optional<Member> optionalMember = memberRepository.findById(email);
@@ -147,7 +109,7 @@ public ResponseDto<Qna> writeQna(QnaRequestDto dto, String email) {
             log.info("************************* GUEST로 게시글 조회 *************************");
         }
 
-// comment를 하나씩 검사하여 ROLE을 지정하고 qnaMap에 put
+        // comment를 하나씩 검사하여 ROLE을 지정하고 qnaMap에 put
         List<Map<String, Object>> commentHostList = new ArrayList<>();
         List<Map<String, Object>> commentGuestList = new ArrayList<>();
         for (Comment comment : comments) {
@@ -185,10 +147,11 @@ public ResponseDto<Qna> writeQna(QnaRequestDto dto, String email) {
 
         return ResponseDto.setSuccess("게시글 조회", qnaMap);
     }
+
     //삭제
     @Transactional
-    public ResponseDto<String> delete(Long qnaId, String email){
-        Qna qna = qnaRepository.findById(qnaId).orElseThrow(()-> new NoSuchElementException("값이 존재하지 않습니다"));
+    public ResponseDto<String> delete(Long qnaId, String email) {
+        Qna qna = qnaRepository.findById(qnaId).orElseThrow(() -> new NoSuchElementException("값이 존재하지 않습니다"));
 
         // 회원 검증
         if (!validateMember(email, qna))
@@ -211,15 +174,15 @@ public ResponseDto<Qna> writeQna(QnaRequestDto dto, String email) {
         // 이미지 데이터 처리
         if (base64Image != null && !base64Image.isEmpty()) {
             // 이미지 파일로 저장하고 파일 경로 설정
-            String filePath = saveImageFromBase64(base64Image);
+            String filePath = Base64Converter.saveImageFromBase64("qna", base64Image);
             if (filePath != null) {
                 // 기존 이미지 삭제
-                deleteImage(qna.getImagePath());
+                Base64Converter.deleteImage(qna.getImagePath());
                 qna.setImagePath(filePath);
             } else {
                 return ResponseDto.setFail("이미지 파일 저장에 실패했습니다.");
             }
-        }else{
+        } else {
             qna.setImagePath(null);
         }
 
@@ -232,21 +195,7 @@ public ResponseDto<Qna> writeQna(QnaRequestDto dto, String email) {
         return ResponseDto.setSuccess("업데이트 성공", qna);
     }
 
-    // 기존 이미지 삭제 메소드
-    private void deleteImage(String imagePath) {
-        if (imagePath != null && !imagePath.isEmpty()) {
-            // 이미지 파일 삭제 로직을 구현합니다.
-            // 예시로서 imagePath를 파일 경로로 사용하여 파일을 삭제하는 방식을 보여드립니다.
-            File imageFile = new File(imagePath);
-            if (imageFile.exists()) {
-                imageFile.delete();
-            }
-        }
-    }
-
     //검색
-
-
     @Transactional
     public ResponseDto<List<Qna>> search(String text) {
         List<Qna> qnaList = qnaRepository.findByTitleContainingOrContentContainingOrderByCurrentDateTimeDesc(text, text);

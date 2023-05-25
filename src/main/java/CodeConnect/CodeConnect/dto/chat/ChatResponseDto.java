@@ -16,11 +16,14 @@ public class ChatResponseDto {
 
     private String currentDateTime; // 현재 시간
 
+    private String profileImagePath; // 회원 이미지
+
     public ChatResponseDto(Chat chat) {
         this.chatId = chat.getChatId();
         this.nickname = chat.getNickname();
         this.message = chat.getMessage();
         this.currentDateTime = chat.getCurrentDateTime();
+        this.profileImagePath = chat.getMember().getProfileImagePath();
     }
 
 }

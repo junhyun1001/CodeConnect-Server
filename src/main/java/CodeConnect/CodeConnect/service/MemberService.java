@@ -1,14 +1,10 @@
 package CodeConnect.CodeConnect.service;
 
+import CodeConnect.CodeConnect.converter.Base64Converter;
 import CodeConnect.CodeConnect.domain.member.Member;
-import CodeConnect.CodeConnect.domain.post.Recruitment;
 import CodeConnect.CodeConnect.dto.ResponseDto;
-import CodeConnect.CodeConnect.dto.member.SignInRequestDto;
-import CodeConnect.CodeConnect.dto.member.SignInResponseDto;
-import CodeConnect.CodeConnect.dto.member.SignUpRequestDto;
-import CodeConnect.CodeConnect.dto.member.UpdateMemberDto;
+import CodeConnect.CodeConnect.dto.member.*;
 import CodeConnect.CodeConnect.repository.MemberRepository;
-import CodeConnect.CodeConnect.repository.RecruitmentRepository;
 import CodeConnect.CodeConnect.security.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,7 +26,8 @@ public class MemberService {
     private final TokenProvider tokenProvider;
     private final PasswordEncoder passwordEncoder;
     private final SignupValidateService signupValidateService;
-    private final RecruitmentRepository recruitmentRepository;
+
+    private final String imagePath = "src/main/resources/image/member/default/default_profile.png"; // 외부 저장소에 있는 이미지 파일 경로
 
     // 회원가입
     public ResponseDto<Member> signUp(SignUpRequestDto dto) {
@@ -75,6 +72,8 @@ public class MemberService {
         Member member = new Member(dto);
         // 비밀번호 암호화
         member.setPassword(passwordEncoder.encode(password));
+        // 프로필 이미지 기본값 설정
+        member.setProfileImagePath(imagePath);
         // 회원 객체 DB 저장
         memberRepository.save(member);
 
@@ -106,16 +105,35 @@ public class MemberService {
 
     // 회원 수정(프로필 이미지, 지역, 관심분야)
     @Transactional
-    public ResponseDto<UpdateMemberDto> updateMember(UpdateMemberDto updateMemberDto, String email) {
+    public ResponseDto<UpdatedMemberResponseDto> updateMember(UpdateMemberRequestDto updateMemberRequestDto, String email) {
 
-        Member updateMember = validateExistMember(email);
+        Member member = validateExistMember(email);
 
-        updateMember.updateMember(updateMemberDto);
+        String base64Image = updateMemberRequestDto.getBase64Image();
 
-        memberRepository.save(updateMember);
+        // 이미지 데이터 처리
+        if (base64Image != null && !base64Image.isEmpty()) {
+            // 이미지 파일로 저장하고 파일 경로 설정
+            String filePath = Base64Converter.saveImageFromBase64("member", base64Image);
+            if (filePath != null) {
+                // 기존 이미지 삭제
+                Base64Converter.deleteImage(member.getProfileImagePath());
+                member.setProfileImagePath(filePath);
+            } else {
+                return ResponseDto.setFail("이미지 파일 저장에 실패했습니다.");
+            }
+        } else {
+            member.setProfileImagePath(null);
+        }
 
-        log.info("************************* {} 회원 정보가 수정되었습니다. *************************", updateMember.getEmail());
-        return ResponseDto.setSuccess("업데이트가 완료되었습니다.", updateMemberDto);
+        member.updateMember(updateMemberRequestDto);
+
+        memberRepository.save(member);
+
+        UpdatedMemberResponseDto updatedMemberResponseDto = new UpdatedMemberResponseDto(updateMemberRequestDto, member.getProfileImagePath());
+
+        log.info("************************* {} 회원 정보가 수정되었습니다. *************************", member.getEmail());
+        return ResponseDto.setSuccess("업데이트가 완료되었습니다.", updatedMemberResponseDto);
     }
 
     // 회원 탈퇴

@@ -1,12 +1,12 @@
 package CodeConnect.CodeConnect.service;
 
-import CodeConnect.CodeConnect.converter.EntityToDto;
 import CodeConnect.CodeConnect.domain.chat.Chat;
 import CodeConnect.CodeConnect.domain.chat.ChatRoom;
+import CodeConnect.CodeConnect.domain.member.Member;
 import CodeConnect.CodeConnect.dto.chat.ChatRequestDto;
-import CodeConnect.CodeConnect.dto.chat.ChatResponseDto;
 import CodeConnect.CodeConnect.repository.ChatRepository;
 import CodeConnect.CodeConnect.repository.ChatRoomRepository;
+import CodeConnect.CodeConnect.repository.MemberRepository;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -14,7 +14,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -25,6 +24,7 @@ import java.util.Optional;
 @Slf4j
 public class ChatService {
 
+    private final MemberRepository memberRepository;
     private final ChatRoomRepository chatRoomRepository;
     private final ChatRepository chatRepository;
 
@@ -33,7 +33,11 @@ public class ChatService {
         ChatRoom chatRoom = validateExistChatRoom(chatRequestDto.getRoomId());
 
         Chat chat = new Chat(chatRequestDto);
+
         chatRoom.setChatList(chat);
+
+        Member member = memberRepository.findByNickname(chat.getNickname());
+        member.setChat(chat);
 
         chatRepository.save(chat);
 

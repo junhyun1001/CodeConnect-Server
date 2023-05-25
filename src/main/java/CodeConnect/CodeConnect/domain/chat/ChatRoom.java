@@ -32,6 +32,7 @@ public class ChatRoom {
     private String currentDateTime; // 방 생성 시간
 
     @OneToOne(mappedBy = "chatRoom")
+    @JsonIgnore
     private Recruitment recruitment; // 게시글 정보
 
     @OneToMany(mappedBy = "chatRoom", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
