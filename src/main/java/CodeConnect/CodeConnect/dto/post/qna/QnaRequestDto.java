@@ -17,16 +17,6 @@ public class QnaRequestDto{
     private String base64Image;
 
 
-    public QnaRequestDto(Qna qna){
-        this.qnaId = qna.getQnaId();
-        this.nickname = qna.getNickname();
-        this.title = qna.getTitle();
-        this.content = qna.getContent();
-        this.commentCount = qna.getCommentCount();
-        this.currentDateTime=qna.getCurrentDateTime();
-        this.modifiedDateTime = qna.getModifiedDateTime();
-    }
-
 
 
 

@@ -14,9 +14,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -34,6 +34,27 @@ public class QnaService {
 
     private final CommentRepository commentRepository;
 
+//    @Transactional
+//    public ResponseDto<Qna> writeQna(QnaRequestDto dto, String email) {
+//
+//        Member findMember = memberRepository.findByEmail(email);
+//        String nickname = findMember.getNickname();
+//        String title = dto.getTitle();
+//        String content = dto.getContent();
+//
+//
+//        Qna qna = new Qna(dto, nickname, title, content);
+//        qna.setTitle(title);
+//        qna.setNickname(nickname);
+//        qna.setContent(content);
+//
+//
+//        findMember.setQna(qna);
+//
+//        Qna saveQna = qnaRepository.save(qna);
+//
+//        return ResponseDto.setSuccess("QnA 글 작성 성공", saveQna);
+//    }
 @Transactional
 public ResponseDto<Qna> writeQna(QnaRequestDto dto, String email) {
     Member findMember = memberRepository.findByEmail(email);
@@ -179,18 +200,48 @@ public ResponseDto<Qna> writeQna(QnaRequestDto dto, String email) {
 
     //업데이트
     @Transactional
-    public ResponseDto<Qna> update(Long qnaId, String title, String content, String email) {
-        Qna qna = qnaRepository.findById(qnaId).orElseThrow(()-> new NoSuchElementException("값이 존재하지 않습니다"));
+    public ResponseDto<Qna> update(Long qnaId, String title, String content, String base64Image, String email) {
+        Qna qna = qnaRepository.findById(qnaId)
+                .orElseThrow(() -> new NoSuchElementException("값이 존재하지 않습니다"));
+
         // 회원 검증
         if (!validateMember(email, qna))
             return ResponseDto.setFail("접근 권한이 없습니다.");
-        //자바에서 직접 수정
-        qna.setTitle(title); //Dirty Checking
-        qna.setContent(content); //Dirty Checking
+
+        // 이미지 데이터 처리
+        if (base64Image != null && !base64Image.isEmpty()) {
+            // 이미지 파일로 저장하고 파일 경로 설정
+            String filePath = saveImageFromBase64(base64Image);
+            if (filePath != null) {
+                // 기존 이미지 삭제
+                deleteImage(qna.getImagePath());
+                qna.setImagePath(filePath);
+            } else {
+                return ResponseDto.setFail("이미지 파일 저장에 실패했습니다.");
+            }
+        }else{
+            qna.setImagePath(null);
+        }
+
+        // 자바에서 직접 수정
+        qna.setTitle(title); // Dirty Checking
+        qna.setContent(content); // Dirty Checking
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yy/MM/dd HH:mm");
         qna.setModifiedDateTime(String.valueOf(LocalDateTime.now().format(formatter)));
 
         return ResponseDto.setSuccess("업데이트 성공", qna);
+    }
+
+    // 기존 이미지 삭제 메소드
+    private void deleteImage(String imagePath) {
+        if (imagePath != null && !imagePath.isEmpty()) {
+            // 이미지 파일 삭제 로직을 구현합니다.
+            // 예시로서 imagePath를 파일 경로로 사용하여 파일을 삭제하는 방식을 보여드립니다.
+            File imageFile = new File(imagePath);
+            if (imageFile.exists()) {
+                imageFile.delete();
+            }
+        }
     }
 
     //검색
