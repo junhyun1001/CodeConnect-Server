@@ -30,6 +30,7 @@ public class ChatRoomService {
     private final ChatRoomRepository chatRoomRepository;
     private final ChatRepository chatRepository;
 
+    // 채팅방 생성
     public ResponseDto<ChatRoomDto> createOrGetChatRoom(Recruitment recruitment) {
 
         ChatRoom chatRoom = recruitment.getChatRoom();
@@ -46,6 +47,7 @@ public class ChatRoomService {
 
     }
 
+    // 채팅방 단일 조회
     @Transactional(readOnly = true)
     public ResponseDto<Map<String, Object>> getChatRoom(String email, Long id) {
 
@@ -70,6 +72,7 @@ public class ChatRoomService {
 
     }
 
+    // 가입한 모든 채팅방 목록
     @Transactional(readOnly = true)
     public ResponseDto<List<ChatRoomDto>> getChatRoomList(String email) {
 
