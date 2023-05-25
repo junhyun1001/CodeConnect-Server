@@ -24,14 +24,17 @@ public class ProfileDto {
     private String address;
 
     private List<String> fieldList;
+
     private Role role;
 
+    private String profileImagePath;
 
     public ProfileDto(Member member){
         this.email = member.getEmail();
         this.nickname = member.getNickname();
         this.address = member.getAddress();
         this.fieldList = member.getFieldList();
+        this.profileImagePath = member.getProfileImagePath();
     }
 
 }

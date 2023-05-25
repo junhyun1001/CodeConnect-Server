@@ -1,12 +1,13 @@
 package CodeConnect.CodeConnect.domain.member;
 
 import CodeConnect.CodeConnect.converter.FieldConverter;
+import CodeConnect.CodeConnect.domain.chat.Chat;
 import CodeConnect.CodeConnect.domain.post.Cocomment;
 import CodeConnect.CodeConnect.domain.post.Comment;
 import CodeConnect.CodeConnect.domain.post.Qna;
 import CodeConnect.CodeConnect.domain.post.Recruitment;
 import CodeConnect.CodeConnect.dto.member.SignUpRequestDto;
-import CodeConnect.CodeConnect.dto.member.UpdateMemberDto;
+import CodeConnect.CodeConnect.dto.member.UpdateMemberRequestDto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
@@ -46,6 +47,8 @@ public class Member {
 //    @NotBlank(message = "관심분야를 선택해 주세요")
     private List<String> fieldList;
 
+    private String profileImagePath;
+
     /**
      * 회원과 모집 게시글은 1:N 관계이다.
      * 즉, 한 명의 회원은 여러개의 모집 게시글을 작성할 수 있지만, 각 모집 게시글은 한 명의 회원에 의해서 작성된다.
@@ -76,6 +79,9 @@ public class Member {
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Cocomment> cocomments = new ArrayList<>();
 
+    @JsonIgnore
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Chat> chats = new ArrayList<>();
 
     // 연관관계 메소드
     public void setRecruitment(Recruitment recruitment) {
@@ -88,6 +94,11 @@ public class Member {
         qna.setMember(this);
     }
 
+    public void setChat(Chat chat) {
+        this.chats.add(chat);
+        chat.setMember(this);
+    }
+
     // 생성자
     public Member(SignUpRequestDto dto) {
         this.email = dto.getEmail();
@@ -98,7 +109,7 @@ public class Member {
         this.fieldList = dto.getFieldList();
     }
 
-    public void updateMember(UpdateMemberDto dto) {
+    public void updateMember(UpdateMemberRequestDto dto) {
         setNickname(dto.getNickname());
         setAddress(dto.getAddress());
         setFieldList(dto.getFieldList());
