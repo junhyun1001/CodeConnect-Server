@@ -27,8 +27,8 @@ public class Qna extends Post {
     /**
      * 작성자 정보에 대한 매핑 정보를 통해 작성자(Member) 엔티티를 참조할 수 있다.
      */
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "email")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "email") // 조인 컬럼명과 조인할 대상 필드명 설정
     @JsonIgnore
     private Member member;
     @Column(name = "comment_count")
