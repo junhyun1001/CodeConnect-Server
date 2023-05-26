@@ -27,27 +27,6 @@ public class QnaService {
     private final MemberRepository memberRepository;
     private final CommentRepository commentRepository;
 
-    //    @Transactional
-//    public ResponseDto<Qna> writeQna(QnaRequestDto dto, String email) {
-//
-//        Member findMember = memberRepository.findByEmail(email);
-//        String nickname = findMember.getNickname();
-//        String title = dto.getTitle();
-//        String content = dto.getContent();
-//
-//
-//        Qna qna = new Qna(dto, nickname, title, content);
-//        qna.setTitle(title);
-//        qna.setNickname(nickname);
-//        qna.setContent(content);
-//
-//
-//        findMember.setQna(qna);
-//
-//        Qna saveQna = qnaRepository.save(qna);
-//
-//        return ResponseDto.setSuccess("QnA 글 작성 성공", saveQna);
-//    }
     @Transactional
     public ResponseDto<Qna> writeQna(QnaRequestDto dto, String email) {
         Member findMember = memberRepository.findByEmail(email);
@@ -69,10 +48,12 @@ public class QnaService {
                 return ResponseDto.setFail("이미지 파일 저장에 실패했습니다.");
             }
         }
-
+        qna.setMember(findMember);
         qna.setTitle(title);
         qna.setNickname(nickname);
         qna.setContent(content);
+        qna.setProfileImagePath(qna.getMember().getProfileImagePath()); // Member 엔티티에서 profileImagePath 설정
+
         findMember.setQna(qna);
         Qna saveQna = qnaRepository.save(qna);
 
@@ -83,54 +64,62 @@ public class QnaService {
     @Transactional
     public ResponseDto<List<Qna>> findQna() {
         List<Qna> qnaList = qnaRepository.findAllByOrderByCurrentDateTimeDesc();
+        for (Qna qna : qnaList) {
+            qna.setProfileImagePath(qna.getMember().getProfileImagePath()); // Member 엔티티에서 profileImagePath 설정
+        }
+
         return ResponseDto.setSuccess("QnA 전체 글 조회 성공", qnaList);
     }
 
     //상세조회
+    @Transactional
     public ResponseDto<Map<Role, Object>> findOne(Long qnaId, String email) {
         Qna qna = qnaRepository.findById(qnaId).orElseThrow(NullPointerException::new);
-
         List<Comment> comments = commentRepository.findAllByQnaOrderByCurrentDateTimeDesc(qna);
-
         Optional<Member> optionalMember = memberRepository.findById(email);
+
         if (optionalMember.isEmpty()) {
             return ResponseDto.setFail("존재하지 않는 회원입니다.");
         }
 
+        Member member = optionalMember.get();
         // 회원 검증 후 내 게시글이면 HOST, 아니면 GUEST
         Map<Role, Object> qnaMap = new LinkedHashMap<>();
         if (validateMember(email, qna)) {
+            qna.setProfileImagePath(member.getProfileImagePath());
             // 자신이 작성한 글인 경우
             qnaMap.put(Role.HOST, qna);
             log.info("************************* HOST로 게시글 조회 *************************");
         } else {
+            qna.setProfileImagePath(qna.getMember().getProfileImagePath());
             // 자신이 작성하지 않은 글인 경우
             qnaMap.put(Role.GUEST, qna);
             log.info("************************* GUEST로 게시글 조회 *************************");
         }
 
-        // comment를 하나씩 검사하여 ROLE을 지정하고 qnaMap에 put
         List<Map<String, Object>> commentHostList = new ArrayList<>();
         List<Map<String, Object>> commentGuestList = new ArrayList<>();
         for (Comment comment : comments) {
             Map<String, Object> commentMap = new LinkedHashMap<>();
-            if (validateMember2(email, Collections.singletonList(comment))) {
+            if (validateMember2(Collections.singletonList(comment), member)) {
                 commentMap.put("commentId", comment.getCommentId());
-                commentMap.put("nickname", comment.getNickname());
+                commentMap.put("nickname", member.getNickname()); // 수정된 닉네임 사용
                 commentMap.put("comment", comment.getComment());
                 commentMap.put("currentDateTime", comment.getCurrentDateTime());
                 commentMap.put("modifiedDateTime", comment.getModifiedDateTime());
                 commentMap.put("cocommentCount", comment.getCocommentCount());
+                commentMap.put("profileImagePath", comment.getMember().getProfileImagePath());
                 commentMap.put("role", Role.COMMENT_HOST);
 
                 commentHostList.add(commentMap);
             } else {
                 commentMap.put("commentId", comment.getCommentId());
-                commentMap.put("nickname", comment.getNickname());
+                commentMap.put("nickname", member.getNickname()); // 수정된 닉네임 사용
                 commentMap.put("comment", comment.getComment());
                 commentMap.put("currentDateTime", comment.getCurrentDateTime());
                 commentMap.put("modifiedDateTime", comment.getModifiedDateTime());
                 commentMap.put("cocommentCount", comment.getCocommentCount());
+                commentMap.put("profileImagePath", comment.getMember().getProfileImagePath());
                 commentMap.put("role", Role.COMMENT_GUEST);
 
                 commentGuestList.add(commentMap);
@@ -164,6 +153,7 @@ public class QnaService {
     //업데이트
     @Transactional
     public ResponseDto<Qna> update(Long qnaId, String title, String content, String base64Image, String email) {
+        Member findMember = memberRepository.findByEmail(email);
         Qna qna = qnaRepository.findById(qnaId)
                 .orElseThrow(() -> new NoSuchElementException("값이 존재하지 않습니다"));
 
@@ -187,8 +177,10 @@ public class QnaService {
         }
 
         // 자바에서 직접 수정
+        qna.setMember(findMember);
         qna.setTitle(title); // Dirty Checking
         qna.setContent(content); // Dirty Checking
+        qna.setProfileImagePath(qna.getMember().getProfileImagePath()); // Member 엔티티에서 profileImagePath 설정
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yy/MM/dd HH:mm");
         qna.setModifiedDateTime(String.valueOf(LocalDateTime.now().format(formatter)));
 
@@ -214,18 +206,15 @@ public class QnaService {
     }
 
 
-    private boolean validateMember2(String email, List<Comment> comments) {
-        Member findMember = memberRepository.findByEmail(email);
-        String findMemberNickname = findMember.getNickname();
+    private boolean validateMember2(List<Comment> comments, Member member) {
+        String findMemberNickname = member.getNickname();
 
         for (Comment comment : comments) {
-            String commentNickname = comment.getNickname();
+            String commentNickname = comment.getMember().getNickname();
             if (findMemberNickname.equals(commentNickname)) {
                 return true; // COMMENT_HOST
             }
         }
         return false; // COMMENT_GUEST
     }
-
-
 }

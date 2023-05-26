@@ -22,7 +22,7 @@ public class CommentRequestDto {
     private int cocommentCount;
     private String currentDateTime;
     private String modifiedDateTime;
-
+    private String profileImagePath; //회원 프로필 사진 경로
 
     public Long getCommentId() {
         if (commentId == null) {
@@ -31,10 +31,12 @@ public class CommentRequestDto {
         return commentId;
     }
     public CommentRequestDto(Comment comment) {
+        this.qnaId = comment.getQna().getQnaId();
         this.commentId = comment.getCommentId();
         this.comment = comment.getComment();
         this.cocommentCount = comment.getCocomments().size();
         this.currentDateTime = comment.getCurrentDateTime();
         this.modifiedDateTime = comment.getModifiedDateTime();
+        this.profileImagePath = comment.getMember().getProfileImagePath();
     }
 }
