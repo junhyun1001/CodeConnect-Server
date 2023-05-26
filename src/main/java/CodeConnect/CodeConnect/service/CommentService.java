@@ -10,7 +10,6 @@ import CodeConnect.CodeConnect.repository.MemberRepository;
 import CodeConnect.CodeConnect.repository.QnaRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.Hibernate;
 import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
@@ -45,9 +44,11 @@ public class CommentService {
 
         Comment comment = new Comment(nickname, email);
 
+        comment.setMember(findMember);
         comment.setComment(requestDto.getComment());
         comment.setNickname(nickname);
         comment.setCommentId(requestDto.getCommentId());
+        comment.setProfileImagePath(comment.getMember().getProfileImagePath());
         comment.setQna(qna);
 
 
@@ -62,6 +63,7 @@ public class CommentService {
         return ResponseDto.setSuccess("댓글 쓰기 성공", savedComment);
     }
     //특정 Qna 들어왔을때 댓글 조회
+    @Transactional
     public ResponseDto<List<CommentRequestDto>> findComment(Long qnaId, String email) {
         // 해당 회원 검증
         Optional<Member> findMember = memberRepository.findById(email);
@@ -76,7 +78,7 @@ public class CommentService {
 
         //특정한 findQna에 달린 댓글을 commentList에 할당
         // Optional내부에 있는 Comment객체를 가져옴
-        List<Comment> commentList = commentRepository.findByQna(findQna.get());
+        List<Comment> commentList = commentRepository.findAllByQnaOrderByCurrentDateTimeDesc(findQna.get());
         List<CommentRequestDto> commentResponseDtoList = commentList.stream()
                 .map(CommentRequestDto::new)
                 .collect(Collectors.toList());
@@ -89,7 +91,7 @@ public class CommentService {
     public ResponseDto<String> deleteComment(Long commentId, String email){
 
         Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new NoSuchElementException("댓글이 존재하지 않습니다"));
-        if (validateMember(email, comment))
+        if (!validateMember(email, comment))
             return ResponseDto.setFail("접근 권한이 없습니다");
 
         Qna qna = qnaRepository.findById(comment.getQna().getQnaId()).orElseThrow(() -> new NoSuchElementException("Qna가 존재하지 않습니다"));
@@ -101,11 +103,15 @@ public class CommentService {
 
     //댓글 수정
     public ResponseDto<Comment> updateComment(Long commentId, String email, String comments){
+        Member findMember = memberRepository.findByEmail(email);
         Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new NoSuchElementException("댓글이 존재하지 않습니다"));
-        if (validateMember(email, comment))
+        if (!validateMember(email, comment))
             return ResponseDto.setFail("접근 권한이 없습니다");
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yy/MM/dd HH:mm:ss");
+
         comment.setModifiedDateTime(LocalDateTime.now().format(formatter));
+        comment.setMember(findMember);
+        comment.setProfileImagePath(comment.getMember().getProfileImagePath());
         comment.setComment(comments);
 
         return ResponseDto.setSuccess("댓글 수정 성공", comment);
@@ -116,8 +122,11 @@ public class CommentService {
         Member findMember = memberRepository.findByEmail(email);
         String findMemberNickname = findMember.getNickname();
 
-        // 댓글
-        String commentNickname = comment.getNickname();
-        return !findMemberNickname.equals(commentNickname);
+        // 이전 닉네임과 현재 회원의 닉네임 비교
+        if (findMemberNickname.equals(comment.getNickname())) {
+            return false; // 접근 권한이 있음
+        }
+
+        return true; // 접근 권한이 없음
     }
 }

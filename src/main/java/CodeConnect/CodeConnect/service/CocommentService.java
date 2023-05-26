@@ -36,9 +36,11 @@ public class CocommentService {
         Comment comment = optionalComment.get();
 
         Cocomment cocomment = new Cocomment(nickname, email);
+        cocomment.setMember(findMember);
         cocomment.setCocomment(dto.getCocomment());
         cocomment.setNickname(nickname);
         cocomment.setCocommentId(dto.getCocommentId());
+        cocomment.setProfileImagePath(comment.getMember().getProfileImagePath());
         cocomment.setComment(comment);
 
         if(cocomment.getCocommentId() != null){
@@ -48,45 +50,51 @@ public class CocommentService {
         Cocomment savedCocomment = cocommentRepository.save(cocomment);
         return ResponseDto.setSuccess("대댓글 작성 완료", savedCocomment);
     }
-
+    @Transactional
     public ResponseDto<Map<Role,Object>> detailComment(Long commentId, String email){
         Optional<Member> optionalMember = memberRepository.findById(email);
         if (optionalMember.isEmpty()) {
             return ResponseDto.setFail("존재하지 않는 회원입니다.");
         }
-
+        Member member = optionalMember.get();
         Comment comment = commentRepository.findById(commentId).orElseThrow(NullPointerException::new);
         List<Cocomment> cocommentList = cocommentRepository.findAllByCommentOrderByCurrentDateTimeDesc(comment);
 
         Map<Role, Object> cocommentMap = new LinkedHashMap<>();
 
-        // comment를 하나씩 검사하여 ROLE을 지정하고 qnaMap에 put
-        List<Cocomment> cocommentHostList = new ArrayList<>();
-        List<Cocomment> cocommentGuestList = new ArrayList<>();
+        // comment를 하나씩 검사하여 ROLE을 지정하고 cocommentMap에 put
+        List<CocommentRequestDto> cocommentHostDtoList = new ArrayList<>();
+        List<CocommentRequestDto> cocommentGuestDtoList = new ArrayList<>();
         for (Cocomment cocomment : cocommentList) {
-            if (validateMember2(email, Collections.singletonList(cocomment))) {
-                cocommentHostList.add(cocomment);
+            CocommentRequestDto cocommentDto = new CocommentRequestDto(cocomment);
+            if (validateMember2(Collections.singletonList(cocomment), member)) {
+                cocommentDto.setProfileImagePath(cocomment.getMember().getProfileImagePath());
+                cocommentHostDtoList.add(cocommentDto);
             } else {
-                cocommentGuestList.add(cocomment);
+                cocommentDto.setProfileImagePath(cocomment.getMember().getProfileImagePath());
+                cocommentGuestDtoList.add(cocommentDto);
             }
         }
-        if (!cocommentHostList.isEmpty()) {
-            cocommentMap.put(Role.COCOMMENT_HOST, cocommentHostList);
+        if (!cocommentHostDtoList.isEmpty()) {
+            cocommentMap.put(Role.COCOMMENT_HOST, cocommentHostDtoList);
         }
-        if (!cocommentGuestList.isEmpty()) {
-            cocommentMap.put(Role.COCOMMENT_GUEST, cocommentGuestList);
+        if (!cocommentGuestDtoList.isEmpty()) {
+            cocommentMap.put(Role.COCOMMENT_GUEST, cocommentGuestDtoList);
         }
 
         return ResponseDto.setSuccess("게시글 조회", cocommentMap);
     }
     @Transactional
     public ResponseDto<Cocomment> update(Long cocomentId,String cocomment, String email) {
+        Member findMember = memberRepository.findByEmail(email);
         Cocomment cocomments = cocommentRepository.findById(cocomentId).orElseThrow(NullPointerException::new);
         // 회원 검증
         if (!validateMember(email, cocomments))
             return ResponseDto.setFail("접근 권한이 없습니다");
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yy/MM/dd HH:mm:ss");
+        cocomments.setMember(findMember);
         cocomments.setModifiedDateTime(LocalDateTime.now().format(formatter));
+        cocomments.setProfileImagePath(cocomments.getMember().getProfileImagePath());
         cocomments.setCocomment(cocomment);
         return ResponseDto.setSuccess("대댓글 수정 성공", cocomments);
     }
@@ -109,17 +117,18 @@ public class CocommentService {
         Member findMember = memberRepository.findByEmail(email);
         String findMemberNickname = findMember.getNickname();
 
-        // Qna
-        String recruitmentNickname = cocomment.getNickname();
+        // 이전 닉네임과 현재 회원의 닉네임 비교
+        if (findMemberNickname.equals(cocomment.getNickname())) {
+            return false; // 접근 권한이 있음
+        }
 
-        return findMemberNickname.equals(recruitmentNickname);
+        return true; // 접근 권한이 없음
     }
-    private boolean validateMember2(String email, List<Cocomment> cocomments) {
-        Member findMember = memberRepository.findByEmail(email);
-        String findMemberNickname = findMember.getNickname();
+    private boolean validateMember2(List<Cocomment> cocomments, Member member) {
+        String findMemberNickname = member.getNickname();
 
         for (Cocomment cocomment : cocomments) {
-            String commentNickname = cocomment.getNickname();
+            String commentNickname = cocomment.getMember().getNickname();
             if (findMemberNickname.equals(commentNickname)) {
                 return true; // COCOMMENT_HOST
             }

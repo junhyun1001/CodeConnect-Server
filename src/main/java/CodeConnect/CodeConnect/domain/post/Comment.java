@@ -55,7 +55,7 @@ public class Comment{
     private final List<Cocomment> cocomments = new ArrayList<>();
 
     @Transient
-    private String profileImagePath; //회원 면상
+    private String profileImagePath; //회원 프로필 사진 경로
 
     public void setQna(Qna qna){
         this.qna = qna;

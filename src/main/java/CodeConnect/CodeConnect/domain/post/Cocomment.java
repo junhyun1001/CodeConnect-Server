@@ -39,6 +39,8 @@ public class Cocomment {
     @OnDelete(action = OnDeleteAction.CASCADE) // 연관된 user가 삭제되면 같이 삭제됨
     private Comment comment;
 
+    @Transient
+    private String profileImagePath; //회원 프로필 사진 경로
     public void setComment(Comment comment){
         this.comment = comment;
         if(comment != null){
