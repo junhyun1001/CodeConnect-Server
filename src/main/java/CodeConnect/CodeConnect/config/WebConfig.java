@@ -17,7 +17,17 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
 
-        registry.addResourceHandler(uploadPath)
-                .addResourceLocations(resourcePath);
+        // 기본 프로필
+        registry.addResourceHandler(uploadPath + "/member/default/**")
+                .addResourceLocations(resourcePath + "/member/default/");
+
+        // 회원 프로필 수정
+        registry.addResourceHandler(uploadPath + "/member/profile/**")
+                .addResourceLocations(resourcePath + "/member/profile/");
+
+        // qna 이미지 업로드
+        registry.addResourceHandler(uploadPath + "/qna/**")
+                .addResourceLocations(resourcePath + "/qna/");
+
     }
 }
