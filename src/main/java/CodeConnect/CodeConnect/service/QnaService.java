@@ -27,27 +27,6 @@ public class QnaService {
     private final MemberRepository memberRepository;
     private final CommentRepository commentRepository;
 
-    //    @Transactional
-//    public ResponseDto<Qna> writeQna(QnaRequestDto dto, String email) {
-//
-//        Member findMember = memberRepository.findByEmail(email);
-//        String nickname = findMember.getNickname();
-//        String title = dto.getTitle();
-//        String content = dto.getContent();
-//
-//
-//        Qna qna = new Qna(dto, nickname, title, content);
-//        qna.setTitle(title);
-//        qna.setNickname(nickname);
-//        qna.setContent(content);
-//
-//
-//        findMember.setQna(qna);
-//
-//        Qna saveQna = qnaRepository.save(qna);
-//
-//        return ResponseDto.setSuccess("QnA 글 작성 성공", saveQna);
-//    }
     @Transactional
     public ResponseDto<Qna> writeQna(QnaRequestDto dto, String email) {
         Member findMember = memberRepository.findByEmail(email);
@@ -69,10 +48,12 @@ public class QnaService {
                 return ResponseDto.setFail("이미지 파일 저장에 실패했습니다.");
             }
         }
-
+        qna.setMember(findMember);
         qna.setTitle(title);
         qna.setNickname(nickname);
         qna.setContent(content);
+        qna.setProfileImagePath(qna.getMember().getProfileImagePath()); // Member 엔티티에서 profileImagePath 설정
+
         findMember.setQna(qna);
         Qna saveQna = qnaRepository.save(qna);
 
@@ -83,27 +64,33 @@ public class QnaService {
     @Transactional
     public ResponseDto<List<Qna>> findQna() {
         List<Qna> qnaList = qnaRepository.findAllByOrderByCurrentDateTimeDesc();
+        for (Qna qna : qnaList) {
+            qna.setProfileImagePath(qna.getMember().getProfileImagePath()); // Member 엔티티에서 profileImagePath 설정
+        }
+
         return ResponseDto.setSuccess("QnA 전체 글 조회 성공", qnaList);
     }
 
     //상세조회
     public ResponseDto<Map<Role, Object>> findOne(Long qnaId, String email) {
         Qna qna = qnaRepository.findById(qnaId).orElseThrow(NullPointerException::new);
-
         List<Comment> comments = commentRepository.findAllByQnaOrderByCurrentDateTimeDesc(qna);
-
         Optional<Member> optionalMember = memberRepository.findById(email);
+
         if (optionalMember.isEmpty()) {
             return ResponseDto.setFail("존재하지 않는 회원입니다.");
         }
 
+        Member member = optionalMember.get();
         // 회원 검증 후 내 게시글이면 HOST, 아니면 GUEST
         Map<Role, Object> qnaMap = new LinkedHashMap<>();
         if (validateMember(email, qna)) {
+           qna.setProfileImagePath(member.getProfileImagePath());
             // 자신이 작성한 글인 경우
             qnaMap.put(Role.HOST, qna);
             log.info("************************* HOST로 게시글 조회 *************************");
         } else {
+            qna.setProfileImagePath(qna.getMember().getProfileImagePath());
             // 자신이 작성하지 않은 글인 경우
             qnaMap.put(Role.GUEST, qna);
             log.info("************************* GUEST로 게시글 조회 *************************");
@@ -121,6 +108,7 @@ public class QnaService {
                 commentMap.put("currentDateTime", comment.getCurrentDateTime());
                 commentMap.put("modifiedDateTime", comment.getModifiedDateTime());
                 commentMap.put("cocommentCount", comment.getCocommentCount());
+                commentMap.put("profileImagePath", comment.getProfileImagePath());
                 commentMap.put("role", Role.COMMENT_HOST);
 
                 commentHostList.add(commentMap);
@@ -131,6 +119,7 @@ public class QnaService {
                 commentMap.put("currentDateTime", comment.getCurrentDateTime());
                 commentMap.put("modifiedDateTime", comment.getModifiedDateTime());
                 commentMap.put("cocommentCount", comment.getCocommentCount());
+                commentMap.put("profileImagePath", comment.getProfileImagePath());
                 commentMap.put("role", Role.COMMENT_GUEST);
 
                 commentGuestList.add(commentMap);

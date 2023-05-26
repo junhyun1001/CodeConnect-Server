@@ -54,6 +54,9 @@ public class Comment{
     @JsonIgnore
     private final List<Cocomment> cocomments = new ArrayList<>();
 
+    @Transient
+    private String profileImagePath; //회원 면상
+
     public void setQna(Qna qna){
         this.qna = qna;
         if(qna != null){
