@@ -103,39 +103,6 @@ public class MemberService {
 
     }
 
-    // 회원 수정(프로필 이미지, 지역, 관심분야)
-    @Transactional
-    public ResponseDto<UpdatedMemberResponseDto> updateMember(UpdateMemberRequestDto updateMemberRequestDto, String email) {
-
-        Member member = validateExistMember(email);
-
-        String base64Image = updateMemberRequestDto.getBase64Image();
-
-        // 이미지 데이터 처리
-        if (base64Image != null && !base64Image.isEmpty()) {
-            // 이미지 파일로 저장하고 파일 경로 설정
-            String filePath = Base64Converter.saveImageFromBase64("member", base64Image);
-            if (filePath != null) {
-                // 기존 이미지 삭제
-                Base64Converter.deleteImage(member.getProfileImagePath());
-                member.setProfileImagePath(filePath);
-            } else {
-                return ResponseDto.setFail("이미지 파일 저장에 실패했습니다.");
-            }
-        } else {
-            member.setProfileImagePath(null);
-        }
-
-        member.updateMember(updateMemberRequestDto);
-
-        memberRepository.save(member);
-
-        UpdatedMemberResponseDto updatedMemberResponseDto = new UpdatedMemberResponseDto(updateMemberRequestDto, member.getProfileImagePath());
-
-        log.info("************************* {} 회원 정보가 수정되었습니다. *************************", member.getEmail());
-        return ResponseDto.setSuccess("업데이트가 완료되었습니다.", updatedMemberResponseDto);
-    }
-
     // 회원 탈퇴
     public ResponseDto<?> deleteMember(String email) {
 
