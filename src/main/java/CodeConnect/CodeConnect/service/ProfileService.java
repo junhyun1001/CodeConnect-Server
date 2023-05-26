@@ -1,10 +1,12 @@
 package CodeConnect.CodeConnect.service;
 
+import CodeConnect.CodeConnect.converter.Base64Converter;
 import CodeConnect.CodeConnect.domain.member.Member;
 import CodeConnect.CodeConnect.domain.post.Qna;
 import CodeConnect.CodeConnect.domain.post.Recruitment;
 import CodeConnect.CodeConnect.dto.ResponseDto;
 import CodeConnect.CodeConnect.dto.member.UpdateMemberRequestDto;
+import CodeConnect.CodeConnect.dto.member.UpdatedMemberResponseDto;
 import CodeConnect.CodeConnect.dto.post.recruitment.RecruitmentDto;
 import CodeConnect.CodeConnect.dto.profile.ProfileDto;
 import CodeConnect.CodeConnect.repository.MemberRepository;
@@ -24,6 +26,8 @@ public class ProfileService {
     private final MemberRepository memberRepository;
     private final QnaRepository qnaRepository;
     private final RecruitmentRepository recruitmentRepository;
+
+    private final String defaultImagePath = "src/main/resources/image/member/default/default_profile.png";
 
     public ResponseDto<Object> showUserInfo(String email, String nickname) {
 
@@ -54,6 +58,7 @@ public class ProfileService {
             }
         }
     }
+
     // 그냥 본인꺼 프로필 조회
     public ResponseDto<Object> showUserInfo2(String email) {
         Member findMember = memberRepository.findByEmail(email);
@@ -187,7 +192,7 @@ public class ProfileService {
         }
     }
     @Transactional
-    public ResponseDto<UpdateMemberRequestDto> updateProfile(UpdateMemberRequestDto updateMemberRequestDto, String email) {
+    public ResponseDto<UpdatedMemberResponseDto> updateProfile(UpdateMemberRequestDto updateMemberRequestDto, String email) {
         Member findMember = memberRepository.findByEmail(email);
         String updatedNickname = updateMemberRequestDto.getNickname();
         String updatedAddress = updateMemberRequestDto.getAddress();
@@ -212,8 +217,27 @@ public class ProfileService {
             recruitment.setAddress(updatedAddress);
         }
 
+        String base64Image = updateMemberRequestDto.getBase64Image();
+
+        // 이미지 데이터 처리
+        if (base64Image != null && !base64Image.isEmpty()) {
+            // 이미지 파일로 저장하고 파일 경로 설정
+            String filePath = Base64Converter.saveImageFromBase64("member", base64Image);
+            if (filePath != null) {
+                // 기존 이미지 삭제
+                Base64Converter.deleteImage(findMember.getProfileImagePath());
+                findMember.setProfileImagePath(filePath);
+            } else {
+                return ResponseDto.setFail("이미지 파일 저장에 실패했습니다.");
+            }
+        } else {
+            findMember.setProfileImagePath(defaultImagePath);
+        }
+
+        UpdatedMemberResponseDto updatedMemberResponseDto = new UpdatedMemberResponseDto(updateMemberRequestDto, findMember.getProfileImagePath());
+
         log.info("************************* {} 회원 정보가 수정되었습니다. *************************", findMember.getEmail());
-        return ResponseDto.setSuccess("업데이트가 완료되었습니다.", updateMemberRequestDto);
+        return ResponseDto.setSuccess("업데이트가 완료되었습니다.", updatedMemberResponseDto);
     }
 
 
