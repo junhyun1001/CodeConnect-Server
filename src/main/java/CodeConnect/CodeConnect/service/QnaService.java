@@ -67,7 +67,6 @@ public class QnaService {
         for (Qna qna : qnaList) {
             qna.setProfileImagePath(qna.getMember().getProfileImagePath()); // Member 엔티티에서 profileImagePath 설정
         }
-
         return ResponseDto.setSuccess("QnA 전체 글 조회 성공", qnaList);
     }
 

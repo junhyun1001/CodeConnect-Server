@@ -113,16 +113,14 @@ public class CocommentService {
         return ResponseDto.setSuccess("대댓글 삭제 성공", null);
     }
     private boolean validateMember(String email, Cocomment cocomment) {
-        // 회원
         Member findMember = memberRepository.findByEmail(email);
-        String findMemberNickname = findMember.getNickname();
+        String memberEmail = cocomment.getMember().getEmail();
 
-        // 이전 닉네임과 현재 회원의 닉네임 비교
-        if (findMemberNickname.equals(cocomment.getNickname())) {
-            return false; // 접근 권한이 있음
+        if(findMember.getEmail().equals(memberEmail)){
+            return true;
         }
+        return false;
 
-        return true; // 접근 권한이 없음
     }
     private boolean validateMember2(List<Cocomment> cocomments, Member member) {
         String findMemberNickname = member.getNickname();

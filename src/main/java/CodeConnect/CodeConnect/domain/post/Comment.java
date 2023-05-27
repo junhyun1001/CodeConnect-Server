@@ -43,9 +43,6 @@ public class Comment{
 
     private String modifiedDateTime;
 
-    @Getter @Setter
-    private String role;
-
     @Column(name = "cocomment_count")
     private Integer cocommentCount = 0; // 대댓글 개수
 
