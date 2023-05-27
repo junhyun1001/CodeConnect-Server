@@ -1,6 +1,7 @@
 package CodeConnect.CodeConnect.service;
 
 import CodeConnect.CodeConnect.domain.member.Member;
+import CodeConnect.CodeConnect.domain.post.Cocomment;
 import CodeConnect.CodeConnect.domain.post.Comment;
 import CodeConnect.CodeConnect.domain.post.Qna;
 import CodeConnect.CodeConnect.dto.ResponseDto;
@@ -89,7 +90,6 @@ public class CommentService {
     //댓글 삭제
     @Transactional
     public ResponseDto<String> deleteComment(Long commentId, String email){
-
         Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new NoSuchElementException("댓글이 존재하지 않습니다"));
         if (!validateMember(email, comment))
             return ResponseDto.setFail("접근 권한이 없습니다");
@@ -120,13 +120,11 @@ public class CommentService {
     private boolean validateMember(String email, Comment comment) {
         // 회원
         Member findMember = memberRepository.findByEmail(email);
-        String findMemberNickname = findMember.getNickname();
+        String memberEmail = comment.getMember().getEmail();
 
-        // 이전 닉네임과 현재 회원의 닉네임 비교
-        if (findMemberNickname.equals(comment.getNickname())) {
-            return false; // 접근 권한이 있음
+        if(findMember.getEmail().equals(memberEmail)){
+            return true;
         }
-
-        return true; // 접근 권한이 없음
+        return false;
     }
 }

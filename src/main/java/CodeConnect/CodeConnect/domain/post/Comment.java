@@ -40,8 +40,7 @@ public class Comment{
 
     private String currentDateTime; // 댓글 작성 시간
     private String modifiedDateTime;
-    @Getter @Setter
-    private String role;
+
     @Column(name = "cocomment_count")
     private Integer cocommentCount = 0; // 대댓글 개수
     @ManyToOne(fetch = FetchType.LAZY)
@@ -54,7 +53,6 @@ public class Comment{
     @JsonIgnore
     private final List<Cocomment> cocomments = new ArrayList<>();
 
-    @Transient
     private String profileImagePath; //회원 프로필 사진 경로
 
     public void setQna(Qna qna){

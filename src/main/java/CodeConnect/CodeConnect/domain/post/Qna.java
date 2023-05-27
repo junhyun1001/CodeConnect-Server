@@ -37,7 +37,6 @@ public class Qna extends Post {
     @Column(name = "image_path")
     private String imagePath; // 이미지 파일 경로
 
-    @Transient
     private String profileImagePath; //회원 면상
 
     // 연관관계 메소드
