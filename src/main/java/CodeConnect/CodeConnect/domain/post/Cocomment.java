@@ -12,7 +12,6 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 
 @Entity
 @Table(name = "Cocomment")
@@ -20,27 +19,33 @@ import java.util.ArrayList;
 @Setter
 @NoArgsConstructor
 public class Cocomment {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long cocommentId; // 댓글 id
+
     @NotBlank
     private String cocomment; // 댓글 내용
 
     private String nickname; // 회원 닉네임
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "email")
     @JsonIgnore
     private Member member; // 회원 조회
+
     private String currentDateTime; // 댓글 작성 시간
+
     private String modifiedDateTime;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "comment_id")
     @JsonIgnore
     @OnDelete(action = OnDeleteAction.CASCADE) // 연관된 user가 삭제되면 같이 삭제됨
     private Comment comment;
 
-    @Transient
     private String profileImagePath; //회원 프로필 사진 경로
+
     public void setComment(Comment comment){
         this.comment = comment;
         if(comment != null){

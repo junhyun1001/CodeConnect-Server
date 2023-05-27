@@ -225,7 +225,6 @@ public class ProfileService {
             String filePath = Base64Converter.saveImageFromBase64("member", base64Image);
             if (filePath != null) {
                 // 기존 이미지 삭제
-                Base64Converter.deleteImage(findMember.getProfileImagePath());
                 findMember.setProfileImagePath(filePath);
             } else {
                 return ResponseDto.setFail("이미지 파일 저장에 실패했습니다.");
