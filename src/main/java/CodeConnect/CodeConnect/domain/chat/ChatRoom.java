@@ -1,6 +1,7 @@
 package CodeConnect.CodeConnect.domain.chat;
 
 import CodeConnect.CodeConnect.domain.post.Recruitment;
+import CodeConnect.CodeConnect.domain.todo.Todo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -31,6 +32,11 @@ public class ChatRoom {
 
     private String currentDateTime; // 방 생성 시간
 
+    @ElementCollection
+    @CollectionTable(joinColumns = @JoinColumn(name = "room_id"))
+    @JsonIgnore
+    private List<String> currentParticipantMemberList;
+
     @OneToOne(mappedBy = "chatRoom")
     @JsonIgnore
     private Recruitment recruitment; // 게시글 정보
@@ -39,10 +45,9 @@ public class ChatRoom {
     @JsonIgnore
     private List<Chat> chatList = new ArrayList<>();
 
-    @ElementCollection
-    @CollectionTable(joinColumns = @JoinColumn(name = "room_id"))
+    @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
-    private List<String> currentParticipantMemberList;
+    private List<Todo> todo;
 
     public ChatRoom(Recruitment recruitment) {
         this.title = recruitment.getTitle();
