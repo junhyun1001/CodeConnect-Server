@@ -41,22 +41,6 @@ public class TodoService {
 
     }
 
-    // todo 조회
-    @Transactional(readOnly = true)
-    public List<TodoResponseDto> getTodoList(Long roomId) {
-
-        ChatRoom chatRoom = chatRoomService.validateExistChatRoom(roomId);
-
-        List<Todo> todo = chatRoom.getTodo();
-
-        List<TodoResponseDto> todoResponseDtos = EntityToDto.mapListToDto(todo, TodoResponseDto::new);
-
-        log.info("{}번 방 Todo 리스트 조회", roomId);
-
-        return todoResponseDtos;
-
-    }
-
     // todo 업데이트
     public TodoResponseDto updateTodo(UpdateTodoRequestDto updateTodoRequestDto) {
         Todo todo = validateExistTodo(updateTodoRequestDto.getTodoId());
