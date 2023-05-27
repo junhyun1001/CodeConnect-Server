@@ -40,7 +40,11 @@ public class ChatRoomService {
         String resultMessage = (chatRoom == recruitment.getChatRoom()) ? "이미 존재하는 채팅방 입니다." : "채팅방이 생성되었습니다.";
         log.info("************************* " + resultMessage + ": {}, {} *************************", chatRoom.getRoomId(), chatRoom.getTitle());
 
-        return ResponseDto.setSuccess(resultMessage, new ChatRoomDto(chatRoom));
+        // dto 생성
+        ChatRoomDto chatRoomDto = new ChatRoomDto(chatRoom);
+        chatRoomDto.setCurrentCount(recruitment.getCurrentCount()); // 작성자 인원 제외하고 인원수 리턴
+
+        return ResponseDto.setSuccess(resultMessage, chatRoomDto);
 
     }
 
