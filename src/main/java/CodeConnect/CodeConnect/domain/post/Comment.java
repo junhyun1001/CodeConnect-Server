@@ -25,6 +25,7 @@ public class Comment{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long commentId; // 댓글 id
+
     @NotBlank
     private String comment; // 댓글 내용
     
@@ -39,22 +40,26 @@ public class Comment{
     private Member member; // 회원 조회
 
     private String currentDateTime; // 댓글 작성 시간
+
     private String modifiedDateTime;
+
     @Getter @Setter
     private String role;
+
     @Column(name = "cocomment_count")
     private Integer cocommentCount = 0; // 대댓글 개수
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "qna_id")
     @JsonIgnore
     @OnDelete(action = OnDeleteAction.CASCADE) // 연관된 user가 삭제되면 같이 삭제됨
     private Qna qna;
+
     @OneToMany(mappedBy = "comment", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("currentDateTime ASC") //comment 오름차순
     @JsonIgnore
     private final List<Cocomment> cocomments = new ArrayList<>();
 
-    @Transient
     private String profileImagePath; //회원 프로필 사진 경로
 
     public void setQna(Qna qna){
