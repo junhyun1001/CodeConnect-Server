@@ -7,6 +7,8 @@ public class UpdateTodoRequestDto {
 
     private Long todoId;
 
+    private Long roomId;
+
     private String content;
 
     private Boolean isCompleted;

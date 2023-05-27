@@ -28,47 +28,45 @@ public class TodoService {
     private final TodoRepository todoRepository;
 
     // todo 생성
-    public ResponseDto<TodoResponseDto> createTodo(CreateTodoRequestDto createTodoRequestDto) {
+    public TodoResponseDto createTodo(CreateTodoRequestDto createTodoRequestDto) {
 
         ChatRoom chatRoom = chatRoomService.validateExistChatRoom(createTodoRequestDto.getRoomId());
 
         Todo todo = new Todo(createTodoRequestDto, chatRoom);
         todoRepository.save(todo);
 
-        TodoResponseDto todoResponseDto = new TodoResponseDto(todo);
-
         log.info("{}번 채팅방 To-Do 생성", createTodoRequestDto.getRoomId());
 
-        return ResponseDto.setSuccess("Todo 생성", todoResponseDto);
+        return new TodoResponseDto(todo);
+
     }
 
     // todo 조회
-    public ResponseDto<List<TodoResponseDto>> getTodoList(RoomIdRequestDto roomIdRequestDto) {
+    @Transactional(readOnly = true)
+    public List<TodoResponseDto> getTodoList(Long roomId) {
 
-        ChatRoom chatRoom = chatRoomService.validateExistChatRoom(roomIdRequestDto.getRoomId());
+        ChatRoom chatRoom = chatRoomService.validateExistChatRoom(roomId);
 
         List<Todo> todo = chatRoom.getTodo();
 
         List<TodoResponseDto> todoResponseDtos = EntityToDto.mapListToDto(todo, TodoResponseDto::new);
 
-        log.info("{}번 방 Todo 리스트 조회", roomIdRequestDto.getRoomId());
+        log.info("{}번 방 Todo 리스트 조회", roomId);
 
-        return ResponseDto.setSuccess("Todo 리스트 조회", todoResponseDtos);
+        return todoResponseDtos;
 
     }
 
     // todo 업데이트
-    public ResponseDto<TodoResponseDto> updateTodo(UpdateTodoRequestDto updateTodoRequestDto) {
+    public TodoResponseDto updateTodo(UpdateTodoRequestDto updateTodoRequestDto) {
         Todo todo = validateExistTodo(updateTodoRequestDto.getTodoId());
 
         todo.updateTodo(updateTodoRequestDto);
         todoRepository.save(todo);
 
-        TodoResponseDto todoResponseDto = new TodoResponseDto(todo);
-
         log.info("{}번 Todo가 업데이트 되었습니다.", todo.getTodoId());
 
-        return ResponseDto.setSuccess("Todo가 업데이트 되었습니다.", todoResponseDto);
+        return new TodoResponseDto(todo);
 
     }
 
