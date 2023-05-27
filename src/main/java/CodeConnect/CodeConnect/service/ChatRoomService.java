@@ -15,10 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -58,6 +55,14 @@ public class ChatRoomService {
 
         List<Chat> byChatRoom = chatRepository.findByChatRoom(chatRoom);
 
+        // {닉네임: 사진} 형식의 맵 생성
+        List<String> currentParticipantMemberList = chatRoom.getCurrentParticipantMemberList();
+        Map<String, String> nicknameAndProfileImageMap = new HashMap<>();
+        for (String memberEmail : currentParticipantMemberList) {
+            member = memberService.validateExistMember(memberEmail);
+            nicknameAndProfileImageMap.put(member.getNickname(), member.getProfileImagePath());
+        }
+
         // dto 생성
         ChatRoomDto chatRoomDto = new ChatRoomDto(chatRoom);
         List<ChatResponseDto> chatResponseDtos = EntityToDto.mapListToDto(byChatRoom, ChatResponseDto::new);
@@ -67,6 +72,7 @@ public class ChatRoomService {
         chatRoomChatMap.put("ROOM_INFO", chatRoomDto);
         chatRoomChatMap.put("CHAT", chatResponseDtos);
         chatRoomChatMap.put("MY_NICKNAME", nickname);
+        chatRoomChatMap.put("NICKNAME_IMAGE", nicknameAndProfileImageMap);
 
         return ResponseDto.setSuccess("채팅방 조회", chatRoomChatMap);
 
