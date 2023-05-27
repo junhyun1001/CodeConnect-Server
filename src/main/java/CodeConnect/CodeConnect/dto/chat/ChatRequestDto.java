@@ -18,6 +18,8 @@ public class ChatRequestDto {
 
     private String currentDateTime = changeDateTimeFormat(LocalDateTime.now()); // 메시지 보낸 시간
 
+    private String profileImagePath; // 회원 프로필 사진
+
     public String changeDateTimeFormat(LocalDateTime dateTime) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
         return dateTime.format(formatter);
