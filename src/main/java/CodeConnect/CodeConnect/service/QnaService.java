@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Service
@@ -67,7 +66,6 @@ public class QnaService {
         List<Qna> qnaList = qnaRepository.findAllByOrderByCurrentDateTimeDesc();
         for (Qna qna : qnaList) {
             qna.setProfileImagePath(qna.getMember().getProfileImagePath()); // Member 엔티티에서 profileImagePath 설정
-            qna.setCurrentDateTime(TimeUtils.formatTimeAgo(qna.getCurrentDateTime()));
         }
         return ResponseDto.setSuccess("QnA 전체 글 조회 성공", qnaList);
     }
@@ -88,13 +86,11 @@ public class QnaService {
         Map<Role, Object> qnaMap = new LinkedHashMap<>();
         if (validateMember(email, qna)) {
             qna.setProfileImagePath(member.getProfileImagePath());
-            qna.setCurrentDateTime(TimeUtils.formatTimeAgo(qna.getCurrentDateTime()));
             // 자신이 작성한 글인 경우
             qnaMap.put(Role.HOST, qna);
             log.info("************************* HOST로 게시글 조회 *************************");
         } else {
             qna.setProfileImagePath(qna.getMember().getProfileImagePath());
-            qna.setCurrentDateTime(TimeUtils.formatTimeAgo(qna.getCurrentDateTime()));
             // 자신이 작성하지 않은 글인 경우
             qnaMap.put(Role.GUEST, qna);
             log.info("************************* GUEST로 게시글 조회 *************************");
