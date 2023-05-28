@@ -33,8 +33,8 @@ public class TodoController {
 
     @MessageMapping("/todo/delete")
     public void deleteTodo(DeleteTodoRequestDto deleteTodoRequestDto) {
-        todoService.deleteTodo(deleteTodoRequestDto);
-        template.convertAndSend("/sub/todo/room/" + deleteTodoRequestDto.getRoomId());
+        boolean result = todoService.deleteTodo(deleteTodoRequestDto);
+        template.convertAndSend("/sub/todo/room/" + deleteTodoRequestDto.getRoomId(), result);
     }
 
 

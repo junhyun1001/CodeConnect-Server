@@ -53,13 +53,18 @@ public class TodoService {
     }
 
     // todo 삭제
-    public void deleteTodo(DeleteTodoRequestDto deleteTodoRequestDto) {
+    public boolean deleteTodo(DeleteTodoRequestDto deleteTodoRequestDto) {
 
         Todo todo = validateExistTodo(deleteTodoRequestDto.getTodoId());
 
-        todoRepository.delete(todo);
-
-        log.info("************************* {}번 Todo가 삭제 되었습니다.", todo.getTodoId());
+        try {
+            todoRepository.delete(todo);
+            log.info("************************* {}번 Todo가 삭제 되었습니다.", todo.getTodoId());
+            return true;
+        } catch (Exception e) {
+            log.error("************************* {}번 Todo 삭제중 오류가 발생했습니다: {}", todo.getTodoId(), e.getMessage());
+            return false;
+        }
 
     }
 
