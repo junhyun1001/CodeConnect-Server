@@ -78,7 +78,7 @@ public class MemberService {
         memberRepository.save(member);
 
         log.info("************************* {} 회원가입 성공 *************************", member.getEmail());
-        return ResponseDto.setSuccess("회원가입 성공", member);
+        return ResponseDto.setSuccess("회원가입 성공", null);
 
     }
 
