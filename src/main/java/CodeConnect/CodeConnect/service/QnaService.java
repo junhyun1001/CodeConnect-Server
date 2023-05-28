@@ -111,7 +111,7 @@ public class QnaService {
             Map<String, Object> commentMap = new LinkedHashMap<>();
             if (validateMember2(Collections.singletonList(comment), member)) {
                 commentMap.put("commentId", comment.getCommentId());
-                commentMap.put("nickname", member.getNickname()); // 수정된 닉네임 사용
+                commentMap.put("nickname", comment.getMember().getNickname()); // 수정된 닉네임 사용
                 commentMap.put("comment", comment.getComment());
                 commentMap.put("currentDateTime", comment.getCurrentDateTime());
                 commentMap.put("modifiedDateTime", comment.getModifiedDateTime());
@@ -122,7 +122,7 @@ public class QnaService {
                 commentHostList.add(commentMap);
             } else {
                 commentMap.put("commentId", comment.getCommentId());
-                commentMap.put("nickname", member.getNickname()); // 수정된 닉네임 사용
+                commentMap.put("nickname", comment.getMember().getNickname()); // 수정된 닉네임 사용
                 commentMap.put("comment", comment.getComment());
                 commentMap.put("currentDateTime", comment.getCurrentDateTime());
                 commentMap.put("modifiedDateTime", comment.getModifiedDateTime());
