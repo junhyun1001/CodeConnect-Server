@@ -1,5 +1,6 @@
 package CodeConnect.CodeConnect.domain.chat;
 
+import CodeConnect.CodeConnect.converter.TimeUtils;
 import CodeConnect.CodeConnect.domain.member.Member;
 import CodeConnect.CodeConnect.dto.chat.ChatRequestDto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -9,7 +10,6 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 @Entity
 @Table(name = "Chat")
@@ -41,7 +41,7 @@ public class Chat {
     public Chat(ChatRequestDto chatRequestDto) {
         this.nickname = chatRequestDto.getNickname();
         this.message = chatRequestDto.getMessage();
-        this.currentDateTime = changeDateTimeFormat(LocalDateTime.now());
+        this.currentDateTime = TimeUtils.changeChatTimeFormat(LocalDateTime.now());
     }
 
     // 연관관계 메소드
@@ -53,11 +53,6 @@ public class Chat {
     public void setMember(Member member) {
         this.member = member;
         member.getChats().add(this);
-    }
-
-    public String changeDateTimeFormat(LocalDateTime dateTime) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
-        return dateTime.format(formatter);
     }
 
 }

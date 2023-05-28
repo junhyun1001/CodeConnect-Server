@@ -1,5 +1,6 @@
 package CodeConnect.CodeConnect.domain.post;
 
+import CodeConnect.CodeConnect.converter.TimeUtils;
 import CodeConnect.CodeConnect.domain.member.Member;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
@@ -11,7 +12,6 @@ import org.hibernate.annotations.OnDeleteAction;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -71,9 +71,7 @@ public class Comment{
     public Comment( String nickname, String comment){
         this.nickname = nickname;
         this.comment = comment;
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yy/MM/dd HH:mm:ss");
-        this.setCurrentDateTime(String.valueOf(LocalDateTime.now().format(formatter)));
-
+        this.setCurrentDateTime(TimeUtils.changeDateTimeFormat(LocalDateTime.now()));
     }
 
 

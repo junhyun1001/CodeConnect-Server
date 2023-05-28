@@ -1,6 +1,7 @@
 package CodeConnect.CodeConnect.service;
 
 import CodeConnect.CodeConnect.converter.Base64Converter;
+import CodeConnect.CodeConnect.converter.TimeUtils;
 import CodeConnect.CodeConnect.domain.member.Member;
 import CodeConnect.CodeConnect.domain.post.Comment;
 import CodeConnect.CodeConnect.domain.post.Qna;
@@ -66,6 +67,7 @@ public class QnaService {
         List<Qna> qnaList = qnaRepository.findAllByOrderByCurrentDateTimeDesc();
         for (Qna qna : qnaList) {
             qna.setProfileImagePath(qna.getMember().getProfileImagePath()); // Member 엔티티에서 profileImagePath 설정
+            qna.setCurrentDateTime(TimeUtils.formatTimeAgo(qna.getCurrentDateTime()));
         }
         return ResponseDto.setSuccess("QnA 전체 글 조회 성공", qnaList);
     }
@@ -86,11 +88,13 @@ public class QnaService {
         Map<Role, Object> qnaMap = new LinkedHashMap<>();
         if (validateMember(email, qna)) {
             qna.setProfileImagePath(member.getProfileImagePath());
+            qna.setCurrentDateTime(TimeUtils.formatTimeAgo(qna.getCurrentDateTime()));
             // 자신이 작성한 글인 경우
             qnaMap.put(Role.HOST, qna);
             log.info("************************* HOST로 게시글 조회 *************************");
         } else {
             qna.setProfileImagePath(qna.getMember().getProfileImagePath());
+            qna.setCurrentDateTime(TimeUtils.formatTimeAgo(qna.getCurrentDateTime()));
             // 자신이 작성하지 않은 글인 경우
             qnaMap.put(Role.GUEST, qna);
             log.info("************************* GUEST로 게시글 조회 *************************");

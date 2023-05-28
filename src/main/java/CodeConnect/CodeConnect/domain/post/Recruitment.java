@@ -1,5 +1,6 @@
 package CodeConnect.CodeConnect.domain.post;
 
+import CodeConnect.CodeConnect.converter.TimeUtils;
 import CodeConnect.CodeConnect.domain.chat.ChatRoom;
 import CodeConnect.CodeConnect.domain.member.Member;
 import CodeConnect.CodeConnect.dto.post.recruitment.CreateRecruitmentDto;
@@ -61,7 +62,7 @@ public class Recruitment extends Post {
         super.title = dto.getTitle();
         super.content = dto.getContent();
         super.nickname = nickname;
-        super.setCurrentDateTime(changeDateTimeFormat(LocalDateTime.now()));
+        super.setCurrentDateTime(TimeUtils.changeDateTimeFormat(LocalDateTime.now()));
         this.address = address;
         this.count = dto.getCount();
         this.field = dto.getField();
@@ -73,7 +74,7 @@ public class Recruitment extends Post {
         setContent(dto.getContent());
         setCount(dto.getCount());
         setField(dto.getField());
-        setModifiedDateTime(changeDateTimeFormat(LocalDateTime.now()));
+        setModifiedDateTime(TimeUtils.changeDateTimeFormat(LocalDateTime.now()));
 
     }
 

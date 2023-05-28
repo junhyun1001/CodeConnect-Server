@@ -1,5 +1,6 @@
 package CodeConnect.CodeConnect.domain.chat;
 
+import CodeConnect.CodeConnect.converter.TimeUtils;
 import CodeConnect.CodeConnect.domain.post.Recruitment;
 import CodeConnect.CodeConnect.domain.todo.Todo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -9,7 +10,6 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,14 +52,9 @@ public class ChatRoom {
     public ChatRoom(Recruitment recruitment) {
         this.title = recruitment.getTitle();
         this.hostNickname = recruitment.getNickname();
-        this.currentDateTime = changeDateTimeFormat(LocalDateTime.now());
+        this.currentDateTime = TimeUtils.changeDateTimeFormat(LocalDateTime.now());
         this.currentParticipantMemberList = new ArrayList<>(recruitment.getCurrentParticipantMemberList());
         this.currentCount = currentParticipantMemberList.size();
-    }
-
-    public String changeDateTimeFormat(LocalDateTime dateTime) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yy/MM/dd HH:mm:ss");
-        return dateTime.format(formatter);
     }
 
     // 연관관계 메소드
