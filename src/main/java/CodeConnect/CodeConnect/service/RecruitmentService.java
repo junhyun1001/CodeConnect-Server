@@ -72,10 +72,10 @@ public class RecruitmentService {
         List<Recruitment> recruitmentList;
 
         // 주소 검색이 있을 때와 없을 때
-        if (searchAddress != null) {
-            recruitmentList = recruitmentRepository.findByAddressOrderByCurrentDateTimeDesc(searchAddress);
-        } else {
+        if (searchAddress == null || searchAddress.isEmpty()) {
             recruitmentList = recruitmentRepository.findByAddressAndFieldInOrderByCurrentDateTimeDesc(address, fieldList);
+        } else {
+            recruitmentList = recruitmentRepository.findByAddressOrderByCurrentDateTimeDesc(searchAddress);
         }
 
         List<RecruitmentDto> recruitmentDtoList = EntityToDto.mapListToDto(recruitmentList, RecruitmentDto::new);
