@@ -1,5 +1,6 @@
 package CodeConnect.CodeConnect.service;
 
+import CodeConnect.CodeConnect.converter.TimeUtils;
 import CodeConnect.CodeConnect.domain.member.Member;
 import CodeConnect.CodeConnect.domain.post.Cocomment;
 import CodeConnect.CodeConnect.domain.post.Comment;
@@ -14,7 +15,6 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Service
@@ -91,9 +91,8 @@ public class CocommentService {
         // 회원 검증
         if (!validateMember(email, cocomments))
             return ResponseDto.setFail("접근 권한이 없습니다");
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yy/MM/dd HH:mm:ss");
         cocomments.setMember(findMember);
-        cocomments.setModifiedDateTime(LocalDateTime.now().format(formatter));
+        cocomments.setModifiedDateTime(TimeUtils.changeDateTimeFormat(LocalDateTime.now()));
         cocomments.setProfileImagePath(cocomments.getMember().getProfileImagePath());
         cocomments.setCocomment(cocomment);
         return ResponseDto.setSuccess("대댓글 수정 성공", cocomments);

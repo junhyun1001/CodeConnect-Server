@@ -184,8 +184,7 @@ public class QnaService {
         qna.setTitle(title); // Dirty Checking
         qna.setContent(content); // Dirty Checking
         qna.setProfileImagePath(qna.getMember().getProfileImagePath()); // Member 엔티티에서 profileImagePath 설정
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yy/MM/dd HH:mm");
-        qna.setModifiedDateTime(String.valueOf(LocalDateTime.now().format(formatter)));
+        qna.setModifiedDateTime(TimeUtils.changeDateTimeFormat(LocalDateTime.now()));
 
         return ResponseDto.setSuccess("업데이트 성공", qna);
     }

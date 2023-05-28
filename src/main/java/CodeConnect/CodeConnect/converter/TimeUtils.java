@@ -6,10 +6,11 @@ import java.time.format.DateTimeFormatter;
 
 public class TimeUtils {
 
-    private static final String format = "yy/MM/dd HH:mm:ss";
+    private static final String yy_MM_dd_HH_mm_ss = "yy/MM/dd HH:mm:ss";
+    private static final String HH_mm = "HH:mm";
 
     public static String formatTimeAgo(String currentDateTime) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(format);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(yy_MM_dd_HH_mm_ss);
         LocalDateTime timestamp = LocalDateTime.parse(currentDateTime, formatter);
         LocalDateTime now = LocalDateTime.now();
         Duration duration = Duration.between(timestamp, now);
@@ -35,12 +36,12 @@ public class TimeUtils {
     }
 
     public static String changeDateTimeFormat(LocalDateTime dateTime) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(format);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(yy_MM_dd_HH_mm_ss);
         return dateTime.format(formatter);
     }
 
     public static String changeChatTimeFormat(LocalDateTime dateTime) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(HH_mm);
         return dateTime.format(formatter);
     }
 

@@ -1,7 +1,7 @@
 package CodeConnect.CodeConnect.service;
 
+import CodeConnect.CodeConnect.converter.TimeUtils;
 import CodeConnect.CodeConnect.domain.member.Member;
-import CodeConnect.CodeConnect.domain.post.Cocomment;
 import CodeConnect.CodeConnect.domain.post.Comment;
 import CodeConnect.CodeConnect.domain.post.Qna;
 import CodeConnect.CodeConnect.dto.ResponseDto;
@@ -12,9 +12,9 @@ import CodeConnect.CodeConnect.repository.QnaRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -107,9 +107,8 @@ public class CommentService {
         Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new NoSuchElementException("댓글이 존재하지 않습니다"));
         if (!validateMember(email, comment))
             return ResponseDto.setFail("접근 권한이 없습니다");
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yy/MM/dd HH:mm:ss");
 
-        comment.setModifiedDateTime(LocalDateTime.now().format(formatter));
+        comment.setModifiedDateTime(TimeUtils.changeDateTimeFormat(LocalDateTime.now()));
         comment.setMember(findMember);
         comment.setProfileImagePath(comment.getMember().getProfileImagePath());
         comment.setComment(comments);
