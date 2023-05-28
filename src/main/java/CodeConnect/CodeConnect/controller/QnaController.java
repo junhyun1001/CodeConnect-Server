@@ -2,15 +2,13 @@ package CodeConnect.CodeConnect.controller;
 
 import CodeConnect.CodeConnect.domain.post.Qna;
 import CodeConnect.CodeConnect.dto.ResponseDto;
+import CodeConnect.CodeConnect.dto.post.qna.QnaDto;
 import CodeConnect.CodeConnect.dto.post.qna.QnaRequestDto;
 import CodeConnect.CodeConnect.service.QnaService;
 import CodeConnect.CodeConnect.service.Role;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Map;
@@ -23,7 +21,7 @@ public class QnaController {
 
     //전체조회
     @GetMapping("/list")
-    public ResponseDto<List<Qna>> getQnaList() {
+    public ResponseDto<List<QnaDto>> getQnaList() {
         return qnaService.findQna();
     }
 
@@ -35,13 +33,13 @@ public class QnaController {
 
     //생성
     @PostMapping("/create")
-    public ResponseDto<Qna> writeQna(@RequestBody QnaRequestDto dto, @AuthenticationPrincipal String email) {
+    public ResponseDto<QnaDto> writeQna(@RequestBody QnaRequestDto dto, @AuthenticationPrincipal String email) {
         return qnaService.writeQna(dto, email);
     }
 
     //
     @PutMapping("/update/{qnaId}")
-    public ResponseDto<Qna> qna_update(@PathVariable("qnaId") Long qnaId, @RequestBody QnaRequestDto qnaDto, @AuthenticationPrincipal String email) {
+    public ResponseDto<QnaDto> qna_update(@PathVariable("qnaId") Long qnaId, @RequestBody QnaRequestDto qnaDto, @AuthenticationPrincipal String email) {
         return qnaService.update(qnaId, qnaDto.getTitle(), qnaDto.getContent(),qnaDto.getBase64Image(), email);
     }
 
@@ -53,7 +51,7 @@ public class QnaController {
 
     //검색
     @GetMapping("/search/{text}")
-    public ResponseDto<List<Qna>> textSearch(@PathVariable String text) {
+    public ResponseDto<List<QnaDto>> textSearch(@PathVariable String text) {
         return qnaService.search(text);
     }
 
