@@ -1,10 +1,13 @@
 package CodeConnect.CodeConnect.domain.post;
 
+import CodeConnect.CodeConnect.converter.TimeUtils;
 import CodeConnect.CodeConnect.domain.member.Member;
 import CodeConnect.CodeConnect.dto.post.qna.QnaRequestDto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.*;
-import org.springframework.web.multipart.MultipartFile;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -17,7 +20,6 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-
 public class Qna extends Post {
 
     @Id
@@ -59,7 +61,7 @@ public class Qna extends Post {
         super.nickname = nickname;
         super.content = content;
         this.commentCount = dto.getCommentCount();
-        super.setCurrentDateTime(changeDateTimeFormat(LocalDateTime.now()));
+        super.setCurrentDateTime(TimeUtils.changeDateTimeFormat(LocalDateTime.now()));
     }
 
 

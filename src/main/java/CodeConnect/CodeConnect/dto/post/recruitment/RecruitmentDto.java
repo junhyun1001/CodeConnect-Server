@@ -1,5 +1,6 @@
 package CodeConnect.CodeConnect.dto.post.recruitment;
 
+import CodeConnect.CodeConnect.converter.TimeUtils;
 import CodeConnect.CodeConnect.domain.post.Recruitment;
 import lombok.Getter;
 
@@ -33,7 +34,7 @@ public class RecruitmentDto {
         this.title = recruitment.getTitle();
         this.content = recruitment.getContent();
         this.nickname = recruitment.getNickname();
-        this.currentDateTime = recruitment.getCurrentDateTime();
+        this.currentDateTime = TimeUtils.formatTimeAgo(recruitment.getCurrentDateTime());
         this.modifiedDateTime = recruitment.getModifiedDateTime();
         this.address = recruitment.getAddress();
         this.count = recruitment.getCount();

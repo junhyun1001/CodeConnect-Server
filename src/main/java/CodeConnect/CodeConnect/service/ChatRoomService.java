@@ -5,9 +5,11 @@ import CodeConnect.CodeConnect.domain.chat.Chat;
 import CodeConnect.CodeConnect.domain.chat.ChatRoom;
 import CodeConnect.CodeConnect.domain.member.Member;
 import CodeConnect.CodeConnect.domain.post.Recruitment;
+import CodeConnect.CodeConnect.domain.todo.Todo;
 import CodeConnect.CodeConnect.dto.ResponseDto;
 import CodeConnect.CodeConnect.dto.chat.ChatResponseDto;
 import CodeConnect.CodeConnect.dto.chat.ChatRoomDto;
+import CodeConnect.CodeConnect.dto.todo.TodoResponseDto;
 import CodeConnect.CodeConnect.repository.ChatRepository;
 import CodeConnect.CodeConnect.repository.ChatRoomRepository;
 import lombok.RequiredArgsConstructor;
@@ -67,9 +69,13 @@ public class ChatRoomService {
             nicknameAndProfileImageMap.put(member.getNickname(), member.getProfileImagePath());
         }
 
-        // dto 생성
+        // ChatRoomDto 생성
         ChatRoomDto chatRoomDto = new ChatRoomDto(chatRoom);
         List<ChatResponseDto> chatResponseDtos = EntityToDto.mapListToDto(byChatRoom, ChatResponseDto::new);
+
+        // todoList dto 생성
+        List<Todo> todo = chatRoom.getTodo();
+        List<TodoResponseDto> todoResponseDtos = EntityToDto.mapListToDto(todo, TodoResponseDto::new);
 
         // return Map 생성
         Map<String, Object> chatRoomChatMap = new HashMap<>();
@@ -77,6 +83,8 @@ public class ChatRoomService {
         chatRoomChatMap.put("CHAT", chatResponseDtos);
         chatRoomChatMap.put("MY_NICKNAME", nickname);
         chatRoomChatMap.put("NICKNAME_IMAGE", nicknameAndProfileImageMap);
+        chatRoomChatMap.put("TODO_LIST", todoResponseDtos);
+
 
         return ResponseDto.setSuccess("채팅방 조회", chatRoomChatMap);
 

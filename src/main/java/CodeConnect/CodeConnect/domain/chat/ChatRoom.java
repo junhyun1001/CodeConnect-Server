@@ -1,6 +1,8 @@
 package CodeConnect.CodeConnect.domain.chat;
 
+import CodeConnect.CodeConnect.converter.TimeUtils;
 import CodeConnect.CodeConnect.domain.post.Recruitment;
+import CodeConnect.CodeConnect.domain.todo.Todo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -8,7 +10,6 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,6 +32,11 @@ public class ChatRoom {
 
     private String currentDateTime; // 방 생성 시간
 
+    @ElementCollection
+    @CollectionTable(joinColumns = @JoinColumn(name = "room_id"))
+    @JsonIgnore
+    private List<String> currentParticipantMemberList;
+
     @OneToOne(mappedBy = "chatRoom")
     @JsonIgnore
     private Recruitment recruitment; // 게시글 정보
@@ -39,22 +45,16 @@ public class ChatRoom {
     @JsonIgnore
     private List<Chat> chatList = new ArrayList<>();
 
-    @ElementCollection
-    @CollectionTable(joinColumns = @JoinColumn(name = "room_id"))
+    @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
-    private List<String> currentParticipantMemberList;
+    private List<Todo> todo;
 
     public ChatRoom(Recruitment recruitment) {
         this.title = recruitment.getTitle();
         this.hostNickname = recruitment.getNickname();
-        this.currentDateTime = changeDateTimeFormat(LocalDateTime.now());
+        this.currentDateTime = TimeUtils.changeDateTimeFormat(LocalDateTime.now());
         this.currentParticipantMemberList = new ArrayList<>(recruitment.getCurrentParticipantMemberList());
         this.currentCount = currentParticipantMemberList.size();
-    }
-
-    public String changeDateTimeFormat(LocalDateTime dateTime) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yy/MM/dd HH:mm:ss");
-        return dateTime.format(formatter);
     }
 
     // 연관관계 메소드
