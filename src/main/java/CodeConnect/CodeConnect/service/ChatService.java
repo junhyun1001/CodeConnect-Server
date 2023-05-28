@@ -4,6 +4,7 @@ import CodeConnect.CodeConnect.domain.chat.Chat;
 import CodeConnect.CodeConnect.domain.chat.ChatRoom;
 import CodeConnect.CodeConnect.domain.member.Member;
 import CodeConnect.CodeConnect.dto.chat.ChatRequestDto;
+import CodeConnect.CodeConnect.dto.chat.ChatResponseDto;
 import CodeConnect.CodeConnect.repository.ChatRepository;
 import CodeConnect.CodeConnect.repository.ChatRoomRepository;
 import CodeConnect.CodeConnect.repository.MemberRepository;
@@ -28,7 +29,7 @@ public class ChatService {
     private final ChatRoomRepository chatRoomRepository;
     private final ChatRepository chatRepository;
 
-    public void saveChat(ChatRequestDto chatRequestDto) {
+    public ChatResponseDto saveChat(ChatRequestDto chatRequestDto) {
 
         ChatRoom chatRoom = validateExistChatRoom(chatRequestDto.getRoomId());
 
@@ -43,6 +44,7 @@ public class ChatService {
 
         log.info("******************** {}번 방 메시지 저장 {}:{} ********************", chat.getChatRoom().getRoomId(), chat.getNickname(), chat.getMessage());
 
+        return new ChatResponseDto(chat);
     }
 
     // 해당 채팅방 존재 여부 확인
