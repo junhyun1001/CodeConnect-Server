@@ -53,7 +53,7 @@ public class TodoService {
     }
 
     // todo 삭제
-    public boolean deleteTodo(DeleteTodoRequestDto deleteTodoRequestDto) {
+    public Boolean deleteTodo(DeleteTodoRequestDto deleteTodoRequestDto) {
 
         Todo todo = validateExistTodo(deleteTodoRequestDto.getTodoId());
 
