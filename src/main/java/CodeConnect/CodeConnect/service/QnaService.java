@@ -1,10 +1,13 @@
 package CodeConnect.CodeConnect.service;
 
 import CodeConnect.CodeConnect.converter.Base64Converter;
+import CodeConnect.CodeConnect.converter.EntityToDto;
+import CodeConnect.CodeConnect.converter.TimeUtils;
 import CodeConnect.CodeConnect.domain.member.Member;
 import CodeConnect.CodeConnect.domain.post.Comment;
 import CodeConnect.CodeConnect.domain.post.Qna;
 import CodeConnect.CodeConnect.dto.ResponseDto;
+import CodeConnect.CodeConnect.dto.post.qna.QnaDto;
 import CodeConnect.CodeConnect.dto.post.qna.QnaRequestDto;
 import CodeConnect.CodeConnect.repository.CommentRepository;
 import CodeConnect.CodeConnect.repository.MemberRepository;
@@ -15,7 +18,6 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Service
@@ -28,7 +30,7 @@ public class QnaService {
     private final CommentRepository commentRepository;
 
     @Transactional
-    public ResponseDto<Qna> writeQna(QnaRequestDto dto, String email) {
+    public ResponseDto<QnaDto> writeQna(QnaRequestDto dto, String email) {
         Member findMember = memberRepository.findByEmail(email);
         String nickname = findMember.getNickname();
         String title = dto.getTitle();
@@ -57,17 +59,21 @@ public class QnaService {
         findMember.setQna(qna);
         Qna saveQna = qnaRepository.save(qna);
 
-        return ResponseDto.setSuccess("QnA 글 작성 성공", saveQna);
+        QnaDto qnaDto = new QnaDto(qna);
+
+        return ResponseDto.setSuccess("QnA 글 작성 성공", qnaDto);
     }
 
     //q&a 들어갔을때 전체 조회
     @Transactional
-    public ResponseDto<List<Qna>> findQna() {
+    public ResponseDto<List<QnaDto>> findQna() {
         List<Qna> qnaList = qnaRepository.findAllByOrderByCurrentDateTimeDesc();
         for (Qna qna : qnaList) {
             qna.setProfileImagePath(qna.getMember().getProfileImagePath()); // Member 엔티티에서 profileImagePath 설정
         }
-        return ResponseDto.setSuccess("QnA 전체 글 조회 성공", qnaList);
+
+        List<QnaDto> qnaDtos = EntityToDto.mapListToDto(qnaList, QnaDto::new);
+        return ResponseDto.setSuccess("QnA 전체 글 조회 성공", qnaDtos);
     }
 
     //상세조회
@@ -81,18 +87,21 @@ public class QnaService {
             return ResponseDto.setFail("존재하지 않는 회원입니다.");
         }
 
+
         Member member = optionalMember.get();
         // 회원 검증 후 내 게시글이면 HOST, 아니면 GUEST
         Map<Role, Object> qnaMap = new LinkedHashMap<>();
         if (validateMember(email, qna)) {
             qna.setProfileImagePath(member.getProfileImagePath());
             // 자신이 작성한 글인 경우
-            qnaMap.put(Role.HOST, qna);
+            QnaDto qnaDto = new QnaDto(qna);
+            qnaMap.put(Role.HOST, qnaDto);
             log.info("************************* HOST로 게시글 조회 *************************");
         } else {
             qna.setProfileImagePath(qna.getMember().getProfileImagePath());
             // 자신이 작성하지 않은 글인 경우
-            qnaMap.put(Role.GUEST, qna);
+            QnaDto qnaDto = new QnaDto(qna);
+            qnaMap.put(Role.GUEST, qnaDto);
             log.info("************************* GUEST로 게시글 조회 *************************");
         }
 
@@ -151,7 +160,7 @@ public class QnaService {
 
     //업데이트
     @Transactional
-    public ResponseDto<Qna> update(Long qnaId, String title, String content, String base64Image, String email) {
+    public ResponseDto<QnaDto> update(Long qnaId, String title, String content, String base64Image, String email) {
         Member findMember = memberRepository.findByEmail(email);
         Qna qna = qnaRepository.findById(qnaId)
                 .orElseThrow(() -> new NoSuchElementException("값이 존재하지 않습니다"));
@@ -180,17 +189,19 @@ public class QnaService {
         qna.setTitle(title); // Dirty Checking
         qna.setContent(content); // Dirty Checking
         qna.setProfileImagePath(qna.getMember().getProfileImagePath()); // Member 엔티티에서 profileImagePath 설정
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yy/MM/dd HH:mm");
-        qna.setModifiedDateTime(String.valueOf(LocalDateTime.now().format(formatter)));
+        qna.setModifiedDateTime(TimeUtils.changeDateTimeFormat(LocalDateTime.now()));
 
-        return ResponseDto.setSuccess("업데이트 성공", qna);
+        QnaDto qnaDto = new QnaDto(qna);
+
+        return ResponseDto.setSuccess("업데이트 성공", qnaDto);
     }
 
     //검색
     @Transactional
-    public ResponseDto<List<Qna>> search(String text) {
+    public ResponseDto<List<QnaDto>> search(String text) {
         List<Qna> qnaList = qnaRepository.findByTitleContainingOrContentContainingOrderByCurrentDateTimeDesc(text, text);
-        return ResponseDto.setSuccess("검색 성공", qnaList);
+        List<QnaDto> qnaDtos = EntityToDto.mapListToDto(qnaList, QnaDto::new);
+        return ResponseDto.setSuccess("검색 성공", qnaDtos);
     }
 
     private boolean validateMember(String email, Qna qna) {

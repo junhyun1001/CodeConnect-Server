@@ -1,6 +1,7 @@
 package CodeConnect.CodeConnect.controller;
 
 import CodeConnect.CodeConnect.dto.chat.ChatRequestDto;
+import CodeConnect.CodeConnect.dto.chat.ChatResponseDto;
 import CodeConnect.CodeConnect.service.ChatService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -17,11 +18,10 @@ public class ChatController {
     //Client가 SEND할 수 있는 경로
     //stompConfig에서 설정한 applicationDestinationPrefixes와 @MessageMapping 경로가 병합됨
     //"/pub/chat/message"
-
     @MessageMapping("/chat/message")
     public void message(ChatRequestDto chatRequestDto) {
-        template.convertAndSend("/sub/chat/room/" + chatRequestDto.getRoomId(), chatRequestDto);
-        chatService.saveChat(chatRequestDto);
+        ChatResponseDto chatResponseDto = chatService.saveChat(chatRequestDto);
+        template.convertAndSend("/sub/chat/room/" + chatRequestDto.getRoomId(), chatResponseDto);
     }
 
 }

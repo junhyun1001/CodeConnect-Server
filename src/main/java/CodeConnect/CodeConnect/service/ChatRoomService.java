@@ -5,9 +5,11 @@ import CodeConnect.CodeConnect.domain.chat.Chat;
 import CodeConnect.CodeConnect.domain.chat.ChatRoom;
 import CodeConnect.CodeConnect.domain.member.Member;
 import CodeConnect.CodeConnect.domain.post.Recruitment;
+import CodeConnect.CodeConnect.domain.todo.Todo;
 import CodeConnect.CodeConnect.dto.ResponseDto;
 import CodeConnect.CodeConnect.dto.chat.ChatResponseDto;
 import CodeConnect.CodeConnect.dto.chat.ChatRoomDto;
+import CodeConnect.CodeConnect.dto.todo.TodoResponseDto;
 import CodeConnect.CodeConnect.repository.ChatRepository;
 import CodeConnect.CodeConnect.repository.ChatRoomRepository;
 import lombok.RequiredArgsConstructor;
@@ -15,10 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -43,7 +42,11 @@ public class ChatRoomService {
         String resultMessage = (chatRoom == recruitment.getChatRoom()) ? "이미 존재하는 채팅방 입니다." : "채팅방이 생성되었습니다.";
         log.info("************************* " + resultMessage + ": {}, {} *************************", chatRoom.getRoomId(), chatRoom.getTitle());
 
-        return ResponseDto.setSuccess(resultMessage, new ChatRoomDto(chatRoom));
+        // dto 생성
+        ChatRoomDto chatRoomDto = new ChatRoomDto(chatRoom);
+        chatRoomDto.setCurrentCount(recruitment.getCurrentCount()); // 작성자 인원 제외하고 인원수 리턴
+
+        return ResponseDto.setSuccess(resultMessage, chatRoomDto);
 
     }
 
@@ -58,15 +61,30 @@ public class ChatRoomService {
 
         List<Chat> byChatRoom = chatRepository.findByChatRoom(chatRoom);
 
-        // dto 생성
+        // {닉네임: 사진} 형식의 맵 생성
+        List<String> currentParticipantMemberList = chatRoom.getCurrentParticipantMemberList();
+        Map<String, String> nicknameAndProfileImageMap = new HashMap<>();
+        for (String memberEmail : currentParticipantMemberList) {
+            member = memberService.validateExistMember(memberEmail);
+            nicknameAndProfileImageMap.put(member.getNickname(), member.getProfileImagePath());
+        }
+
+        // ChatRoomDto 생성
         ChatRoomDto chatRoomDto = new ChatRoomDto(chatRoom);
         List<ChatResponseDto> chatResponseDtos = EntityToDto.mapListToDto(byChatRoom, ChatResponseDto::new);
+
+        // todoList dto 생성
+        List<Todo> todo = chatRoom.getTodo();
+        List<TodoResponseDto> todoResponseDtos = EntityToDto.mapListToDto(todo, TodoResponseDto::new);
 
         // return Map 생성
         Map<String, Object> chatRoomChatMap = new HashMap<>();
         chatRoomChatMap.put("ROOM_INFO", chatRoomDto);
         chatRoomChatMap.put("CHAT", chatResponseDtos);
         chatRoomChatMap.put("MY_NICKNAME", nickname);
+        chatRoomChatMap.put("NICKNAME_IMAGE", nicknameAndProfileImageMap);
+        chatRoomChatMap.put("TODO_LIST", todoResponseDtos);
+
 
         return ResponseDto.setSuccess("채팅방 조회", chatRoomChatMap);
 
