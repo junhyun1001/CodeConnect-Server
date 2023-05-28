@@ -1,10 +1,7 @@
 package CodeConnect.CodeConnect.service;
 
-import CodeConnect.CodeConnect.converter.EntityToDto;
 import CodeConnect.CodeConnect.domain.chat.ChatRoom;
 import CodeConnect.CodeConnect.domain.todo.Todo;
-import CodeConnect.CodeConnect.dto.ResponseDto;
-import CodeConnect.CodeConnect.dto.todo.RoomIdRequestDto;
 import CodeConnect.CodeConnect.dto.todo.CreateTodoRequestDto;
 import CodeConnect.CodeConnect.dto.todo.TodoResponseDto;
 import CodeConnect.CodeConnect.dto.todo.UpdateTodoRequestDto;
@@ -14,7 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
