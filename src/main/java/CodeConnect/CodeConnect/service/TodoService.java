@@ -2,10 +2,7 @@ package CodeConnect.CodeConnect.service;
 
 import CodeConnect.CodeConnect.domain.chat.ChatRoom;
 import CodeConnect.CodeConnect.domain.todo.Todo;
-import CodeConnect.CodeConnect.dto.todo.CreateTodoRequestDto;
-import CodeConnect.CodeConnect.dto.todo.DeleteTodoRequestDto;
-import CodeConnect.CodeConnect.dto.todo.TodoResponseDto;
-import CodeConnect.CodeConnect.dto.todo.UpdateTodoRequestDto;
+import CodeConnect.CodeConnect.dto.todo.*;
 import CodeConnect.CodeConnect.repository.TodoRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -53,17 +50,18 @@ public class TodoService {
     }
 
     // todo 삭제
-    public Boolean deleteTodo(DeleteTodoRequestDto deleteTodoRequestDto) {
+    public DeleteTodoResponseDto deleteTodo(DeleteTodoRequestDto deleteTodoRequestDto) {
 
         Todo todo = validateExistTodo(deleteTodoRequestDto.getTodoId());
+
 
         try {
             todoRepository.delete(todo);
             log.info("************************* {}번 Todo가 삭제 되었습니다.", todo.getTodoId());
-            return true;
+            return new DeleteTodoResponseDto(todo.getTodoId(), true);
         } catch (Exception e) {
             log.error("************************* {}번 Todo 삭제중 오류가 발생했습니다: {}", todo.getTodoId(), e.getMessage());
-            return false;
+            return new DeleteTodoResponseDto(todo.getTodoId(), false);
         }
 
     }
