@@ -58,6 +58,9 @@ public class ChatRoomService {
         String nickname = member.getNickname();
 
         ChatRoom chatRoom = validateExistChatRoom(id);
+        if (chatRoom == null) {
+            return ResponseDto.setFail("존재하지 않는 채팅방 입니다.");
+        }
 
         List<Chat> byChatRoom = chatRepository.findByChatRoom(chatRoom);
 
@@ -106,6 +109,9 @@ public class ChatRoomService {
     public ResponseDto<?> leaveChatRoom(String email, Long id) {
 
         ChatRoom chatRoom = validateExistChatRoom(id);
+        if (chatRoom == null) {
+            return ResponseDto.setFail("존재하지 않는 채팅방 입니다.");
+        }
 
         chatRoom.getCurrentParticipantMemberList().remove(email);
 

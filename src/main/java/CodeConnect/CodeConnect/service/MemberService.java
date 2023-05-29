@@ -89,6 +89,9 @@ public class MemberService {
         String password = dto.getPassword();
 
         Member member = validateExistMember(email);
+        if (member == null) {
+            return ResponseDto.setFail("존재하지 않는 회원입니다.");
+        }
 
         // 비밀번호가 일치하지 않을 때
         if (!passwordEncoder.matches(password, member.getPassword()))
@@ -107,6 +110,9 @@ public class MemberService {
     public ResponseDto<?> deleteMember(String email) {
 
         Member member = validateExistMember(email);
+        if (member == null) {
+            return ResponseDto.setFail("존재하지 않는 회원입니다.");
+        }
 
         memberRepository.delete(member);
 
