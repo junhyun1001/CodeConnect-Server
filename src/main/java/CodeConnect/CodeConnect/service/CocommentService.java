@@ -1,6 +1,6 @@
 package CodeConnect.CodeConnect.service;
 
-import CodeConnect.CodeConnect.converter.TimeUtils;
+import CodeConnect.CodeConnect.utils.TimeUtils;
 import CodeConnect.CodeConnect.domain.member.Member;
 import CodeConnect.CodeConnect.domain.post.Cocomment;
 import CodeConnect.CodeConnect.domain.post.Comment;

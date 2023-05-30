@@ -1,6 +1,6 @@
 package CodeConnect.CodeConnect.service;
 
-import CodeConnect.CodeConnect.converter.EntityToDto;
+import CodeConnect.CodeConnect.utils.EntityToDto;
 import CodeConnect.CodeConnect.domain.chat.Chat;
 import CodeConnect.CodeConnect.domain.chat.ChatRoom;
 import CodeConnect.CodeConnect.domain.member.Member;

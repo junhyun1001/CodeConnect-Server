@@ -1,9 +1,10 @@
 package CodeConnect.CodeConnect.service;
 
-import CodeConnect.CodeConnect.converter.Base64Converter;
 import CodeConnect.CodeConnect.domain.member.Member;
 import CodeConnect.CodeConnect.dto.ResponseDto;
-import CodeConnect.CodeConnect.dto.member.*;
+import CodeConnect.CodeConnect.dto.member.SignInRequestDto;
+import CodeConnect.CodeConnect.dto.member.SignInResponseDto;
+import CodeConnect.CodeConnect.dto.member.SignUpRequestDto;
 import CodeConnect.CodeConnect.repository.MemberRepository;
 import CodeConnect.CodeConnect.security.TokenProvider;
 import lombok.RequiredArgsConstructor;

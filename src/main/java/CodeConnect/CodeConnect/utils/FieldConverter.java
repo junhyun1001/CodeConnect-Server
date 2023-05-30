@@ -1,4 +1,4 @@
-package CodeConnect.CodeConnect.converter;
+package CodeConnect.CodeConnect.utils;
 
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;

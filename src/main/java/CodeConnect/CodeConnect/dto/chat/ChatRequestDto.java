@@ -1,6 +1,6 @@
 package CodeConnect.CodeConnect.dto.chat;
 
-import CodeConnect.CodeConnect.converter.TimeUtils;
+import CodeConnect.CodeConnect.utils.TimeUtils;
 import lombok.Getter;
 import lombok.Setter;
 

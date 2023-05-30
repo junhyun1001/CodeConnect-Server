@@ -1,6 +1,5 @@
 package CodeConnect.CodeConnect.dto.member;
 
-import CodeConnect.CodeConnect.converter.Base64Converter;
 import lombok.Getter;
 import lombok.Setter;
 

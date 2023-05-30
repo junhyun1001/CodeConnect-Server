@@ -1,8 +1,8 @@
 package CodeConnect.CodeConnect.service;
 
-import CodeConnect.CodeConnect.converter.Base64Converter;
-import CodeConnect.CodeConnect.converter.EntityToDto;
-import CodeConnect.CodeConnect.converter.TimeUtils;
+import CodeConnect.CodeConnect.utils.Base64Converter;
+import CodeConnect.CodeConnect.utils.EntityToDto;
+import CodeConnect.CodeConnect.utils.TimeUtils;
 import CodeConnect.CodeConnect.domain.member.Member;
 import CodeConnect.CodeConnect.domain.post.Comment;
 import CodeConnect.CodeConnect.domain.post.Qna;
@@ -60,6 +60,8 @@ public class QnaService {
         Qna saveQna = qnaRepository.save(qna);
 
         QnaDto qnaDto = new QnaDto(qna);
+
+        log.info("******************** Q&A 글 작성");
 
         return ResponseDto.setSuccess("QnA 글 작성 성공", qnaDto);
     }

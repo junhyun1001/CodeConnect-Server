@@ -1,6 +1,6 @@
 package CodeConnect.CodeConnect.domain.chat;
 
-import CodeConnect.CodeConnect.converter.TimeUtils;
+import CodeConnect.CodeConnect.utils.TimeUtils;
 import CodeConnect.CodeConnect.domain.post.Recruitment;
 import CodeConnect.CodeConnect.domain.todo.Todo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
