@@ -34,7 +34,7 @@ public class QnaDto {
         this.modifiedDateTime = qna.getModifiedDateTime();
         this.commentCount = qna.getCommentCount();
         this.imagePath = qna.getImagePath();
-        this.profileImagePath = qna.getProfileImagePath();
+        this.profileImagePath = qna.getMember().getProfileImagePath();
     }
 
 }
