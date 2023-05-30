@@ -16,4 +16,6 @@ public interface QnaRepository extends JpaRepository<Qna, Long> {
 
     List<Qna> findByMemberOrderByCurrentDateTimeDesc(Member findMember);
 
+    List<Qna> findTop10ByOrderByLikeCountDesc();
+
 }

@@ -25,6 +25,8 @@ public class QnaDto {
 
     private final String profileImagePath;
 
+    private final int likeCount;
+
     public QnaDto(Qna qna) {
         this.qnaId = qna.getQnaId();
         this.title = qna.getTitle();
@@ -35,6 +37,7 @@ public class QnaDto {
         this.commentCount = qna.getCommentCount();
         this.imagePath = qna.getImagePath();
         this.profileImagePath = qna.getMember().getProfileImagePath();
+        this.likeCount = qna.getLikeCount();
     }
 
 }

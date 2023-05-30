@@ -1,6 +1,5 @@
 package CodeConnect.CodeConnect.controller;
 
-import CodeConnect.CodeConnect.domain.post.Qna;
 import CodeConnect.CodeConnect.dto.ResponseDto;
 import CodeConnect.CodeConnect.dto.post.qna.QnaDto;
 import CodeConnect.CodeConnect.dto.post.qna.QnaRequestDto;
@@ -37,10 +36,10 @@ public class QnaController {
         return qnaService.writeQna(dto, email);
     }
 
-    //
+    //업데이트
     @PutMapping("/update/{qnaId}")
     public ResponseDto<QnaDto> qna_update(@PathVariable("qnaId") Long qnaId, @RequestBody QnaRequestDto qnaDto, @AuthenticationPrincipal String email) {
-        return qnaService.update(qnaId, qnaDto.getTitle(), qnaDto.getContent(),qnaDto.getBase64Image(), email);
+        return qnaService.update(qnaId, qnaDto.getTitle(), qnaDto.getContent(), qnaDto.getBase64Image(), email);
     }
 
     //삭제
@@ -55,5 +54,15 @@ public class QnaController {
         return qnaService.search(text);
     }
 
+    //top10 조회
+    @GetMapping("/popular")
+    public ResponseDto<List<QnaDto>> getPopularPost() {
+        return qnaService.getPopularPost();
+    }
 
+    //게시글 좋아요 카운팅
+    @PutMapping("/like/{qnaId}")
+    public ResponseDto<Integer> likeCounting(@AuthenticationPrincipal String email, @PathVariable Long qnaId) {
+        return qnaService.likeCounting(email, qnaId);
+    }
 }
