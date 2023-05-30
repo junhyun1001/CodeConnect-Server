@@ -13,7 +13,6 @@ public class QnaRequestDto{
     private String content;
     private int commentCount;
     private String currentDateTime;
-    private String modifiedDateTime;
     private String base64Image;
 
 

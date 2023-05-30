@@ -25,6 +25,4 @@ public abstract class Post {
 
     String currentDateTime; // 작성 날짜와 시간 정보
 
-    String modifiedDateTime; // 수정 날짜와 시간 정보
-
 }

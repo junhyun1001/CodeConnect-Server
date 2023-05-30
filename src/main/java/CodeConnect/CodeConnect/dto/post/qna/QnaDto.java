@@ -17,8 +17,6 @@ public class QnaDto {
 
     private final String currentDateTime;
 
-    private final String modifiedDateTime;
-
     private final int commentCount;
 
     private final String imagePath;
@@ -33,7 +31,6 @@ public class QnaDto {
         this.content = qna.getContent();
         this.nickname = qna.getNickname();
         this.currentDateTime = TimeUtils.formatTimeAgo(qna.getCurrentDateTime());
-        this.modifiedDateTime = qna.getModifiedDateTime();
         this.commentCount = qna.getCommentCount();
         this.imagePath = qna.getImagePath();
         this.profileImagePath = qna.getMember().getProfileImagePath();

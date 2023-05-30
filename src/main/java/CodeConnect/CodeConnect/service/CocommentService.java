@@ -92,7 +92,6 @@ public class CocommentService {
         if (!validateMember(email, cocomments))
             return ResponseDto.setFail("접근 권한이 없습니다");
         cocomments.setMember(findMember);
-        cocomments.setModifiedDateTime(TimeUtils.changeDateTimeFormat(LocalDateTime.now()));
         cocomments.setProfileImagePath(cocomments.getMember().getProfileImagePath());
         cocomments.setCocomment(cocomment);
         return ResponseDto.setSuccess("대댓글 수정 성공", cocomments);

@@ -108,7 +108,6 @@ public class CommentService {
         if (!validateMember(email, comment))
             return ResponseDto.setFail("접근 권한이 없습니다");
 
-        comment.setModifiedDateTime(TimeUtils.changeDateTimeFormat(LocalDateTime.now()));
         comment.setMember(findMember);
         comment.setProfileImagePath(comment.getMember().getProfileImagePath());
         comment.setComment(comments);

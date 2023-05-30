@@ -36,8 +36,6 @@ public class Cocomment {
 
     private String currentDateTime; // 댓글 작성 시간
 
-    private String modifiedDateTime;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "comment_id")
     @JsonIgnore
