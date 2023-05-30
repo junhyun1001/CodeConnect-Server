@@ -1,9 +1,6 @@
 package CodeConnect.CodeConnect.controller;
 
-import CodeConnect.CodeConnect.dto.todo.CreateTodoRequestDto;
-import CodeConnect.CodeConnect.dto.todo.DeleteTodoRequestDto;
-import CodeConnect.CodeConnect.dto.todo.TodoResponseDto;
-import CodeConnect.CodeConnect.dto.todo.UpdateTodoRequestDto;
+import CodeConnect.CodeConnect.dto.todo.*;
 import CodeConnect.CodeConnect.service.TodoService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,8 +30,8 @@ public class TodoController {
 
     @MessageMapping("/todo/delete")
     public void deleteTodo(DeleteTodoRequestDto deleteTodoRequestDto) {
-        boolean result = todoService.deleteTodo(deleteTodoRequestDto);
-        template.convertAndSend("/sub/todo/room/" + deleteTodoRequestDto.getRoomId(), result);
+        DeleteTodoResponseDto deleteTodoResponseDto = todoService.deleteTodo(deleteTodoRequestDto);
+        template.convertAndSend("/sub/todo/room/" + deleteTodoRequestDto.getRoomId(), deleteTodoResponseDto);
     }
 
 

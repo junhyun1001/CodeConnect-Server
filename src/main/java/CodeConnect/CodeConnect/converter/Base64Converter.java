@@ -32,19 +32,17 @@ public class Base64Converter {
                 imageBytes = Base64.getDecoder().decode(base64Image);
             } catch (IllegalArgumentException e) {
                 // 잘못된 Base64 문자가 포함된 경우 예외 처리 방법을 선택하거나 오류 메시지 반환
-                return null;
+                return e.getMessage();
             }
 
             Path path = Paths.get(uploadDir, fileName);
             Files.write(path, imageBytes);
 
             return filePath;
-        } catch (
-                IOException e) {
+        } catch (IOException e) {
             // 예외 처리
-            e.printStackTrace();
             // 파일 저장 실패 시 예외 처리 방법을 선택하거나 null 등을 반환
-            return null;
+            return e.getMessage();
         }
     }
 

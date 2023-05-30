@@ -26,12 +26,12 @@ import java.util.Optional;
 public class ChatService {
 
     private final MemberRepository memberRepository;
-    private final ChatRoomRepository chatRoomRepository;
+    private final ChatRoomService chatRoomService;
     private final ChatRepository chatRepository;
 
     public ChatResponseDto saveChat(ChatRequestDto chatRequestDto) {
 
-        ChatRoom chatRoom = validateExistChatRoom(chatRequestDto.getRoomId());
+        ChatRoom chatRoom = chatRoomService.validateExistChatRoom(chatRequestDto.getRoomId());
 
         Chat chat = new Chat(chatRequestDto);
 
@@ -46,12 +46,5 @@ public class ChatService {
 
         return new ChatResponseDto(chat);
     }
-
-    // 해당 채팅방 존재 여부 확인
-    public ChatRoom validateExistChatRoom(Long id) {
-        Optional<ChatRoom> optionalChatRoom = chatRoomRepository.findById(id);
-        return optionalChatRoom.orElse(null);
-    }
-
 
 }

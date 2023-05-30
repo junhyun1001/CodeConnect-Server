@@ -34,6 +34,7 @@ public class RecruitmentService {
     public ResponseDto<RecruitmentDto> createPost(CreateRecruitmentDto dto, String email) {
 
         Member member = memberService.validateExistMember(email);
+
         String nickname = member.getNickname();
         String address = member.getAddress();
 
@@ -72,10 +73,10 @@ public class RecruitmentService {
         List<Recruitment> recruitmentList;
 
         // 주소 검색이 있을 때와 없을 때
-        if (searchAddress != null) {
-            recruitmentList = recruitmentRepository.findByAddressOrderByCurrentDateTimeDesc(searchAddress);
-        } else {
+        if (searchAddress == null || searchAddress.isEmpty()) {
             recruitmentList = recruitmentRepository.findByAddressAndFieldInOrderByCurrentDateTimeDesc(address, fieldList);
+        } else {
+            recruitmentList = recruitmentRepository.findByAddressOrderByCurrentDateTimeDesc(searchAddress);
         }
 
         List<RecruitmentDto> recruitmentDtoList = EntityToDto.mapListToDto(recruitmentList, RecruitmentDto::new);
@@ -91,6 +92,10 @@ public class RecruitmentService {
         memberService.validateExistMember(email);
 
         Recruitment recruitment = validateExistPost(id);
+        if (recruitment == null) {
+            return ResponseDto.setFail("존재하지 않는 게시글 입니다.");
+        }
+
         RecruitmentDto recruitmentDto = new RecruitmentDto(recruitment);
 
         // 회원 검증 후 내 게시글이면 HOST, 아니면 GUEST
@@ -145,6 +150,9 @@ public class RecruitmentService {
 
         // 해당 게시글을 id로 조회함
         Recruitment recruitment = validateExistPost(id);
+        if (recruitment == null) {
+            return ResponseDto.setFail("존재하지 않는 게시글 입니다.");
+        }
 
         // 회원 권한 검증
         if (validateAuthorizedMember(email, recruitment))
@@ -164,9 +172,10 @@ public class RecruitmentService {
     // 게시글 삭제
     public ResponseDto<String> deletePost(String email, Long id) {
 
-        memberService.validateExistMember(email);
-
         Recruitment recruitment = validateExistPost(id);
+        if (recruitment == null) {
+            return ResponseDto.setFail("존재하지 않는 게시글 입니다.");
+        }
 
         // 회원 검증
         if (validateAuthorizedMember(email, recruitment))
@@ -181,9 +190,10 @@ public class RecruitmentService {
     // 스터디 참여 여부 처리
     public ResponseDto<?> participate(String email, Long id, Boolean isParticipating) {
 
-        memberService.validateExistMember(email);
-
         Recruitment recruitment = validateExistPost(id);
+        if (recruitment == null) {
+            return ResponseDto.setFail("존재하지 않는 게시글 입니다.");
+        }
 
         if (isParticipating)
             return addMemberInPost(recruitment, email);
@@ -221,8 +231,6 @@ public class RecruitmentService {
 
     // 참여 회원 삭제
     public ResponseDto<Object> subtractMemberInPost(Recruitment recruitment, String email) {
-
-        memberService.validateExistMember(email);
 
         int count = recruitment.getCount();
         int currentCount = recruitment.getCurrentCount();

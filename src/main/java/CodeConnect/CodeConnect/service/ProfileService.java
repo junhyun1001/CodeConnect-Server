@@ -279,7 +279,7 @@ public class ProfileService {
                 return ResponseDto.setFail("이미지 파일 저장에 실패했습니다.");
             }
         } else {
-            findMember.setProfileImagePath(defaultImagePath);
+            findMember.setProfileImagePath(findMember.getProfileImagePath());
         }
 
         UpdatedMemberResponseDto updatedMemberResponseDto = new UpdatedMemberResponseDto(updateMemberRequestDto, findMember.getProfileImagePath());
