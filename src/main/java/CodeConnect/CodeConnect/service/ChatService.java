@@ -6,7 +6,6 @@ import CodeConnect.CodeConnect.domain.member.Member;
 import CodeConnect.CodeConnect.dto.chat.ChatRequestDto;
 import CodeConnect.CodeConnect.dto.chat.ChatResponseDto;
 import CodeConnect.CodeConnect.repository.ChatRepository;
-import CodeConnect.CodeConnect.repository.ChatRoomRepository;
 import CodeConnect.CodeConnect.repository.MemberRepository;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -14,8 +13,6 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Optional;
 
 @Service
 @Getter
