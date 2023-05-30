@@ -7,6 +7,7 @@ import CodeConnect.CodeConnect.domain.post.Recruitment;
 import CodeConnect.CodeConnect.dto.ResponseDto;
 import CodeConnect.CodeConnect.dto.member.UpdateMemberRequestDto;
 import CodeConnect.CodeConnect.dto.member.UpdatedMemberResponseDto;
+import CodeConnect.CodeConnect.dto.post.qna.QnaDto;
 import CodeConnect.CodeConnect.dto.post.recruitment.RecruitmentDto;
 import CodeConnect.CodeConnect.dto.profile.ProfileDto;
 import CodeConnect.CodeConnect.repository.MemberRepository;
@@ -142,6 +143,31 @@ public class ProfileService {
 
 
     //조회한 회원 프로필에 해당 회원이 작성한 스터디 게시글
+//    public ResponseDto<Object> showUserRecruitment(String email, String nickname) {
+//        Member findMember = memberRepository.findByEmail(email);
+//        if (findMember == null) {
+//            return ResponseDto.setFail("회원을 찾을 수 없습니다.");
+//        }
+//
+//        String findMemberNickname = findMember.getNickname();
+//        if (findMemberNickname == null || findMemberNickname.isEmpty()) {
+//            return ResponseDto.setFail("회원을 찾을 수 없습니다.");
+//        }
+//        if (findMemberNickname.equals(nickname)) {
+//            List<Recruitment> recruitmentList = recruitmentRepository.findByMemberOrderByCurrentDateTimeDesc(findMember);
+//            return ResponseDto.setSuccess("프로필 회원 본인이 작성한 스터디 게시글 조회 성공",recruitmentList);
+//        }else {
+//            Member otherMember = memberRepository.findByNickname(nickname);
+//            if (otherMember != null) {
+//                // 다른 사용자가 작성한 Recruitment 게시글 조회
+//                List<Recruitment> recruitmentList = recruitmentRepository.findByMemberOrderByCurrentDateTimeDesc(otherMember);
+//                return ResponseDto.setSuccess("다른 사용자 스터디 게시글 조회 성공", recruitmentList);
+//            } else {
+//                return ResponseDto.setFail("사용자를 찾을 수 없습니다.");
+//            }
+//        }
+//    }
+    @Transactional
     public ResponseDto<Object> showUserRecruitment(String email, String nickname) {
         Member findMember = memberRepository.findByEmail(email);
         if (findMember == null) {
@@ -152,22 +178,33 @@ public class ProfileService {
         if (findMemberNickname == null || findMemberNickname.isEmpty()) {
             return ResponseDto.setFail("회원을 찾을 수 없습니다.");
         }
+
         if (findMemberNickname.equals(nickname)) {
             List<Recruitment> recruitmentList = recruitmentRepository.findByMemberOrderByCurrentDateTimeDesc(findMember);
-            return ResponseDto.setSuccess("프로필 회원 본인이 작성한 스터디 게시글 조회 성공",recruitmentList);
-        }else {
+            List<RecruitmentDto> recruitmentDtoList = new ArrayList<>();
+            for (Recruitment recruitment : recruitmentList) {
+                RecruitmentDto recruitmentDto = new RecruitmentDto(recruitment);
+                recruitmentDtoList.add(recruitmentDto);
+            }
+            return ResponseDto.setSuccess("프로필 회원 본인이 작성한 스터디 게시글 조회 성공", recruitmentDtoList);
+        } else {
             Member otherMember = memberRepository.findByNickname(nickname);
             if (otherMember != null) {
-                // 다른 사용자가 작성한 Recruitment 게시글 조회
                 List<Recruitment> recruitmentList = recruitmentRepository.findByMemberOrderByCurrentDateTimeDesc(otherMember);
-                return ResponseDto.setSuccess("다른 사용자 스터디 게시글 조회 성공", recruitmentList);
+                List<RecruitmentDto> recruitmentDtoList = new ArrayList<>();
+                for (Recruitment recruitment : recruitmentList) {
+                    RecruitmentDto recruitmentDto = new RecruitmentDto(recruitment);
+                    recruitmentDtoList.add(recruitmentDto);
+                }
+                return ResponseDto.setSuccess("다른 사용자 스터디 게시글 조회 성공", recruitmentDtoList);
             } else {
                 return ResponseDto.setFail("사용자를 찾을 수 없습니다.");
             }
         }
     }
 //    //조회한 회원 프로필에 해당 회원이 작성한 Qna 게시글
-    public ResponseDto<Object> showUserQna(String email, String nickname){
+    @Transactional
+    public ResponseDto<Object> showUserQna(String email, String nickname) {
         Member findMember = memberRepository.findByEmail(email);
         if (findMember == null) {
             return ResponseDto.setFail("회원을 찾을 수 없습니다.");
@@ -177,20 +214,32 @@ public class ProfileService {
         if (findMemberNickname == null || findMemberNickname.isEmpty()) {
             return ResponseDto.setFail("회원을 찾을 수 없습니다.");
         }
+
         if (findMemberNickname.equals(nickname)) {
             List<Qna> qnaList = qnaRepository.findByMemberOrderByCurrentDateTimeDesc(findMember);
-            return ResponseDto.setSuccess("프로필 회원 본인이 작성한 Qna 게시글 조회 성공", qnaList);
+            List<QnaDto> qnaDtoList = new ArrayList<>();
+            for (Qna qna : qnaList) {
+                QnaDto qnaDto = new QnaDto(qna);
+                qnaDtoList.add(qnaDto);
+            }
+            return ResponseDto.setSuccess("프로필 회원 본인이 작성한 Qna 게시글 조회 성공", qnaDtoList);
         } else {
             Member otherMember = memberRepository.findByNickname(nickname);
             if (otherMember != null) {
-                // 다른 사용자가 작성한 Qna 게시글 조회
                 List<Qna> qnaList = qnaRepository.findByMemberOrderByCurrentDateTimeDesc(otherMember);
-                return ResponseDto.setSuccess("다른 사용자 Qna 게시글 조회 성공", qnaList);
+                List<QnaDto> qnaDtoList = new ArrayList<>();
+                for (Qna qna : qnaList) {
+                    QnaDto qnaDto = new QnaDto(qna);
+                    qnaDtoList.add(qnaDto);
+                }
+                return ResponseDto.setSuccess("다른 사용자 Qna 게시글 조회 성공", qnaDtoList);
             } else {
                 return ResponseDto.setFail("사용자를 찾을 수 없습니다.");
             }
         }
     }
+
+
     @Transactional
     public ResponseDto<UpdatedMemberResponseDto> updateProfile(UpdateMemberRequestDto updateMemberRequestDto, String email) {
         Member findMember = memberRepository.findByEmail(email);
