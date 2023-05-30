@@ -1,6 +1,6 @@
 package CodeConnect.CodeConnect.service;
 
-import CodeConnect.CodeConnect.converter.Base64Converter;
+import CodeConnect.CodeConnect.utils.Base64Converter;
 import CodeConnect.CodeConnect.domain.member.Member;
 import CodeConnect.CodeConnect.domain.post.Qna;
 import CodeConnect.CodeConnect.domain.post.Recruitment;

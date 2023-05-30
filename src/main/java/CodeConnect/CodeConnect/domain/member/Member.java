@@ -1,6 +1,6 @@
 package CodeConnect.CodeConnect.domain.member;
 
-import CodeConnect.CodeConnect.converter.FieldConverter;
+import CodeConnect.CodeConnect.utils.FieldConverter;
 import CodeConnect.CodeConnect.domain.chat.Chat;
 import CodeConnect.CodeConnect.domain.post.Cocomment;
 import CodeConnect.CodeConnect.domain.post.Comment;

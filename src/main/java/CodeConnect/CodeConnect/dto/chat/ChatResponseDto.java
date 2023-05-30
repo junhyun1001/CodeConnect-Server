@@ -3,8 +3,10 @@ package CodeConnect.CodeConnect.dto.chat;
 import CodeConnect.CodeConnect.domain.chat.Chat;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
+@Setter
 @NoArgsConstructor
 public class ChatResponseDto {
 

@@ -1,6 +1,6 @@
 package CodeConnect.CodeConnect.domain.post;
 
-import CodeConnect.CodeConnect.converter.TimeUtils;
+import CodeConnect.CodeConnect.utils.TimeUtils;
 import CodeConnect.CodeConnect.domain.member.Member;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;

@@ -1,6 +1,6 @@
 package CodeConnect.CodeConnect.dto.post.recruitment;
 
-import CodeConnect.CodeConnect.converter.TimeUtils;
+import CodeConnect.CodeConnect.utils.TimeUtils;
 import CodeConnect.CodeConnect.domain.post.Recruitment;
 import lombok.Getter;
 

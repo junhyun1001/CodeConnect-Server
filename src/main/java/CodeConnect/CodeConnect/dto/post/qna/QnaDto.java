@@ -1,6 +1,6 @@
 package CodeConnect.CodeConnect.dto.post.qna;
 
-import CodeConnect.CodeConnect.converter.TimeUtils;
+import CodeConnect.CodeConnect.utils.TimeUtils;
 import CodeConnect.CodeConnect.domain.post.Qna;
 import lombok.Getter;
 

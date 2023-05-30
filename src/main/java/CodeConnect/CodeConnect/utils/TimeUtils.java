@@ -1,4 +1,4 @@
-package CodeConnect.CodeConnect.converter;
+package CodeConnect.CodeConnect.utils;
 
 import java.time.Duration;
 import java.time.LocalDateTime;

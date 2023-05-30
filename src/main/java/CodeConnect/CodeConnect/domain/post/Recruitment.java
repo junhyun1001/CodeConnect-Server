@@ -1,6 +1,6 @@
 package CodeConnect.CodeConnect.domain.post;
 
-import CodeConnect.CodeConnect.converter.TimeUtils;
+import CodeConnect.CodeConnect.utils.TimeUtils;
 import CodeConnect.CodeConnect.domain.chat.ChatRoom;
 import CodeConnect.CodeConnect.domain.member.Member;
 import CodeConnect.CodeConnect.dto.post.recruitment.CreateRecruitmentDto;
