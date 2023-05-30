@@ -1,5 +1,7 @@
 package CodeConnect.CodeConnect.utils;
 
+import org.springframework.beans.factory.annotation.Value;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -11,10 +13,13 @@ import java.util.UUID;
 
 public class Base64Converter {
 
+    @Value("${image.save.path}")
+    private static String uploadDir;
+
     public static String saveImageFromBase64(String type, String base64Image) {
 
         // 이미지 파일 저장 디렉토리 설정
-        String uploadDir = "src/main/resources/image";
+
         if(type.equals("qna"))
             uploadDir += "/qna";
         else if(type.equals("member"))

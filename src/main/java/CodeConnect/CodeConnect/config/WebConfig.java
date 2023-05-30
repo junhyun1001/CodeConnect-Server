@@ -8,10 +8,10 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
-    @Value("${resource.path}")
+    @Value("${resource.image.path}")
     private String resourcePath;
 
-    @Value("${upload.path}")
+    @Value("${upload.image.path}")
     private String uploadPath;
 
     @Override
