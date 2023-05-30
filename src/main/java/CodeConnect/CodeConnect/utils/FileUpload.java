@@ -1,6 +1,7 @@
 package CodeConnect.CodeConnect.utils;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -10,9 +11,13 @@ import java.util.UUID;
 @Slf4j
 public class FileUpload {
 
+    @Value("${file.savs.path}")
+    private static String uploadPath;
+
+    @Value("${resource.file.path}")
+    private static String resourcePath;
 
     public static String fileUpload(MultipartFile file) {
-        final String uploadPath = "src/main/resources/image";
 
         String fileRealName = file.getOriginalFilename(); //파일명을 얻어낼 수 있는 메서드!
         String fileExtension = null;
@@ -29,14 +34,16 @@ public class FileUpload {
 		  고유한 랜던 문자를 통해 db와 서버에 저장할 파일명을 새롭게 만들어 준다.
 		 */
 
+
         UUID fileName = UUID.randomUUID(); // 랜덤 파일 이름 생성
-        File saveFile = new File(uploadPath + "chat/file/" + fileName + fileExtension);  // 적용 후
+        File saveFile = new File(uploadPath + fileName + fileExtension);  // 적용 후
         try {
             file.transferTo(saveFile); // 실제 파일 저장메서드(filewriter 작업을 손쉽게 한방에 처리해준다.)
         } catch (IllegalStateException | IOException e) {
             e.printStackTrace();
         }
-        return saveFile.getPath();
+
+        return resourcePath + saveFile.getName();
     }
 
 }
