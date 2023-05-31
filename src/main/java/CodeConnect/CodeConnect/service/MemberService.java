@@ -9,6 +9,7 @@ import CodeConnect.CodeConnect.repository.MemberRepository;
 import CodeConnect.CodeConnect.security.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,7 +29,8 @@ public class MemberService {
     private final PasswordEncoder passwordEncoder;
     private final SignupValidateService signupValidateService;
 
-    private final String imagePath = "src/main/resources/image/member/default/default_profile.png"; // 외부 저장소에 있는 이미지 파일 경로
+    @Value("${default.image}")
+    private String imagePath; // 외부 저장소에 있는 이미지 파일 경로
 
     // 회원가입
     public ResponseDto<Member> signUp(SignUpRequestDto dto) {

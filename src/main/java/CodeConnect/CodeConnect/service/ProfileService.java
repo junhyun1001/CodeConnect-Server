@@ -28,8 +28,6 @@ public class ProfileService {
     private final QnaRepository qnaRepository;
     private final RecruitmentRepository recruitmentRepository;
 
-    private final String defaultImagePath = "src/main/resources/image/member/default/default_profile.png";
-
     public ResponseDto<Object> showUserInfo(String email, String nickname) {
 
         Member findMember = memberRepository.findByEmail(email);
