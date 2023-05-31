@@ -1,6 +1,7 @@
 package CodeConnect.CodeConnect.controller;
 
 import CodeConnect.CodeConnect.dto.ResponseDto;
+import CodeConnect.CodeConnect.dto.post.qna.LikeCountResponseDto;
 import CodeConnect.CodeConnect.dto.post.qna.QnaDto;
 import CodeConnect.CodeConnect.dto.post.qna.QnaRequestDto;
 import CodeConnect.CodeConnect.service.QnaService;
@@ -62,7 +63,7 @@ public class QnaController {
 
     //게시글 좋아요 카운팅
     @PutMapping("/like/{qnaId}")
-    public ResponseDto<Integer> likeCounting(@AuthenticationPrincipal String email, @PathVariable Long qnaId) {
+    public ResponseDto<LikeCountResponseDto> likeCounting(@AuthenticationPrincipal String email, @PathVariable Long qnaId) {
         return qnaService.likeCounting(email, qnaId);
     }
 }

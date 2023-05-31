@@ -1,23 +1,22 @@
 package CodeConnect.CodeConnect.service;
 
-import CodeConnect.CodeConnect.utils.Base64Converter;
-import CodeConnect.CodeConnect.utils.EntityToDto;
-import CodeConnect.CodeConnect.utils.TimeUtils;
 import CodeConnect.CodeConnect.domain.member.Member;
 import CodeConnect.CodeConnect.domain.post.Comment;
 import CodeConnect.CodeConnect.domain.post.Qna;
 import CodeConnect.CodeConnect.dto.ResponseDto;
+import CodeConnect.CodeConnect.dto.post.qna.LikeCountResponseDto;
 import CodeConnect.CodeConnect.dto.post.qna.QnaDto;
 import CodeConnect.CodeConnect.dto.post.qna.QnaRequestDto;
 import CodeConnect.CodeConnect.repository.CommentRepository;
 import CodeConnect.CodeConnect.repository.MemberRepository;
 import CodeConnect.CodeConnect.repository.QnaRepository;
+import CodeConnect.CodeConnect.utils.Base64Converter;
+import CodeConnect.CodeConnect.utils.EntityToDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
@@ -215,7 +214,7 @@ public class QnaService {
 
     // 좋아요 카운트
     @Transactional
-    public ResponseDto<Integer> likeCounting(String email, Long qnaId) {
+    public ResponseDto<LikeCountResponseDto> likeCounting(String email, Long qnaId) {
         Optional<Qna> optionalQna = qnaRepository.findById(qnaId);
         if (optionalQna.isEmpty()) {
             return ResponseDto.setFail("존재하지 않는 Q&A 게시글 입니다.");
@@ -226,11 +225,11 @@ public class QnaService {
         if (isLikedQna(qna, email)) {
             --likeCount;
             updateLikeCount(qna, email, likeCount, false);
-            return ResponseDto.setSuccess("Q&A 좋아요 취소", likeCount);
+            return ResponseDto.setSuccess("Q&A 좋아요 취소", new LikeCountResponseDto(false, likeCount));
         } else {
             ++likeCount;
             updateLikeCount(qna, email, likeCount, true);
-            return ResponseDto.setSuccess("Q&A 좋아요", likeCount);
+            return ResponseDto.setSuccess("Q&A 좋아요", new LikeCountResponseDto(true, likeCount));
 
         }
     }
