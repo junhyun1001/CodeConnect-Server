@@ -15,9 +15,6 @@ public class FileUpload {
 
     public static String fileUpload(MultipartFile file) {
 
-        log.info(uploadPath);
-        log.info(resourcePath);
-
         String fileRealName = file.getOriginalFilename(); //파일명을 얻어낼 수 있는 메서드!
         String fileExtension = null;
 
