@@ -13,8 +13,8 @@ import java.util.UUID;
 
 public class Base64Converter {
 
-    @Value("${image.save.path}")
-    private static String uploadDir;
+//    @Value("${image.save.path}")
+    private static String uploadDir = "src/main/resources";
 
     public static String saveImageFromBase64(String type, String base64Image) {
 

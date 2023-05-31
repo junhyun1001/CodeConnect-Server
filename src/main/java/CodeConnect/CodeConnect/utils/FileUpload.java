@@ -1,7 +1,6 @@
 package CodeConnect.CodeConnect.utils;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -11,13 +10,13 @@ import java.util.UUID;
 @Slf4j
 public class FileUpload {
 
-    @Value("${file.savs.path}")
-    private static String uploadPath;
-
-    @Value("${resource.file.path}")
-    private static String resourcePath;
+    private static final String uploadPath = "D:/build/src/main/resources/file/";
+    private static final String resourcePath = "src/main/resources/file/";
 
     public static String fileUpload(MultipartFile file) {
+
+        log.info(uploadPath);
+        log.info(resourcePath);
 
         String fileRealName = file.getOriginalFilename(); //파일명을 얻어낼 수 있는 메서드!
         String fileExtension = null;
