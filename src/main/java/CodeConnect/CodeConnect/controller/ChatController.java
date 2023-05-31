@@ -1,12 +1,12 @@
 package CodeConnect.CodeConnect.controller;
 
+import CodeConnect.CodeConnect.dto.ResponseDto;
 import CodeConnect.CodeConnect.dto.chat.ChatRequestDto;
 import CodeConnect.CodeConnect.dto.chat.ChatResponseDto;
 import CodeConnect.CodeConnect.dto.file.FileRequestDto;
 import CodeConnect.CodeConnect.dto.file.FileResponseDto;
 import CodeConnect.CodeConnect.service.ChatService;
 import CodeConnect.CodeConnect.utils.FileDownload;
-import CodeConnect.CodeConnect.utils.FileUpload;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -34,12 +34,8 @@ public class ChatController {
     }
 
     @PostMapping("/chat/file/upload")
-    public void uploadFile(@RequestPart("file") MultipartFile file, @RequestPart("roomId") String roomId) {
-        String filePath = FileUpload.fileUpload(file);
-        Long fileSize = file.getSize();
-        String fileContentType = file.getContentType();
-        FileResponseDto fileResponseDto = new FileResponseDto(filePath, fileSize, fileContentType);
-        template.convertAndSend("/sub/chat/room/" + roomId, fileResponseDto);
+    public ResponseDto<FileResponseDto> uploadFile(@RequestPart("file") MultipartFile file) {
+        return chatService.fileUpload(file);
     }
 
     @GetMapping("/chat/file/download")
