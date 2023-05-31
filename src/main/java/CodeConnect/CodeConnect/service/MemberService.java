@@ -40,6 +40,7 @@ public class MemberService {
         String nickname = dto.getNickname();
         String password = dto.getPassword();
         String passwordCheck = dto.getPasswordCheck();
+        String address = dto.getAddress();
         List<String> fieldList = dto.getFieldList();
 
         // 이메일 중복 체크
@@ -69,6 +70,10 @@ public class MemberService {
         // 관심분야 값 체크
         if (fieldList.size() > 2) {
             return ResponseDto.setFail("관심 분야는 2개까지 선택 가능합니다.");
+        }
+
+        if (address == null || address.isEmpty()) {
+            return ResponseDto.setFail("주소를 입력해 주세요");
         }
 
         // 클라이언트에서 받아온 값으로 Member 객체 생성
