@@ -10,6 +10,8 @@ import lombok.Setter;
 @NoArgsConstructor
 public class ChatResponseDto {
 
+    private MessageType messageType; // 메시지 타입 설정
+
     private Long chatId; // 메시지 id
 
     private String nickname; // 발신자
@@ -26,6 +28,7 @@ public class ChatResponseDto {
         this.message = chat.getMessage();
         this.currentDateTime = chat.getCurrentDateTime();
         this.profileImagePath = chat.getMember().getProfileImagePath();
+        this.messageType = chat.getMessageType();
     }
 
 }

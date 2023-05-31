@@ -10,6 +10,8 @@ import java.time.LocalDateTime;
 @Setter
 public class ChatRequestDto {
 
+    private MessageType messageType;
+
     private Long roomId; // 방 id
 
     private String nickname; // 발신자
