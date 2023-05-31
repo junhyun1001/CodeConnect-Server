@@ -18,8 +18,6 @@ public class CocommentRequestDto {
     private String cocomment;
     private String nickname;
     private String currentDateTime;
-    private String modifiedDateTime;
-
     private String profileImagePath; //회원 프로필 사진 경로
 
     public Long getCocommentId() {
@@ -35,7 +33,6 @@ public class CocommentRequestDto {
         this.cocomment = cocomment.getCocomment();
         this.nickname = cocomment.getNickname();
         this.currentDateTime = cocomment.getCurrentDateTime();
-        this.modifiedDateTime = cocomment.getModifiedDateTime();
         this.profileImagePath = cocomment.getMember().getProfileImagePath(); // 추가된 부분
     }
 

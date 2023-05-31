@@ -17,8 +17,6 @@ public class RecruitmentDto {
 
     private final String currentDateTime; // 작성 날짜와 시간 정보
 
-    private final String modifiedDateTime; // 수정 날짜와 시간 정보
-
     private final String address; // 작성자 주소
 
     private final int count; // 해당 게시글의 제한 인원수
@@ -35,7 +33,6 @@ public class RecruitmentDto {
         this.content = recruitment.getContent();
         this.nickname = recruitment.getNickname();
         this.currentDateTime = TimeUtils.formatTimeAgo(recruitment.getCurrentDateTime());
-        this.modifiedDateTime = recruitment.getModifiedDateTime();
         this.address = recruitment.getAddress();
         this.count = recruitment.getCount();
         this.currentCount = recruitment.getCurrentCount();

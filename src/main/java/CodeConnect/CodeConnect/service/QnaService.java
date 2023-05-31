@@ -112,24 +112,12 @@ public class QnaService {
         for (Comment comment : comments) {
             Map<String, Object> commentMap = new LinkedHashMap<>();
             if (validateMember2(Collections.singletonList(comment), member)) {
-                commentMap.put("commentId", comment.getCommentId());
-                commentMap.put("nickname", comment.getMember().getNickname()); // 수정된 닉네임 사용
-                commentMap.put("comment", comment.getComment());
-                commentMap.put("currentDateTime", comment.getCurrentDateTime());
-                commentMap.put("modifiedDateTime", comment.getModifiedDateTime());
-                commentMap.put("cocommentCount", comment.getCocommentCount());
-                commentMap.put("profileImagePath", comment.getMember().getProfileImagePath());
+                putMap(comment, commentMap);
                 commentMap.put("role", Role.COMMENT_HOST);
 
                 commentHostList.add(commentMap);
             } else {
-                commentMap.put("commentId", comment.getCommentId());
-                commentMap.put("nickname", comment.getMember().getNickname()); // 수정된 닉네임 사용
-                commentMap.put("comment", comment.getComment());
-                commentMap.put("currentDateTime", comment.getCurrentDateTime());
-                commentMap.put("modifiedDateTime", comment.getModifiedDateTime());
-                commentMap.put("cocommentCount", comment.getCocommentCount());
-                commentMap.put("profileImagePath", comment.getMember().getProfileImagePath());
+                putMap(comment, commentMap);
                 commentMap.put("role", Role.COMMENT_GUEST);
 
                 commentGuestList.add(commentMap);
@@ -145,6 +133,15 @@ public class QnaService {
         }
 
         return ResponseDto.setSuccess("게시글 조회", qnaMap);
+    }
+
+    private void putMap(Comment comment, Map<String, Object> commentMap) {
+        commentMap.put("commentId", comment.getCommentId());
+        commentMap.put("nickname", comment.getMember().getNickname()); // 수정된 닉네임 사용
+        commentMap.put("comment", comment.getComment());
+        commentMap.put("currentDateTime", comment.getCurrentDateTime());
+        commentMap.put("cocommentCount", comment.getCocommentCount());
+        commentMap.put("profileImagePath", comment.getMember().getProfileImagePath());
     }
 
     //삭제
@@ -191,7 +188,6 @@ public class QnaService {
         qna.setTitle(title); // Dirty Checking
         qna.setContent(content); // Dirty Checking
         qna.setProfileImagePath(qna.getMember().getProfileImagePath()); // Member 엔티티에서 profileImagePath 설정
-        qna.setModifiedDateTime(TimeUtils.changeDateTimeFormat(LocalDateTime.now()));
 
         QnaDto qnaDto = new QnaDto(qna);
 
@@ -204,6 +200,39 @@ public class QnaService {
         List<Qna> qnaList = qnaRepository.findByTitleContainingOrContentContainingOrderByCurrentDateTimeDesc(text, text);
         List<QnaDto> qnaDtos = EntityToDto.mapListToDto(qnaList, QnaDto::new);
         return ResponseDto.setSuccess("검색 성공", qnaDtos);
+    }
+
+    // top10 조회
+    @Transactional
+    public ResponseDto<List<QnaDto>> getPopularPost() {
+        List<Qna> top10ByOrderByLikeCountDesc = qnaRepository.findTop10ByOrderByLikeCountDesc();
+        for (Qna qna : top10ByOrderByLikeCountDesc) {
+            qna.setProfileImagePath(qna.getMember().getProfileImagePath()); // Member 엔티티에서 profileImagePath 설정
+        }
+        List<QnaDto> qnaDtos = EntityToDto.mapListToDto(top10ByOrderByLikeCountDesc, QnaDto::new);
+        return ResponseDto.setSuccess("Q&A Top10", qnaDtos);
+    }
+
+    // 좋아요 카운트
+    @Transactional
+    public ResponseDto<Integer> likeCounting(String email, Long qnaId) {
+        Optional<Qna> optionalQna = qnaRepository.findById(qnaId);
+        if (optionalQna.isEmpty()) {
+            return ResponseDto.setFail("존재하지 않는 Q&A 게시글 입니다.");
+        }
+        Qna qna = optionalQna.get();
+        int likeCount = qna.getLikeCount();
+
+        if (isLikedQna(qna, email)) {
+            --likeCount;
+            updateLikeCount(qna, email, likeCount, false);
+            return ResponseDto.setSuccess("Q&A 좋아요 취소", likeCount);
+        } else {
+            ++likeCount;
+            updateLikeCount(qna, email, likeCount, true);
+            return ResponseDto.setSuccess("Q&A 좋아요", likeCount);
+
+        }
     }
 
     private boolean validateMember(String email, Qna qna) {
@@ -228,5 +257,20 @@ public class QnaService {
             }
         }
         return false; // COMMENT_GUEST
+    }
+
+    // 좋아요 눌렀는지 확인
+    public boolean isLikedQna(Qna qna, String email) {
+        return qna.getLikesEmail().stream().anyMatch(participant -> participant.equals(email));
+    }
+
+    // 좋아요 회원 정보 업데이트
+    public void updateLikeCount(Qna qna, String email, int likeCount, Boolean bool) {
+        qna.setLikeCount(likeCount);
+        if (bool)
+            qna.getLikesEmail().add(email);
+        else
+            qna.getLikesEmail().remove(email);
+        qnaRepository.save(qna);
     }
 }

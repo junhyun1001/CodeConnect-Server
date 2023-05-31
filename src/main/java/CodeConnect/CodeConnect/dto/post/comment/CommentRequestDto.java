@@ -21,7 +21,6 @@ public class CommentRequestDto {
     private String comment;
     private int cocommentCount;
     private String currentDateTime;
-    private String modifiedDateTime;
     private String profileImagePath; //회원 프로필 사진 경로
 
     public Long getCommentId() {
@@ -36,7 +35,6 @@ public class CommentRequestDto {
         this.comment = comment.getComment();
         this.cocommentCount = comment.getCocomments().size();
         this.currentDateTime = comment.getCurrentDateTime();
-        this.modifiedDateTime = comment.getModifiedDateTime();
         this.profileImagePath = comment.getMember().getProfileImagePath();
     }
 }

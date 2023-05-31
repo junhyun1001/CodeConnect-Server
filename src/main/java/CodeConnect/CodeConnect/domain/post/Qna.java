@@ -33,6 +33,7 @@ public class Qna extends Post {
     @JoinColumn(name = "email") // 조인 컬럼명과 조인할 대상 필드명 설정
     @JsonIgnore
     private Member member;
+
     @Column(name = "comment_count")
     private Integer commentCount = 0; // 댓글 개수
 
@@ -40,6 +41,13 @@ public class Qna extends Post {
     private String imagePath; // 이미지 파일 경로
 
     private String profileImagePath; //회원 면상
+
+    private int likeCount; // 게시글 좋아요 수
+
+    @ElementCollection
+    @CollectionTable(joinColumns = @JoinColumn(name = "qna_id"))
+    @JsonIgnore
+    private List<String> likesEmail = new ArrayList<>();
 
     // 연관관계 메소드
     public void setMember(Member member) {
