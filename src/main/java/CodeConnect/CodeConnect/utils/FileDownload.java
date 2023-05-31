@@ -14,7 +14,7 @@ public class FileDownload {
         String filePath = fileRequestDto.getFilePath();
         int lastIndexOfSlash = filePath.lastIndexOf("/");
         String fileName = filePath.substring(lastIndexOfSlash + 1);
-        String contentType = fileRequestDto.getContentType();
+        String contentType = fileRequestDto.getFileContentType();
         File file = new File(filePath);
         long fileLength = file.length();
         //파일의 크기와 같지 않을 경우 프로그램이 멈추지 않고 계속 실행되거나, 잘못된 정보가 다운로드 될 수 있다.

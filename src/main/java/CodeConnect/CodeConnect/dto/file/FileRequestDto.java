@@ -7,6 +7,6 @@ public class FileRequestDto {
 
     private String filePath;
 
-    private String contentType;
+    private String fileContentType;
 
 }
