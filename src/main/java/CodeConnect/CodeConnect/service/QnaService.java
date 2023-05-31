@@ -97,12 +97,16 @@ public class QnaService {
             // 자신이 작성한 글인 경우
             QnaDto qnaDto = new QnaDto(qna);
             qnaMap.put(Role.HOST, qnaDto);
+            boolean likedQna = isLikedQna(qna, email);
+            qnaDto.setLiked(likedQna);
             log.info("************************* HOST로 게시글 조회 *************************");
         } else {
             qna.setProfileImagePath(qna.getMember().getProfileImagePath());
             // 자신이 작성하지 않은 글인 경우
             QnaDto qnaDto = new QnaDto(qna);
             qnaMap.put(Role.GUEST, qnaDto);
+            boolean likedQna = isLikedQna(qna, email);
+            qnaDto.setLiked(likedQna);
             log.info("************************* GUEST로 게시글 조회 *************************");
         }
 

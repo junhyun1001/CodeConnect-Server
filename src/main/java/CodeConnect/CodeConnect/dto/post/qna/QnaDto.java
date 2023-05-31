@@ -3,8 +3,10 @@ package CodeConnect.CodeConnect.dto.post.qna;
 import CodeConnect.CodeConnect.utils.TimeUtils;
 import CodeConnect.CodeConnect.domain.post.Qna;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
+@Setter
 public class QnaDto {
 
     private final Long qnaId;
@@ -24,6 +26,8 @@ public class QnaDto {
     private final String profileImagePath;
 
     private final int likeCount;
+
+    private boolean liked;
 
     public QnaDto(Qna qna) {
         this.qnaId = qna.getQnaId();
