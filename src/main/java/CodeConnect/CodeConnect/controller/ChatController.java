@@ -39,8 +39,10 @@ public class ChatController {
     }
 
     @GetMapping("/chat/file/download")
-    public void downloadFile(@RequestBody FileRequestDto fileRequestDto, HttpServletResponse response) {
+    public void downloadFile(@RequestParam("filePath") String filePath, @RequestParam("fileContentType") String fileContentType, HttpServletResponse response) {
+        FileRequestDto fileRequestDto = new FileRequestDto(filePath, fileContentType);
         FileDownload.downloadFile(response, fileRequestDto);
     }
+
 }
 
