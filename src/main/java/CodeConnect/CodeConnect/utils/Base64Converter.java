@@ -13,13 +13,9 @@ import java.util.UUID;
 
 public class Base64Converter {
 
-//    @Value("${image.save.path}")
-    private static String uploadDir = "src/main/resources";
-
     public static String saveImageFromBase64(String type, String base64Image) {
-
         // 이미지 파일 저장 디렉토리 설정
-
+        String uploadDir = "src/main/resources";
         if(type.equals("qna"))
             uploadDir += "/qna";
         else if(type.equals("member"))
