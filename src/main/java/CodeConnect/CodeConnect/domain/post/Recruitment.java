@@ -24,7 +24,7 @@ import java.util.List;
 public class Recruitment extends Post {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long recruitmentId; // 모집 게시글 id
 
     // 작성자 정보에 대한 매핑 정보를 통해 작성자(Member) 엔티티를 참조할 수 있다.
