@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.AuthorityUtils;
@@ -28,6 +29,7 @@ import java.io.IOException;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final TokenProvider tokenProvider;
+    private RedisTemplate<String, Object> redisTemplate;
 
     // Request Header의 Authorization 필드에서 Bearer Token을 가져와 검증하는 역할
     @Override
@@ -36,7 +38,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         try {
             if (token != null && !token.equalsIgnoreCase("null")) {
-                String email = tokenProvider.validate(token);
+                String email = tokenProvider.validateToken(token);
+
+                // 토큰의 subject가 "Refresh Token"이면 사용 불가능
+                if (email.equals("Refresh Token")) {
+                    jwtExceptionHandler(response, "Refresh Token은 사용할 수 없습니다.");
+                    return;
+                }
 
                 AbstractAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(email, null, AuthorityUtils.NO_AUTHORITIES);
                 authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
@@ -46,26 +54,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 SecurityContextHolder.setContext(securityContext);
             }
         } catch (Exception e) {
+            // 오류 객체 반환
+            jwtExceptionHandler(response, "유효하지 않은 토큰입니다.");
+
             log.error(e.getMessage());
-
-            // 유효성 검증에 실패한 경우도 SecurityContext에 인증 정보를 추가해야 함
-            AbstractAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(null, null, AuthorityUtils.NO_AUTHORITIES);
-            SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
-            securityContext.setAuthentication(authenticationToken);
-            SecurityContextHolder.setContext(securityContext);
-
-            // 오류 응답 객체 생성 및 데이터 설정
-            ObjectMapper objectMapper = new ObjectMapper();
-
-            // 오류 응답 객체를 JSON으로 변환
-            String jsonResponse = objectMapper.writeValueAsString(ResponseDto.setFail("유효하지 않은 토큰입니다."));
-
-            // 응답 객체를 설정
-            response.setContentType("application/json;charset=UTF-8");
-            response.getWriter().write(jsonResponse);
-            response.getWriter().flush();
-            response.getWriter().close();
-
             return;
         }
 
@@ -78,6 +70,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer "))
             return bearerToken.substring(7);
         return null;
+    }
+
+    private void jwtExceptionHandler(@NotNull HttpServletResponse response, String message) throws IOException {
+        String jsonResponse = new ObjectMapper().writeValueAsString(ResponseDto.setFail(message));
+        response.setContentType("application/json;charset=UTF-8");
+        response.getWriter().write(jsonResponse);
+        response.getWriter().flush();
+        response.getWriter().close();
     }
 
 }

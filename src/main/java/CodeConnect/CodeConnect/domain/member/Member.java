@@ -1,15 +1,17 @@
 package CodeConnect.CodeConnect.domain.member;
 
-import CodeConnect.CodeConnect.utils.FieldConverter;
 import CodeConnect.CodeConnect.domain.chat.Chat;
 import CodeConnect.CodeConnect.domain.post.Cocomment;
 import CodeConnect.CodeConnect.domain.post.Comment;
 import CodeConnect.CodeConnect.domain.post.Qna;
 import CodeConnect.CodeConnect.domain.post.Recruitment;
 import CodeConnect.CodeConnect.dto.member.SignUpRequestDto;
-import CodeConnect.CodeConnect.dto.member.UpdateMemberRequestDto;
+import CodeConnect.CodeConnect.utils.FieldConverter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -48,6 +50,8 @@ public class Member {
     private List<String> fieldList;
 
     private String profileImagePath;
+
+    private String refreshToken;
 
     /**
      * 회원과 모집 게시글은 1:N 관계이다.
@@ -107,12 +111,6 @@ public class Member {
         this.createMemberTime = dto.getCreateMemberTime();
         this.address = dto.getAddress();
         this.fieldList = dto.getFieldList();
-    }
-
-    public void updateMember(UpdateMemberRequestDto dto) {
-        setNickname(dto.getNickname());
-        setAddress(dto.getAddress());
-        setFieldList(dto.getFieldList());
     }
 
 }

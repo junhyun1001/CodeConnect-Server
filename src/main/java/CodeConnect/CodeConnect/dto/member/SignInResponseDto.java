@@ -1,6 +1,7 @@
 package CodeConnect.CodeConnect.dto.member;
 
 import CodeConnect.CodeConnect.domain.member.Member;
+import CodeConnect.CodeConnect.dto.token.Token;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,9 +19,7 @@ import java.util.List;
 @AllArgsConstructor
 public class SignInResponseDto {
 
-    private String token; // jwt 토근
-
-    private int exprTime; // 토큰 만료기한
+    private Token token; // jwt 토근
 
     private String address; // 회원 주소
 
@@ -28,14 +27,12 @@ public class SignInResponseDto {
 
     private List<String> fieldList; // 회원 관심분야
 
-    public SignInResponseDto(String token, int exprTime, Member member) {
+    public SignInResponseDto(Token token, Member member) {
         this.token = token;
-        this.exprTime = exprTime;
         this.address = member.getAddress();
         this.nickname = member.getNickname();
         this.fieldList = member.getFieldList();
     }
-
 
 
 }
