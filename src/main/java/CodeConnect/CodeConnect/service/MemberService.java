@@ -5,8 +5,10 @@ import CodeConnect.CodeConnect.dto.ResponseDto;
 import CodeConnect.CodeConnect.dto.member.SignInRequestDto;
 import CodeConnect.CodeConnect.dto.member.SignInResponseDto;
 import CodeConnect.CodeConnect.dto.member.SignUpRequestDto;
+import CodeConnect.CodeConnect.dto.token.Token;
 import CodeConnect.CodeConnect.repository.MemberRepository;
 import CodeConnect.CodeConnect.security.TokenProvider;
+import CodeConnect.CodeConnect.utils.RedisUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,6 +30,7 @@ public class MemberService {
     private final TokenProvider tokenProvider;
     private final PasswordEncoder passwordEncoder;
     private final SignupValidateService signupValidateService;
+    private final RedisUtil redisUtil;
 
     @Value("${default.image}")
     private String imagePath; // 외부 저장소에 있는 이미지 파일 경로
@@ -91,7 +94,6 @@ public class MemberService {
     }
 
     // 로그인
-    @Transactional(readOnly = true)
     public ResponseDto<SignInResponseDto> signIn(SignInRequestDto dto) {
         String email = dto.getEmail();
         String password = dto.getPassword();
@@ -105,13 +107,29 @@ public class MemberService {
         if (!passwordEncoder.matches(password, member.getPassword()))
             return ResponseDto.setFail("비밀번호가 일치하지 않습니다.");
 
-        // 새로운 토큰 생성
-        String token = tokenProvider.create(email); // 토큰 생성
-        int exprTime = 3600000;
+        Token token = tokenProvider.create(email); // access, refresh token 생성
+        member.setRefreshToken(token.getRefreshToken());
+
+        memberRepository.save(member);
 
         log.info("************************* {} 로그인 성공 *************************", email);
-        return ResponseDto.setSuccess("로그인 성공", new SignInResponseDto(token, exprTime, member));
+        return ResponseDto.setSuccess("로그인 성공", new SignInResponseDto(token, member));
 
+    }
+
+    // 로그아웃
+    public ResponseDto<String> logout(String accessToken) {
+        String email = tokenProvider.validateToken(accessToken);
+        // 해당 refresh token 삭제
+        Member member = validateExistMember(email);
+        if(member == null) return ResponseDto.setFail("존재하지 않는 회원입니다.");
+        member.setRefreshToken(null);
+        memberRepository.save(member);
+
+        // 레디스에 access token 블랙리스트 등록
+        redisUtil.setBlackList(accessToken, "accessToken", 5);
+
+        return ResponseDto.setSuccess("로그아웃 되었습니다.", null);
     }
 
     // 회원 탈퇴
@@ -130,6 +148,7 @@ public class MemberService {
 
     // 해당 회원 존재 여부 확인
     public Member validateExistMember(String email) {
+        log.info("email: {}", email);
         Optional<Member> optionalMember = memberRepository.findById(email);
         return optionalMember.orElse(null);
     }
