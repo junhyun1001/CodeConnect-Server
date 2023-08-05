@@ -5,6 +5,7 @@ import CodeConnect.CodeConnect.dto.ResponseDto;
 import CodeConnect.CodeConnect.dto.member.SignInRequestDto;
 import CodeConnect.CodeConnect.dto.member.SignInResponseDto;
 import CodeConnect.CodeConnect.dto.member.SignUpRequestDto;
+import CodeConnect.CodeConnect.dto.token.AccessTokenDto;
 import CodeConnect.CodeConnect.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -33,7 +34,7 @@ public class MemberController {
     }
 
     @PostMapping("/logout")
-    public ResponseDto<String> logout(@RequestBody String accessToken) {
-        return memberService.logout(accessToken);
+    public ResponseDto<String> logout(@RequestBody AccessTokenDto token) {
+        return memberService.logout(token);
     }
 }
