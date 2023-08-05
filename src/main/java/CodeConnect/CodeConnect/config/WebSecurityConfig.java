@@ -31,8 +31,7 @@ public class WebSecurityConfig {
                 .csrf().disable() // csrf 정책 (현재는 비활성화)
                 .httpBasic().disable() // Basic 인증 (현재는 Bearer 인증 방법을 사용함)
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and() // 세션 기반 인증을 비활성화 시킴
-                .authorizeRequests().antMatchers("/members/signup", "/members/login", "/").permitAll() // 회원가입, 로그인, 기본 페이지에 대해서만 접근을 허용함
-                .antMatchers("/v3/api-docs", "/configuration/ui", "/swagger-resources/**", "/configuration/security", "/swagger-ui/**", "/webjars/**").permitAll() // Allow access to Swagger UI and its related resources
+                .authorizeRequests().antMatchers(ApiPaths.ALLOWED_API).permitAll() // 회원가입, 로그인, 기본 페이지에 대해서만 접근을 허용함
                 .anyRequest().authenticated(); // 나머지 Request에 대해서는 모두 인증된 사용자만 가능하게 함
 
         httpSecurity.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

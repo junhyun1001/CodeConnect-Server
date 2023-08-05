@@ -1,5 +1,6 @@
 package CodeConnect.CodeConnect.filter;
 
+import CodeConnect.CodeConnect.config.ApiPaths;
 import CodeConnect.CodeConnect.dto.ResponseDto;
 import CodeConnect.CodeConnect.security.TokenProvider;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -21,6 +22,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Arrays;
 
 @Component
 @RequiredArgsConstructor
@@ -49,6 +51,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
                 securityContext.setAuthentication(authenticationToken);
                 SecurityContextHolder.setContext(securityContext);
+            } else if (requestRequiresAuthentication(request)) {
+                jwtExceptionHandler(response, "Bearer Token이 필요합니다.");
+                return;
             }
         } catch (Exception e) {
             // 오류 객체 반환
@@ -58,6 +63,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
         filterChain.doFilter(request, response);
     }
+
+    private boolean requestRequiresAuthentication(HttpServletRequest request) {
+        return !Arrays.asList(ApiPaths.ALLOWED_API).contains(request.getRequestURI());
+    }
+
 
     private String parseBearerToken(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");
