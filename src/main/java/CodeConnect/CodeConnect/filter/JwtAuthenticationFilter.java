@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.AuthorityUtils;
@@ -29,13 +28,11 @@ import java.io.IOException;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final TokenProvider tokenProvider;
-    private RedisTemplate<String, Object> redisTemplate;
 
     // Request Header의 Authorization 필드에서 Bearer Token을 가져와 검증하는 역할
     @Override
     protected void doFilterInternal(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response, @NotNull FilterChain filterChain) throws ServletException, IOException {
         String token = parseBearerToken(request);
-
         try {
             if (token != null && !token.equalsIgnoreCase("null")) {
                 String email = tokenProvider.validateToken(token);
@@ -55,12 +52,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
         } catch (Exception e) {
             // 오류 객체 반환
-            jwtExceptionHandler(response, "유효하지 않은 토큰입니다.");
-
+            jwtExceptionHandler(response, e.getMessage());
             log.error(e.getMessage());
             return;
         }
-
         filterChain.doFilter(request, response);
     }
 
