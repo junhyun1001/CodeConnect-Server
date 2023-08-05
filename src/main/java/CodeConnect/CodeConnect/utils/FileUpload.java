@@ -10,7 +10,7 @@ import java.util.UUID;
 @Slf4j
 public class FileUpload {
 
-    private static final String uploadPath = "D:/build/src/main/resources/file/";
+    private static final String uploadPath = "/home/ec2-user/build/src/main/resources/file/";
     private static final String resourcePath = "src/main/resources/file/";
 
     public static String fileUpload(MultipartFile file) {
