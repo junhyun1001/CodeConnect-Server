@@ -90,7 +90,7 @@ public class MemberService {
         // 회원 객체 DB 저장
         memberRepository.save(member);
 
-        log.info("************************* {} 회원가입 성공 *************************", member.getEmail());
+        log.info("************************* {} 회원가입 *************************", member.getEmail());
         return ResponseDto.setSuccess("회원가입 성공", null);
 
     }
@@ -111,7 +111,7 @@ public class MemberService {
 
         memberRepository.save(member);
 
-        log.info("************************* {} 로그인 성공 *************************", email);
+        log.info("************************* {} 로그인 *************************", email);
         return ResponseDto.setSuccess("로그인 성공", new SignInResponseDto(token, member));
 
     }
@@ -127,6 +127,7 @@ public class MemberService {
         // 레디스에 access token 블랙리스트 등록
         redisUtil.setBlackList(token.getAccessToken(), "accessToken", 5);
 
+        log.info("************************* {} 로그아웃 *************************", email);
         return ResponseDto.setSuccess("로그아웃 되었습니다.", null);
     }
 
@@ -135,7 +136,7 @@ public class MemberService {
 
         Member member = validateExistMember(email);
         memberRepository.delete(member);
-        log.info("************************* {} 회원이 삭제되었습니다. *************************", member.getEmail());
+        log.info("************************* {} 삭제 *************************", member.getEmail());
         return ResponseDto.setSuccess("회원이 삭제되었습니다.", null);
     }
 
