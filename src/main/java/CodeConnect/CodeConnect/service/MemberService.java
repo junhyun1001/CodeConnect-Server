@@ -5,6 +5,7 @@ import CodeConnect.CodeConnect.dto.ResponseDto;
 import CodeConnect.CodeConnect.dto.member.SignInRequestDto;
 import CodeConnect.CodeConnect.dto.member.SignInResponseDto;
 import CodeConnect.CodeConnect.dto.member.SignUpRequestDto;
+import CodeConnect.CodeConnect.dto.token.AccessTokenDto;
 import CodeConnect.CodeConnect.dto.token.Token;
 import CodeConnect.CodeConnect.repository.MemberRepository;
 import CodeConnect.CodeConnect.security.TokenProvider;
@@ -18,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.validation.constraints.Email;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
@@ -88,7 +90,7 @@ public class MemberService {
         // 회원 객체 DB 저장
         memberRepository.save(member);
 
-        log.info("************************* {} 회원가입 성공 *************************", member.getEmail());
+        log.info("************************* {} 회원가입 *************************", member.getEmail());
         return ResponseDto.setSuccess("회원가입 성공", null);
 
     }
@@ -99,9 +101,6 @@ public class MemberService {
         String password = dto.getPassword();
 
         Member member = validateExistMember(email);
-        if (member == null) {
-            return ResponseDto.setFail("존재하지 않는 회원입니다.");
-        }
 
         // 비밀번호가 일치하지 않을 때
         if (!passwordEncoder.matches(password, member.getPassword()))
@@ -112,23 +111,23 @@ public class MemberService {
 
         memberRepository.save(member);
 
-        log.info("************************* {} 로그인 성공 *************************", email);
+        log.info("************************* {} 로그인 *************************", email);
         return ResponseDto.setSuccess("로그인 성공", new SignInResponseDto(token, member));
 
     }
 
     // 로그아웃
-    public ResponseDto<String> logout(String accessToken) {
-        String email = tokenProvider.validateToken(accessToken);
+    public ResponseDto<String> logout(AccessTokenDto token) {
+        String email = tokenProvider.validateToken(token.getAccessToken());
         // 해당 refresh token 삭제
         Member member = validateExistMember(email);
-        if(member == null) return ResponseDto.setFail("존재하지 않는 회원입니다.");
         member.setRefreshToken(null);
         memberRepository.save(member);
 
         // 레디스에 access token 블랙리스트 등록
-        redisUtil.setBlackList(accessToken, "accessToken", 5);
+        redisUtil.setBlackList(token.getAccessToken(), "accessToken", 5);
 
+        log.info("************************* {} 로그아웃 *************************", email);
         return ResponseDto.setSuccess("로그아웃 되었습니다.", null);
     }
 
@@ -136,21 +135,15 @@ public class MemberService {
     public ResponseDto<?> deleteMember(String email) {
 
         Member member = validateExistMember(email);
-        if (member == null) {
-            return ResponseDto.setFail("존재하지 않는 회원입니다.");
-        }
-
         memberRepository.delete(member);
-
-        log.info("************************* {} 회원이 삭제되었습니다. *************************", member.getEmail());
+        log.info("************************* {} 삭제 *************************", member.getEmail());
         return ResponseDto.setSuccess("회원이 삭제되었습니다.", null);
     }
 
     // 해당 회원 존재 여부 확인
     public Member validateExistMember(String email) {
-        log.info("email: {}", email);
         Optional<Member> optionalMember = memberRepository.findById(email);
-        return optionalMember.orElse(null);
+        return optionalMember.orElseThrow(() -> new NoSuchElementException("존재하지 않는 회원입니다."));
     }
 
 }
