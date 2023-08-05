@@ -4,12 +4,13 @@ import CodeConnect.CodeConnect.domain.member.Member;
 import CodeConnect.CodeConnect.dto.token.Token;
 import CodeConnect.CodeConnect.repository.MemberRepository;
 import CodeConnect.CodeConnect.utils.RedisUtil;
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
-import io.jsonwebtoken.security.SignatureException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
 import java.time.Instant;
@@ -17,12 +18,6 @@ import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.Optional;
 
-
-/**
- * JWT 생성 및 검증을 위한 키
- */
-
-@Service
 @AllArgsConstructor
 @Slf4j
 public class TokenProvider {
@@ -57,27 +52,18 @@ public class TokenProvider {
 
     // 토큰 디코딩
     public String validateToken(String token) {
-        try {
-            if (redisUtil.hasKeyBlackList(token)) {
-                log.info("로그아웃 했습니다.");
-                throw new RuntimeException("로그아웃 했습니다.");
-            }
-            return Jwts.parserBuilder()
-                    .setSigningKey(SECRET_KEY)
-                    .build()
-                    .parseClaimsJws(token)
-                    .getBody()
-                    .getSubject();
-        } catch (ExpiredJwtException e) {
-            log.error("만료된 토큰입니다.", e);
-        } catch (UnsupportedJwtException e) {
-            log.error("지원되지 않는 토큰입니다.", e);
-        } catch (MalformedJwtException | SignatureException e) {
-            log.error("잘못된 JWT 서명입니다.", e);
-        } catch (IllegalArgumentException e) {
-            log.error("잘못된 형식의 토큰입니다.", e);
+        // redis에 등록되어있는 키일 경우
+        if (redisUtil.hasKeyBlackList(token)) {
+            throw new RuntimeException("로그아웃 된 키 입니다.");
         }
-        return null;
+
+        // access toekn의 sub(email)을 리턴한다.
+        return Jwts.parserBuilder()
+                .setSigningKey(SECRET_KEY)
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .getSubject();
     }
 
     public String validateRefreshToken(String refreshToken) {
@@ -100,6 +86,4 @@ public class TokenProvider {
         }
         return null;
     }
-
-
 }
