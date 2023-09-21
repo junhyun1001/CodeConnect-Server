@@ -7,12 +7,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -39,24 +38,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             if (token != null && !token.equalsIgnoreCase("null")) {
                 String email = tokenProvider.validateToken(token);
 
-                // 토큰의 subject가 "Refresh Token"이면 사용 불가능
-                if (email.equals("Refresh Token")) {
-                    jwtExceptionHandler(response, "Refresh Token은 사용할 수 없습니다.");
-                    return;
-                }
-
-                AbstractAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(email, null, AuthorityUtils.NO_AUTHORITIES);
-                authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
-                SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
-                securityContext.setAuthentication(authenticationToken);
-                SecurityContextHolder.setContext(securityContext);
-            } else if (requestRequiresAuthentication(request)) {
-                jwtExceptionHandler(response, "Bearer Token이 필요합니다.");
-                return;
+                Authentication authentication = new UsernamePasswordAuthenticationToken(email, null, AuthorityUtils.NO_AUTHORITIES);
+                SecurityContext context = SecurityContextHolder.getContext();
+                context.setAuthentication(authentication);
             }
+//            else if (requestRequiresAuthentication(request)) {
+//                jwtExceptionHandler(response, "Bearer Token이 필요합니다.");
+//                return;
+//            }
         } catch (Exception e) {
-            // 오류 객체 반환
+//             오류 객체 반환
             jwtExceptionHandler(response, e.getMessage());
             log.error(e.getMessage());
             return;
