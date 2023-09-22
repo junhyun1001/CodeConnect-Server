@@ -12,6 +12,7 @@ import CodeConnect.CodeConnect.repository.MemberRepository;
 import CodeConnect.CodeConnect.repository.QnaRepository;
 import CodeConnect.CodeConnect.utils.Base64Converter;
 import CodeConnect.CodeConnect.utils.EntityToDto;
+import CodeConnect.CodeConnect.utils.MarkdownUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -33,7 +34,7 @@ public class QnaService {
         Member findMember = memberRepository.findByEmail(email);
         String nickname = findMember.getNickname();
         String title = dto.getTitle();
-        String content = dto.getContent();
+        String content = MarkdownUtil.markdown(dto.getContent());
 
         Qna qna = new Qna(dto, nickname, title, content);
 
@@ -56,7 +57,7 @@ public class QnaService {
         qna.setProfileImagePath(qna.getMember().getProfileImagePath()); // Member 엔티티에서 profileImagePath 설정
 
         findMember.setQna(qna);
-        Qna saveQna = qnaRepository.save(qna);
+        qnaRepository.save(qna);
 
         QnaDto qnaDto = new QnaDto(qna);
 

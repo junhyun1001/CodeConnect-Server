@@ -1,5 +1,6 @@
 package CodeConnect.CodeConnect.dto.post.qna;
 
+import CodeConnect.CodeConnect.utils.MarkdownUtil;
 import CodeConnect.CodeConnect.utils.TimeUtils;
 import CodeConnect.CodeConnect.domain.post.Qna;
 import lombok.Getter;
@@ -32,7 +33,7 @@ public class QnaDto {
     public QnaDto(Qna qna) {
         this.qnaId = qna.getQnaId();
         this.title = qna.getTitle();
-        this.content = qna.getContent();
+        this.content = MarkdownUtil.markdown(qna.getContent());
         this.nickname = qna.getNickname();
         this.currentDateTime = TimeUtils.formatTimeAgo(qna.getCurrentDateTime());
         this.commentCount = qna.getCommentCount();
