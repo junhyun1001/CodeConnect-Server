@@ -1,4 +1,4 @@
-# CodeConnect
+# CodeConnect - Server
 ---
 Spring Boot + React + Android 스터디 서비스
 
@@ -14,3 +14,18 @@ Spring Boot + React + Android 스터디 서비스
 - Framework: Springboot 2.7.9
 - Database: MySQL DB
 - JPA: Hibernate
+
+프로젝트 결과물
+<img width="514" alt="스크린샷 2023-11-16 오후 11 52 14" src="https://github.com/junhyun1001/CodeConnect-Server/assets/90903322/1e26d721-08ac-45dd-bafa-6ed26fb12cf1">
+
+<img width="514" alt="스크린샷 2023-11-17 오전 12 09 46" src="https://github.com/junhyun1001/CodeConnect-Server/assets/90903322/82e83248-34b0-4f34-90c7-c5f623f4a7ab">
+
+<img width="514" alt="스크린샷 2023-11-17 오전 12 10 12" src="https://github.com/junhyun1001/CodeConnect-Server/assets/90903322/981cec64-4e79-4734-8c00-d35fd31f3836">
+
+<img width="514" alt="스크린샷 2023-11-17 오전 12 11 08" src="https://github.com/junhyun1001/CodeConnect-Server/assets/90903322/db04e70b-8415-41ea-8a42-add58bb8da62">
+
+<img width="514" alt="스크린샷 2023-11-17 오전 12 11 21" src="https://github.com/junhyun1001/CodeConnect-Server/assets/90903322/09c70a90-4b5a-4e1c-ac55-93d3e60139ec">
+
+<img width="514" alt="스크린샷 2023-11-17 오전 12 11 38" src="https://github.com/junhyun1001/CodeConnect-Server/assets/90903322/b436c6ee-306b-4611-96d8-d8113867b4be">
+
+<img width="514" alt="스크린샷 2023-11-17 오전 12 11 49" src="https://github.com/junhyun1001/CodeConnect-Server/assets/90903322/a796cf5e-3a17-4221-b123-450ea08d5025">
