@@ -1,6 +1,6 @@
 # CodeConnect
 ---
-Spring Boot + React + Android
+Spring Boot + React + Android 스터디 서비스
 
 # 프로젝트 소개
 ---
