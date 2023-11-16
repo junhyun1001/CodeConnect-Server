@@ -10,8 +10,7 @@ Spring Boot + React + Android 스터디 서비스
 
 개발환경
 ---
-- IDE: IntelliJ
 - Java 11
 - Framework: Springboot 2.7.9
 - Database: MySQL DB
-- ORM: Hibernate
+- JPA: Hibernate
