@@ -17,7 +17,7 @@ Spring Boot + React + Android 스터디 서비스
 
 서버 구조
 ---
-<img width="206" alt="image" src="https://github.com/junhyun1001/CodeConnect-Server/assets/90903322/66dd7af9-6506-4886-88a4-a3423bcc13c3">
+<img width="960" alt="구조도" src="https://github.com/junhyun1001/CodeConnect-Server/assets/90903322/1698dbd2-f866-4b37-b905-c0d74826ffa6">
 
 
 프로젝트 결과물
