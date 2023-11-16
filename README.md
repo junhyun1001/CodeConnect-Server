@@ -16,6 +16,7 @@ Spring Boot + React + Android 스터디 서비스
 - JPA: Hibernate
 
 프로젝트 결과물
+---
 <img width="514" alt="스크린샷 2023-11-16 오후 11 52 14" src="https://github.com/junhyun1001/CodeConnect-Server/assets/90903322/1e26d721-08ac-45dd-bafa-6ed26fb12cf1">
 
 <img width="514" alt="스크린샷 2023-11-17 오전 12 09 46" src="https://github.com/junhyun1001/CodeConnect-Server/assets/90903322/82e83248-34b0-4f34-90c7-c5f623f4a7ab">
