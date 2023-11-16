@@ -15,6 +15,11 @@ Spring Boot + React + Android 스터디 서비스
 - Database: MySQL DB
 - JPA: Hibernate
 
+서버 구조
+---
+<img width="206" alt="image" src="https://github.com/junhyun1001/CodeConnect-Server/assets/90903322/66dd7af9-6506-4886-88a4-a3423bcc13c3">
+
+
 프로젝트 결과물
 ---
 <img width="207" alt="스크린샷 2023-11-16 오후 11 52 14" src="https://github.com/junhyun1001/CodeConnect-Server/assets/90903322/1e26d721-08ac-45dd-bafa-6ed26fb12cf1">
