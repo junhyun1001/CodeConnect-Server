@@ -1,43 +1,67 @@
-# CodeConnect - Server
----
-Spring Boot + React + Android 스터디 서비스
+# 💻 CodeConnect (코드커넥트)
+> **"우리 동네 코딩 스터디의 시작"** 혼자 하는 코딩이 막막할 때, 함께 성장할 동료를 찾아주는 **위치 기반 코딩 스터디 매칭 플랫폼**입니다.
 
-# 프로젝트 소개
----
-이 프로젝트는 코딩을 배우고자 하는 사람들을 위한 동네 스터디 모임을 활성화시키는 것에 목적이 있다.
-사용자들은 자신이 공부하고자 하는 분야의 사람들을 찾고 그 사람들과 지식을 공유하며 배울 수 있는 기회를 제공한다. 
-스터디 모임을 통해 지식을 공유하며 혼자 학습할 때 보다 더 큰 학습의 효과를 기대할 수 있다.
+<br>
 
-# 기대효과
-1. 동기부여 증대: 스터디 모임을 통해 다른 사람들과 함께 공부하고 지식을 공유하는 경험은 개인 학습보다 더욱 즐겁고 동기부여를 높일 수 있습니다. 스터디 모임에서 다른 참여자들의 학습에 대한 질문이나 의견을 듣는 것은 새로운 관점을 제공해줄 뿐만 아니라 자신의 지식을 더욱 깊이 있는 수준으로 이해하게 해줄 수 있 습니다.
-2. 학습 효율성 증대: 스터디 모임을 통해 다른 참여자들과 지식을 공유하고 토론하면서 자신의 이해도를 검 증하고 더욱 깊이 있는 학습을 할 수 있습니다. 또한, 스터디 모임에서 다른 참여자들과 함께 문제를 해결하 면서 자신의 학습에 대한 책임감을 높일 수 있으며, 이를 통해 학습 효율성을 높일 수 있습니다.
-3. 사회적 관계 형성: 스터디 모임은 다른 사람들과 함께 지식을 공유하는 좋은 기회이며, 이를 통해 새로운 사람들과 사회적 관계를 형성할 수 있습니다. 이는 개인적인 이점 뿐만 아니라, 새로운 지인들과 함께 지식을 공유하고 서로서로 배울 수 있는 기회를 제공하며, 스터디 모임의 네트워크를 통해 취업, 경력 발전 등의 다 양한 기회를 얻을 수도 있습니다.
-4. 다양하고 새로운 지식 습득: 스터디 모임은 다양한 분야의 사람들이 함께 모이는 공간이므로, 참여자들은 다른 분야의 지식도 습득할 수 있습니다. 이를 통해 다양한 분야에 대한 이해도를 높일 수 있으며, 이를 통해 새로운 아이디어나 독창적인 문제해결 방법 등을 얻을 수 있습니다.
+## 📖 프로젝트 소개 (Introduction)
+**"백지장도 맞들면 낫다, 코딩은 함께하면 더 즐겁다!"**
 
-개발환경
----
-- Java 11
-- Framework: Springboot 2.7.9
-- Database: MySQL DB
-- JPA: Hibernate
+개발 공부를 하다 보면 혼자서는 해결하기 힘든 오류나, 의지가 약해지는 순간들을 마주하게 됩니다. **CodeConnect**는 이러한 어려움을 해결하기 위해 탄생했습니다.
 
-서버 구조
----
-<img width="480" alt="구조도" src="https://github.com/junhyun1001/CodeConnect-Server/assets/90903322/1698dbd2-f866-4b37-b905-c0d74826ffa6">
+사용자는 자신의 거주지 근처에서 관심 기술(Java, Python 등) 스터디를 손쉽게 찾을 수 있으며, 지식 공유와 네트워킹을 통해 **함께 성장하는 즐거움**을 경험할 수 있습니다. 단순한 매칭을 넘어, 지속 가능한 개발자 커뮤니티를 만드는 것이 이 프로젝트의 목표입니다.
 
+<br>
 
-프로젝트 결과물
----
-<img width="207" alt="스크린샷 2023-11-16 오후 11 52 14" src="https://github.com/junhyun1001/CodeConnect-Server/assets/90903322/1e26d721-08ac-45dd-bafa-6ed26fb12cf1">
+## 🚀 주요 목표 및 기대 효과 (Why CodeConnect?)
+단순한 모임을 넘어, 참여자들에게 다음과 같은 가치를 제공합니다.
 
-<img width="207" alt="스크린샷 2023-11-17 오전 12 09 46" src="https://github.com/junhyun1001/CodeConnect-Server/assets/90903322/82e83248-34b0-4f34-90c7-c5f623f4a7ab">
+| 키워드 | 설명 |
+| :--- | :--- |
+| **🔥 동기부여 (Motivation)** | 혼자 할 때보다 더 즐겁게! 서로 격려하며 완주율을 높입니다. |
+| **⚡️ 학습 효율 (Efficiency)** | 막히는 코드는 함께 해결하고, 코드 리뷰를 통해 책임감을 기릅니다. |
+| **🤝 네트워킹 (Networking)** | 다양한 분야의 개발자들과 교류하며 취업 및 커리어 기회를 확장합니다. |
+| **💡 인사이트 (Insight)** | 내가 몰랐던 새로운 기술과 문제 해결 방법을 공유받습니다. |
 
-<img width="207" alt="스크린샷 2023-11-17 오전 12 10 12" src="https://github.com/junhyun1001/CodeConnect-Server/assets/90903322/981cec64-4e79-4734-8c00-d35fd31f3836">
+<br>
 
-<img width="207" alt="스크린샷 2023-11-17 오전 12 11 08" src="https://github.com/junhyun1001/CodeConnect-Server/assets/90903322/db04e70b-8415-41ea-8a42-add58bb8da62">
+## 🛠 기술 스택 (Tech Stack)
 
-<img width="207" alt="스크린샷 2023-11-17 오전 12 11 21" src="https://github.com/junhyun1001/CodeConnect-Server/assets/90903322/09c70a90-4b5a-4e1c-ac55-93d3e60139ec">
+<div align=left>
+  <img src="https://img.shields.io/badge/java-007396?style=for-the-badge&logo=java&logoColor=white"> 
+  <img src="https://img.shields.io/badge/spring boot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white"> 
+  <img src="https://img.shields.io/badge/mysql-4479A1?style=for-the-badge&logo=mysql&logoColor=white"> 
+  <img src="https://img.shields.io/badge/spring data jpa-6DB33F?style=for-the-badge&logo=spring&logoColor=white">
+  </div>
 
-<img width="207" alt="스크린샷 2023-11-17 오전 12 11 38" src="https://github.com/junhyun1001/CodeConnect-Server/assets/90903322/b436c6ee-306b-4611-96d8-d8113867b4be">
+<br>
 
-<img width="207" alt="스크린샷 2023-11-17 오전 12 11 49" src="https://github.com/junhyun1001/CodeConnect-Server/assets/90903322/a796cf5e-3a17-4221-b123-450ea08d5025">
+## ⚙️ 주요 기능 (Key Features)
+* **스터디 매칭:** 주소 기반으로 스터디 목록 조회 및 필터링
+* **회원 관리:** 관심 분야 및 기술 스택 설정, 프로필 관리
+* **커뮤니티:** 스터디원 간의 소통을 위한 게시판 및 실시간 채팅 (예정)
+* **인증 및 보안:** JWT 기반 로그인 및 권한 관리
+
+<br>
+
+## 🏗️ 아키텍처 및 설계 (Architecture)
+<div align="center">
+  <img src="https://github.com/user-attachments/assets/7010215c-dc29-4fc4-8147-90bcf3f75735" width="800" />
+</div>
+
+<br>
+
+## 채팅 기능
+<div align="center">
+  <img src="https://github.com/user-attachments/assets/6166d0af-44bd-4fa7-8d7a-e499046c1b22" width="800" />
+</div>
+
+## 실행 화면
+<div align="center">
+
+| **홈 화면** | **주소 검색** |
+| :---: | :---: |
+| <img src="https://github.com/user-attachments/assets/b8687b02-3d47-4b6a-8eae-c9fdd7b23dbd" width="300"> | <img src="https://github.com/user-attachments/assets/1fb16e43-3f39-41f0-9792-d823fd972bd3" width="300"> |
+| **Q&A** | **참여 중인 방 채팅** |
+| <img src="https://github.com/user-attachments/assets/bc4791ee-1a81-411f-924b-9bbe93364e5c" width="300"> | <img src="https://github.com/user-attachments/assets/73466b56-39b8-44d3-b89c-fe76b7bdda33" width="300"> |
+
+</div>
