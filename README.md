@@ -3,6 +3,21 @@
 
 <br>
 
+## 🛠 기술 스택 (Tech Stack)
+
+<div align="left">
+  <img src="https://img.shields.io/badge/java-007396?style=for-the-badge&logo=java&logoColor=white"> 
+  <img src="https://img.shields.io/badge/spring boot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white"> 
+  <img src="https://img.shields.io/badge/spring data jpa-6DB33F?style=for-the-badge&logo=spring&logoColor=white">
+  <img src="https://img.shields.io/badge/spring websocket-6DB33F?style=for-the-badge&logo=spring&logoColor=white">
+  <img src="https://img.shields.io/badge/stomp-000000?style=for-the-badge&logoColor=white">
+  <img src="https://img.shields.io/badge/mysql-4479A1?style=for-the-badge&logo=mysql&logoColor=white"> 
+  <img src="https://img.shields.io/badge/redis-DC382D?style=for-the-badge&logo=redis&logoColor=white"> 
+  <img src="https://img.shields.io/badge/aws-232F3E?style=for-the-badge&logo=amazonwebservices&logoColor=white"> 
+</div>
+
+<br>
+
 ## 📖 프로젝트 소개 (Introduction)
 **"백지장도 맞들면 낫다, 코딩은 함께하면 더 즐겁다!"**
 
@@ -22,22 +37,6 @@
 | **🤝 네트워킹 (Networking)** | 다양한 분야의 개발자들과 교류하며 취업 및 커리어 기회를 확장합니다. |
 | **💡 인사이트 (Insight)** | 내가 몰랐던 새로운 기술과 문제 해결 방법을 공유받습니다. |
 
-<br>
-
-## 🛠 기술 스택 (Tech Stack)
-
-<div align="left">
-  <img src="https://img.shields.io/badge/java-007396?style=for-the-badge&logo=java&logoColor=white"> 
-  <img src="https://img.shields.io/badge/spring boot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white"> 
-  <img src="https://img.shields.io/badge/spring data jpa-6DB33F?style=for-the-badge&logo=spring&logoColor=white">
-  <img src="https://img.shields.io/badge/spring websocket-6DB33F?style=for-the-badge&logo=spring&logoColor=white">
-  
-  <br>
-  
-  <img src="https://img.shields.io/badge/mysql-4479A1?style=for-the-badge&logo=mysql&logoColor=white"> 
-  <img src="https://img.shields.io/badge/redis-DC382D?style=for-the-badge&logo=redis&logoColor=white"> 
-  <img src="https://img.shields.io/badge/aws-232F3E?style=for-the-badge&logo=amazonwebservices&logoColor=white"> 
-</div>
 <br>
 
 ## ⚙️ 주요 기능 (Key Features)
